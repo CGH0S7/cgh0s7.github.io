@@ -20,15 +20,20 @@
     var CONFIG = {"hostname":"cgh0s7.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="CGH0S7&#39;s Blog">
-<meta property="og:url" content="http://cgh0s7.github.io/tags/TEST/index.html">
+  <meta name="description" content="12月28日OpenCAEPoro 小组（黄熙涵，梁飞扬，程景愉，刘鹏程）  各组员继续进行优化工作,部分函数完成cuda移植，取得一定优化效果 继续学习openacc及cuda相关知识 搜集多孔介质流动模拟与opencaeporo相关论文资料为proposal做准备">
+<meta property="og:type" content="article">
+<meta property="og:title" content="12月28日进度报告">
+<meta property="og:url" content="http://cgh0s7.github.io/2023/12/28/12%E6%9C%8828%E6%97%A5%E8%BF%9B%E5%BA%A6%E6%8A%A5%E5%91%8A/index.html">
 <meta property="og:site_name" content="CGH0S7&#39;s Blog">
+<meta property="og:description" content="12月28日OpenCAEPoro 小组（黄熙涵，梁飞扬，程景愉，刘鹏程）  各组员继续进行优化工作,部分函数完成cuda移植，取得一定优化效果 继续学习openacc及cuda相关知识 搜集多孔介质流动模拟与opencaeporo相关论文资料为proposal做准备">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-12-28T15:22:13.000Z">
+<meta property="article:modified_time" content="2023-12-28T15:27:23.852Z">
 <meta property="article:author" content="CGH0S7">
+<meta property="article:tag" content="日志">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://cgh0s7.github.io/tags/TEST/">
+<link rel="canonical" href="http://cgh0s7.github.io/2023/12/28/12%E6%9C%8828%E6%97%A5%E8%BF%9B%E5%BA%A6%E6%8A%A5%E5%91%8A/">
 
 
 <script id="page-configurations">
@@ -36,12 +41,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>标签: TEST | CGH0S7's Blog</title>
+  <title>12月28日进度报告 | CGH0S7's Blog</title>
   
 
 
@@ -140,51 +145,85 @@
         <div class="content-wrap">
           
 
-          <div class="content tag">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">TEST
-          <small>标签</small>
-        </h2>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://cgh0s7.github.io/2023/12/28/12%E6%9C%8828%E6%97%A5%E8%BF%9B%E5%BA%A6%E6%8A%A5%E5%91%8A/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/gh0s7.jpg">
+      <meta itemprop="name" content="CGH0S7">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CGH0S7's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          12月28日进度报告
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-12-28 23:22:13 / 修改时间：23:27:23" itemprop="dateCreated datePublished" datetime="2023-12-28T23:22:13+08:00">2023-12-28</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2023</span>
+        <h2 id="12月28日"><a href="#12月28日" class="headerlink" title="12月28日"></a>12月28日</h2><p>OpenCAEPoro 小组（黄熙涵，梁飞扬，程景愉，刘鹏程）</p>
+<ol>
+<li>各组员继续进行优化工作,部分函数完成cuda移植，取得一定优化效果</li>
+<li>继续学习openacc及cuda相关知识</li>
+<li>搜集多孔介质流动模拟与opencaeporo相关论文资料为proposal做准备</li>
+</ol>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2023-12-06T16:33:30+08:00"
-              content="2023-12-06">
-          12-06
-        </time>
-      </div>
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%97%A5%E5%BF%97/" rel="tag"># 日志</a>
+          </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/12/06/CGH0S7-s-Blog/" itemprop="url">
-            <span itemprop="name">Welcome to CGH0S7's Blog</span>
-          </a>
-      </div>
+        
 
-    </header>
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/12/20/12%E6%9C%8820%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/" rel="prev" title="12月20日工作记录">
+      <i class="fa fa-chevron-left"></i> 12月20日工作记录
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
   </article>
-
-    </div>
-  </div>
   
   
-  
-
   
 
 
@@ -237,6 +276,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#12%E6%9C%8828%E6%97%A5"><span class="nav-number">1.</span> <span class="nav-text">12月28日</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
