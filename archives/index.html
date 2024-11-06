@@ -67,7 +67,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"blog.hifuu.ink","root":"/","version":"1.9.8","typing":{"cursorChar":"_","enable":"yes","loop":"no","scope":[],"typeSpeed":70},"anchorjs":{"element":"h1,h2,h3,h4,h5,h6","enable":"yes","icon":"","placement":"left","visible":"hover"},"progressbar":{"color":"#29d","enable":"yes","height_px":3,"options":{"showSpinner":"no","trickleSpeed":100}},"code_language":{"default":"TEXT","enable":"yes"},"copy_btn":"yes","image_caption":{"enable":"yes"},"image_zoom":{"enable":"yes","img_url_replace":["",""]},"toc":{"collapseDepth":0,"enable":"yes","headingSelector":"h1,h2,h3,h4,h5,h6","placement":"right"},"lazyload":{"enable":"yes","loading_img":"/img/loading.gif","offset_factor":2,"onlypost":"no"},"web_analytics":{"baidu":null,"enable":"no","follow_dnt":"yes","google":{"measurement_id":null},"leancloud":{"app_id":null,"app_key":null,"ignore_local":"no","path":"window.location.pathname","server_url":null},"tencent":{"cid":null,"sid":null},"umami":{"api_server":null,"domains":null,"src":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"website_id":null}},"search_path":"/local-search.xml","include_content_in_search":"yes"};
+    var CONFIG = {"hostname":"blog.hifuu.ink","root":"/","version":"1.9.8","typing":{"cursorChar":"_","enable":"yes","loop":false,"scope":[],"typeSpeed":70},"anchorjs":{"element":"h1,h2,h3,h4,h5,h6","enable":"yes","icon":"","placement":"left","visible":"hover"},"progressbar":{"color":"#29d","enable":"yes","height_px":3,"options":{"showSpinner":"no","trickleSpeed":100}},"code_language":{"default":"TEXT","enable":"yes"},"copy_btn":"yes","image_caption":{"enable":"yes"},"image_zoom":{"enable":"yes","img_url_replace":["",""]},"toc":{"collapseDepth":0,"enable":"yes","headingSelector":"h1,h2,h3,h4,h5,h6","placement":"right"},"lazyload":{"enable":"yes","loading_img":"/img/loading.gif","offset_factor":2,"onlypost":"no"},"web_analytics":{"baidu":null,"enable":"no","follow_dnt":"yes","google":{"measurement_id":null},"leancloud":{"app_id":null,"app_key":null,"ignore_local":"no","path":"window.location.pathname","server_url":null},"tencent":{"cid":null,"sid":null},"umami":{"api_server":null,"domains":null,"src":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"website_id":null}},"search_path":"/local-search.xml","include_content_in_search":"yes"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -246,13 +246,25 @@
                 
 
 <div class="list-group">
-  <p class="h4">共计 14 篇文章</p>
+  <p class="h4">共计 16 篇文章</p>
   <hr>
   
   
     
       
       <p class="h5">2024</p>
+    
+    <a href="../2024/11/06/arch-nvidia/" class="list-group-item list-group-item-action">
+      <time>11-06</time>
+      <div class="list-group-item-title">Archlinux KDE配置Nvidia显卡指北</div>
+    </a>
+  
+    
+    <a href="../2024/11/06/overleaf/" class="list-group-item list-group-item-action">
+      <time>11-06</time>
+      <div class="list-group-item-title">Overleaf Toolkit踩坑记录</div>
+    </a>
+  
     
     <a href="../2024/11/04/loopers/" class="list-group-item list-group-item-action">
       <time>11-04</time>
@@ -302,18 +314,6 @@
     <a href="../2023/12/28/12%E6%9C%8828%E6%97%A5%E8%BF%9B%E5%BA%A6%E6%8A%A5%E5%91%8A/" class="list-group-item list-group-item-action">
       <time>12-28</time>
       <div class="list-group-item-title">12月28日进度报告</div>
-    </a>
-  
-    
-    <a href="../2023/12/20/12%E6%9C%8820%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/" class="list-group-item list-group-item-action">
-      <time>12-20</time>
-      <div class="list-group-item-title">12月20日工作记录</div>
-    </a>
-  
-    
-    <a href="../2023/12/19/12%E6%9C%8819%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/" class="list-group-item list-group-item-action">
-      <time>12-19</time>
-      <div class="list-group-item-title">12月19日工作记录</div>
     </a>
   
 </div>

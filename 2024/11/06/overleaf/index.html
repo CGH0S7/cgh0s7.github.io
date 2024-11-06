@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" sizes="76x76" href="../../../../img/hifuu.png">
   <link rel="icon" href="../../../../img/hifuu.png">
   
-    <link rel="canonical" href="http://blog.hifuu.ink/2023/12/31/12月31日进度报告/"/>
+    <link rel="canonical" href="http://blog.hifuu.ink/2024/11/06/overleaf/"/>
   
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
@@ -23,24 +23,24 @@
   <meta name="author" content="CGH0S7">
   <meta name="keywords" content="">
   
-    <meta name="description" content="12月30-31日OpenCAEPoro 小组（黄，梁，程，刘）  服务器上的Opencaeporo改用nvhpc编译器编译以支持cuda; 收集运行数据用于proposal绘制图表; 继续尝试优化，同时已经查阅收集了一些相关资料以尽量理解相关含义便于工作开展.">
+    <meta name="description" content="在安装 Overleaf Toolkit 时，表面上看起来很简单只要执行一些脚本就行，但是在某地区网络环境下还是遇到了一些问题和困难，这里记录安装过程中的问题和解决方案，方便以后参考。 具体流程就不赘述了，先将访问Overleaf Toolkit官方仓库将代码clone下来并按照手册执行即可。 问题一：无法 Pull Mongo、Redis 和 Sharelatex 镜像在执行 bin&#x2F;up 脚本">
 <meta property="og:type" content="article">
-<meta property="og:title" content="12月30-31日进度报告">
-<meta property="og:url" content="http://blog.hifuu.ink/2023/12/31/12%E6%9C%8831%E6%97%A5%E8%BF%9B%E5%BA%A6%E6%8A%A5%E5%91%8A/index.html">
+<meta property="og:title" content="Overleaf Toolkit踩坑记录">
+<meta property="og:url" content="http://blog.hifuu.ink/2024/11/06/overleaf/index.html">
 <meta property="og:site_name" content="CGH0S7&#39;s Blog">
-<meta property="og:description" content="12月30-31日OpenCAEPoro 小组（黄，梁，程，刘）  服务器上的Opencaeporo改用nvhpc编译器编译以支持cuda; 收集运行数据用于proposal绘制图表; 继续尝试优化，同时已经查阅收集了一些相关资料以尽量理解相关含义便于工作开展.">
+<meta property="og:description" content="在安装 Overleaf Toolkit 时，表面上看起来很简单只要执行一些脚本就行，但是在某地区网络环境下还是遇到了一些问题和困难，这里记录安装过程中的问题和解决方案，方便以后参考。 具体流程就不赘述了，先将访问Overleaf Toolkit官方仓库将代码clone下来并按照手册执行即可。 问题一：无法 Pull Mongo、Redis 和 Sharelatex 镜像在执行 bin&#x2F;up 脚本">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-12-30T16:07:09.000Z">
-<meta property="article:modified_time" content="2024-11-04T08:59:55.559Z">
+<meta property="article:published_time" content="2024-11-06T01:56:18.000Z">
+<meta property="article:modified_time" content="2024-11-06T02:31:56.685Z">
 <meta property="article:author" content="CGH0S7">
-<meta property="article:tag" content="日志">
+<meta property="article:tag" content="技术">
 <meta name="twitter:card" content="summary_large_image">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>12月30-31日进度报告 - CGH0S7&#39;s Blog</title>
+  <title>Overleaf Toolkit踩坑记录 - CGH0S7&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -229,7 +229,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="12月30-31日进度报告"></span>
+            <span id="subtitle" data-typed-text="Overleaf Toolkit踩坑记录"></span>
           
         </div>
 
@@ -245,8 +245,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-12-31 00:07" pubdate>
-          2023年12月31日 凌晨
+        <time datetime="2024-11-06 09:56" pubdate>
+          2024年11月6日 上午
         </time>
       </span>
     
@@ -257,7 +257,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          75 字
+          830 字
         
       </span>
     
@@ -268,7 +268,7 @@
         
         
         
-          1 分钟
+          7 分钟
         
       </span>
     
@@ -314,12 +314,12 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">12月30-31日进度报告</h1>
+            <h1 id="seo-header">Overleaf Toolkit踩坑记录</h1>
             
               <p id="updated-time" class="note note-info" style="display: none">
                 
                   
-                    本文最后更新于 2024-11-04T16:59:55+08:00
+                    本文最后更新于 2024-11-06T10:31:56+08:00
                   
                   
 
@@ -329,12 +329,38 @@
             
               <div class="markdown-body">
                 
-                <h2 id="12月30-31日"><a href="#12月30-31日" class="headerlink" title="12月30-31日"></a>12月30-31日</h2><p>OpenCAEPoro 小组（黄<strong>，梁</strong>，程<strong>，刘</strong>）</p>
+                <p>在安装 Overleaf Toolkit 时，表面上看起来很简单只要执行一些脚本就行，但是在某地区网络环境下还是遇到了一些问题和困难，这里记录安装过程中的问题和解决方案，方便以后参考。</p>
+<p>具体流程就不赘述了，先将访问<a target="_blank" rel="noopener" href="https://github.com/overleaf/toolkit">Overleaf Toolkit官方仓库</a>将代码clone下来并按照手册执行即可。</p>
+<h2 id="问题一：无法-Pull-Mongo、Redis-和-Sharelatex-镜像"><a href="#问题一：无法-Pull-Mongo、Redis-和-Sharelatex-镜像" class="headerlink" title="问题一：无法 Pull Mongo、Redis 和 Sharelatex 镜像"></a>问题一：无法 Pull Mongo、Redis 和 Sharelatex 镜像</h2><p>在执行 <code>bin/up</code> 脚本启动服务时，发现 Mongo、Redis 和 Sharelatex 镜像无法拉取。主要原因是 Docker 在国内网络环境中，直接访问 Docker Hub 可能会被限制，导致拉取镜像失败。</p>
+<p>截至这篇博客编写时网上提供的镜像均无法解决只能使用代理。</p>
+<h3 id="解决方案：为-Docker-设置代理"><a href="#解决方案：为-Docker-设置代理" class="headerlink" title="解决方案：为 Docker 设置代理"></a>解决方案：为 Docker 设置代理</h3><p>通过配置 Docker 的代理，可以解决拉取镜像受限的问题。步骤如下：</p>
 <ol>
-<li>服务器上的Opencaeporo改用nvhpc编译器编译以支持cuda;</li>
-<li>收集运行数据用于proposal绘制图表;</li>
-<li>继续尝试优化，同时已经查阅收集了一些相关资料以尽量理解相关含义便于工作开展.</li>
+<li><p>创建一个 <code>systemd</code> 服务文件，为 Docker 设置代理。</p>
+</li>
+<li><p>编辑 <code>/etc/systemd/system/docker.service.d/proxy.conf</code> 文件，添加以下内容（确保已经设置了代理服务器）：</p>
+ <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[Service]</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;HTTP_PROXY=http://&lt;your-proxy-server&gt;:&lt;port&gt;&quot;</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;HTTPS_PROXY=http://&lt;your-proxy-server&gt;:&lt;port&gt;&quot;</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;NO_PROXY=localhost,127.0.0.1&quot;</span><br></code></pre></td></tr></table></figure>
+</li>
+<li><p>重新加载 <code>systemd</code> 配置并重启 Docker：</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo systemctl daemon-reload<br>sudo systemctl restart docker<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>重启 Docker 后再次执行 <code>sudo ./up</code>，此时应该可以正常拉取 Mongo、Redis 和 Sharelatex 的镜像。等待执行完成即可。</p>
+</li>
 </ol>
+<hr>
+<h2 id="问题二：外部机器无法访问-Overleaf-Web-服务"><a href="#问题二：外部机器无法访问-Overleaf-Web-服务" class="headerlink" title="问题二：外部机器无法访问 Overleaf Web 服务"></a>问题二：外部机器无法访问 Overleaf Web 服务</h2><p>先确认ipv4和ipv6转发功能没有问题，但是依旧出现只能本机访问127.0.0.1，其他方式均无法访问，甚至nmap扫描端口也发现并未开放sharelatex端口，可以通过修改docker-compose配置文件解决。</p>
+<p>注意到在默认的 <code>lib/docker-compose.base.yml</code> 配置中，Overleaf Web 服务的端口映射方式为 <code>&quot;$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;:$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</code>。</p>
+<h3 id="解决方案：修改端口映射"><a href="#解决方案：修改端口映射" class="headerlink" title="解决方案：修改端口映射"></a>解决方案：修改端口映射</h3><p>在 <code>docker-compose.base.yml</code> 文件中，删除 <code>$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;</code> 前缀，将 <code>&quot;$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;:$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</code> 修改为 <code>&quot;$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</code>。这样可以使 Docker 将 Overleaf 的 Web 服务端口暴露给所有网络接口，从而允许外部机器访问。</p>
+<p>修改后的 <code>docker-compose.base.yml</code> 端口映射配置如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-meta">---</span><br><span class="hljs-attr">services:</span><br><br>    <span class="hljs-attr">sharelatex:</span><br>        <span class="hljs-attr">restart:</span> <span class="hljs-string">always</span><br>        <span class="hljs-attr">image:</span> <span class="hljs-string">&quot;$&#123;IMAGE&#125;&quot;</span><br>        <span class="hljs-attr">container_name:</span> <span class="hljs-string">sharelatex</span><br>        <span class="hljs-attr">volumes:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;$&#123;OVERLEAF_DATA_PATH&#125;:$&#123;OVERLEAF_IN_CONTAINER_DATA_PATH&#125;&quot;</span><br>        <span class="hljs-attr">ports:</span><br>            <span class="hljs-comment">#- &quot;$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;:$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</span><br>        <span class="hljs-attr">environment:</span><br>          <span class="hljs-attr">GIT_BRIDGE_ENABLED:</span> <span class="hljs-string">&quot;$&#123;GIT_BRIDGE_ENABLED&#125;&quot;</span><br>          <span class="hljs-attr">GIT_BRIDGE_HOST:</span> <span class="hljs-string">&quot;git-bridge&quot;</span><br>          <span class="hljs-attr">GIT_BRIDGE_PORT:</span> <span class="hljs-string">&quot;8000&quot;</span><br>          <span class="hljs-attr">REDIS_HOST:</span> <span class="hljs-string">&quot;$&#123;REDIS_HOST&#125;&quot;</span><br>          <span class="hljs-attr">REDIS_PORT:</span> <span class="hljs-string">&quot;$&#123;REDIS_PORT&#125;&quot;</span><br>          <span class="hljs-attr">V1_HISTORY_URL:</span> <span class="hljs-string">&quot;http://sharelatex:3100/api&quot;</span><br>        <span class="hljs-attr">env_file:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">../config/variables.env</span><br>        <span class="hljs-attr">stop_grace_period:</span> <span class="hljs-string">60s</span><br></code></pre></td></tr></table></figure>
+
+<p>完成修改后，重新启动 Docker 服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo ./start<br></code></pre></td></tr></table></figure>
+
+<p>现在，外部机器可以通过服务器的 IP 地址加端口 <code>&#123;Overleaf_Port&#125;</code> 访问 Overleaf Web 服务。</p>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这次安装 Overleaf Toolkit 时，主要遇到的两个问题分别是镜像拉取失败和端口映射受限。通过为 Docker 设置代理解决了拉取镜像的问题，而通过修改 <code>docker-compose.base.yml</code> 中的端口映射使外部设备可以访问 Overleaf 服务。</p>
+<p>可以在这里参考我的本地<a target="_blank" rel="noopener" href="https://overleaf.hifuu.ink/">Overleaf</a>效果，注意安装完后还需要配置latex包和中文字体。</p>
+<p>这篇记录希望能为遇到类似问题的朋友提供帮助。</p>
 
                 
               </div>
@@ -343,11 +369,32 @@
             <div>
               <div class="post-metas my-3">
   
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="../../../../categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" class="category-chain-item">技术分享</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
   
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="../../../../tags/%E6%97%A5%E5%BF%97/" class="print-no-link">#日志</a>
+        <a href="../../../../tags/%E6%8A%80%E6%9C%AF/" class="print-no-link">#技术</a>
       
     </div>
   
@@ -359,8 +406,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>12月30-31日进度报告</div>
-      <div>http://blog.hifuu.ink/2023/12/31/12月31日进度报告/</div>
+      <div>Overleaf Toolkit踩坑记录</div>
+      <div>http://blog.hifuu.ink/2024/11/06/overleaf/</div>
     </div>
     <div class="license-meta">
       
@@ -372,13 +419,13 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年12月31日</div>
+          <div>2024年11月6日</div>
         </div>
       
       
         <div class="license-meta-item license-meta-date">
           <div>更新于</div>
-          <div>2024年11月4日</div>
+          <div>2024年11月6日</div>
         </div>
       
       
@@ -409,9 +456,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="../../../../2024/06/03/%E5%8E%9F%E6%9D%A5%E6%88%91%E8%BF%98%E6%9C%89%E4%B8%AA%E5%8D%9A%E5%AE%A2/" title="原来我还有个博客">
+                      <a href="../arch-nvidia/" title="Archlinux KDE配置Nvidia显卡指北">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">原来我还有个博客</span>
+                        <span class="hidden-mobile">Archlinux KDE配置Nvidia显卡指北</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -419,8 +466,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="../../28/12%E6%9C%8828%E6%97%A5%E8%BF%9B%E5%BA%A6%E6%8A%A5%E5%91%8A/" title="12月28日进度报告">
-                        <span class="hidden-mobile">12月28日进度报告</span>
+                      <a href="../../04/loopers/" title="时隔一年再次拿起数位板能画出什么东西">
+                        <span class="hidden-mobile">时隔一年再次拿起数位板能画出什么东西</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

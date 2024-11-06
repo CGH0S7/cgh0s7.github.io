@@ -67,7 +67,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"blog.hifuu.ink","root":"/","version":"1.9.8","typing":{"cursorChar":"_","enable":"yes","loop":"no","scope":[],"typeSpeed":70},"anchorjs":{"element":"h1,h2,h3,h4,h5,h6","enable":"yes","icon":"","placement":"left","visible":"hover"},"progressbar":{"color":"#29d","enable":"yes","height_px":3,"options":{"showSpinner":"no","trickleSpeed":100}},"code_language":{"default":"TEXT","enable":"yes"},"copy_btn":"yes","image_caption":{"enable":"yes"},"image_zoom":{"enable":"yes","img_url_replace":["",""]},"toc":{"collapseDepth":0,"enable":"yes","headingSelector":"h1,h2,h3,h4,h5,h6","placement":"right"},"lazyload":{"enable":"yes","loading_img":"/img/loading.gif","offset_factor":2,"onlypost":"no"},"web_analytics":{"baidu":null,"enable":"no","follow_dnt":"yes","google":{"measurement_id":null},"leancloud":{"app_id":null,"app_key":null,"ignore_local":"no","path":"window.location.pathname","server_url":null},"tencent":{"cid":null,"sid":null},"umami":{"api_server":null,"domains":null,"src":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"website_id":null}},"search_path":"/local-search.xml","include_content_in_search":"yes"};
+    var CONFIG = {"hostname":"blog.hifuu.ink","root":"/","version":"1.9.8","typing":{"cursorChar":"_","enable":"yes","loop":false,"scope":[],"typeSpeed":70},"anchorjs":{"element":"h1,h2,h3,h4,h5,h6","enable":"yes","icon":"","placement":"left","visible":"hover"},"progressbar":{"color":"#29d","enable":"yes","height_px":3,"options":{"showSpinner":"no","trickleSpeed":100}},"code_language":{"default":"TEXT","enable":"yes"},"copy_btn":"yes","image_caption":{"enable":"yes"},"image_zoom":{"enable":"yes","img_url_replace":["",""]},"toc":{"collapseDepth":0,"enable":"yes","headingSelector":"h1,h2,h3,h4,h5,h6","placement":"right"},"lazyload":{"enable":"yes","loading_img":"/img/loading.gif","offset_factor":2,"onlypost":"no"},"web_analytics":{"baidu":null,"enable":"no","follow_dnt":"yes","google":{"measurement_id":null},"leancloud":{"app_id":null,"app_key":null,"ignore_local":"no","path":"window.location.pathname","server_url":null},"tencent":{"cid":null,"sid":null},"umami":{"api_server":null,"domains":null,"src":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"website_id":null}},"search_path":"/local-search.xml","include_content_in_search":"yes"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -249,6 +249,128 @@
               <div class="col-12 col-md-10 m-auto">
                 
 
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="2024/11/06/arch-nvidia/" target="_self">
+          Archlinux KDE配置Nvidia显卡指北
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="2024/11/06/arch-nvidia/" target="_self">
+        <div>
+          这篇文章将分别介绍x11和wayland会话下kde plasma如何优先启用Nvidia独立显卡以及i+n显卡混用方案。首先请读者确保已经安装好了Nvidia驱动(非Mainline内核使用nvidia-dkms或nvidia-open-dkms)。  对于CachyOS或EndeavorOS这种Archlinux衍生发行版应该是开箱即用无需配置的，但是对于刚刚入坑Archlinux使用kde的
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-11-06 10:02" pubdate>
+              2024-11-06
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" class="category-chain-item">技术分享</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="2024/11/06/overleaf/" target="_self">
+          Overleaf Toolkit踩坑记录
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="2024/11/06/overleaf/" target="_self">
+        <div>
+          在安装 Overleaf Toolkit 时，表面上看起来很简单只要执行一些脚本就行，但是在某地区网络环境下还是遇到了一些问题和困难，这里记录安装过程中的问题和解决方案，方便以后参考。 具体流程就不赘述了，先将访问Overleaf Toolkit官方仓库将代码clone下来并按照手册执行即可。 问题一：无法 Pull Mongo、Redis 和 Sharelatex 镜像在执行 bin/up 脚本
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-11-06 09:56" pubdate>
+              2024-11-06
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" class="category-chain-item">技术分享</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
 
   <div class="row mx-auto index-card">
     
@@ -625,86 +747,6 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2023-12-28 23:22" pubdate>
               2023-12-28
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="tags/%E6%97%A5%E5%BF%97/">#日志</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="2023/12/20/12%E6%9C%8820%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/" target="_self">
-          12月20日工作记录
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="2023/12/20/12%E6%9C%8820%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/" target="_self">
-        <div>
-          12月20日OpenCAEPoro 小组（黄，梁，程**）  阅读代码，开展优化工作,初步使用openacc完成petsc_solver的优化，取得一定优化效果   优化方向基本确定为OpenMP&#x2F;OpenACC并行化+cuda移植   赛题环境汇总，目前各组工作有序开展，CentOS 7符合要求暂未发现更换系统需求
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-12-20 21:56" pubdate>
-              2023-12-20
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="tags/%E6%97%A5%E5%BF%97/">#日志</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="2023/12/19/12%E6%9C%8819%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/" target="_self">
-          12月19日工作记录
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="2023/12/19/12%E6%9C%8819%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/" target="_self">
-        <div>
-          12月18日 彻底完成opencaeporo安装部署，本地和服务器均已安装，明天正式开始调优工作; 学习cuda编程.
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-12-19 21:59" pubdate>
-              2023-12-19
             </time>
           </div>
         

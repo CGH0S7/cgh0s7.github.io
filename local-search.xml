@@ -4,11 +4,61 @@
   
   
   <entry>
+    <title>Archlinux KDE配置Nvidia显卡指北</title>
+    <link href="/2024/11/06/arch-nvidia/"/>
+    <url>/2024/11/06/arch-nvidia/</url>
+    
+    <content type="html"><![CDATA[<p>这篇文章将分别介绍x11和wayland会话下kde plasma如何优先启用Nvidia独立显卡以及i+n显卡混用方案。首先请读者确保已经安装好了Nvidia驱动(非Mainline内核使用nvidia-dkms或nvidia-open-dkms)。</p><p><img src="https://i0.hdslb.com/bfs/new_dyn/5364bba6d035326e82c53504dd53e7c2454454985.png@1192w.avif" srcset="/img/loading.gif" lazyload></p><p>对于CachyOS或EndeavorOS这种Archlinux衍生发行版应该是开箱即用无需配置的，但是对于刚刚入坑Archlinux使用kde的新人可能会遇到一个奇怪的问题，为什么驱动明明安装好了，nvidia-smi输出也正常但是kde设置里系统信息显示使用的仍然是核显而非上图中的独显，运行软件时工作的也是核显而非独显这样对于浏览器和Blender这种软件可能会有明显的卡顿掉帧，而这是因为Archlinux作为高自定义系统绝大多数功能是需要自己配置的，不拐弯抹角下面直接给出解决方案:</p><p>对于X11：</p><p>可以通过配置&#x2F;etc&#x2F;X11&#x2F;xorg.conf来实现N卡输出，并且幸运的是用户不需要自己查阅文档或询问ChatGPT如何填写配置文件，Nvidia提供了工具可以自动完成备份和写入配置文件的工作，执行以下命令即可：sudo nvidia-xconfig –prime</p><p>之后便会根据你的硬件情况自动生成配置文件，退出会话重新登录即可生效(即使是Wayland用户也不妨执行一次这个命令)</p><p><img src="https://i0.hdslb.com/bfs/new_dyn/1613f5602b203b38230f19699deb0219454454985.png@1192w.avif" srcset="/img/loading.gif" lazyload></p><p>对于Wayland：</p><p>首先请修改&#x2F;etc&#x2F;default&#x2F;grub文件在GRUB_CMDLINE_LINUX_DEFAULT&#x3D;””中加上nvidia_drm.modeset&#x3D;1然后重新生成grub配置sudo grub-mkconfig -o &#x2F;boot&#x2F;grub&#x2F;grub.cfg，再编写plasma配置文件vim .config&#x2F;plasma-workspace&#x2F;env&#x2F;nvidia.sh填入内容:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#!/bin/bash </span><br><br><span class="hljs-built_in">export</span> __NV_PRIME_RENDER_OFFLOAD=1 <br><br><span class="hljs-built_in">export</span> __GLX_VENDOR_LIBRARY_NAME=nvidia<br></code></pre></td></tr></table></figure><p>保存后重启电脑即可生效。</p><p><img src="https://i0.hdslb.com/bfs/new_dyn/b2054bbaf6197624d38cc2007d885fd1454454985.png@1192w.avif" srcset="/img/loading.gif" lazyload></p><p>独显核显混用方案：</p><p>不进行上述配置，大部分程序使用核显，仅对少数程序的启动文件设置独显启动，优点是节省功耗与独显显存，将独显资源集中留给需要的程序(如Steam大型游戏，Blender等图形资源要求高的程序)，缺点是手动设置比较麻烦并且程序更新后需要重新设置。</p><p>方法是修改&#x2F;usr&#x2F;share&#x2F;application或~&#x2F;.local&#x2F;share&#x2F;application中目标程序的.desktop文件为所有Exec&#x3D;后面加上启动参数prime-run，例如:</p><p><img src="https://i0.hdslb.com/bfs/new_dyn/71a5357ef4bd808b10429bc2ea46cb6f454454985.png@1192w.avif" srcset="/img/loading.gif" lazyload></p><p>如果使用vim的话可以依次输入以下快捷键迅速完成设置:</p><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs elixir">v -&gt; G -&gt; <span class="hljs-symbol">:s/Exec=/Exec=prime-run</span> /g <span class="hljs-title class_">Enter</span> -&gt; <span class="hljs-symbol">:wq</span> <span class="hljs-title class_">Enter</span><br></code></pre></td></tr></table></figure><p>若是希望plasma桌面也通过n卡运行的话可以修改Wayland方案中给出的配置文件删除第二行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#!/bin/bash </span><br><br><span class="hljs-built_in">export</span> __GLX_VENDOR_LIBRARY_NAME=nvidia<br></code></pre></td></tr></table></figure><p>这样会让Plasma桌面也通过独显启动，但是其余程序默认仍然通过核显启动。</p><p>希望以上经验能对需要帮助的同志起到参考作用。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术分享</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>技术</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Overleaf Toolkit踩坑记录</title>
+    <link href="/2024/11/06/overleaf/"/>
+    <url>/2024/11/06/overleaf/</url>
+    
+    <content type="html"><![CDATA[<p>在安装 Overleaf Toolkit 时，表面上看起来很简单只要执行一些脚本就行，但是在某地区网络环境下还是遇到了一些问题和困难，这里记录安装过程中的问题和解决方案，方便以后参考。</p><p>具体流程就不赘述了，先将访问<a href="https://github.com/overleaf/toolkit">Overleaf Toolkit官方仓库</a>将代码clone下来并按照手册执行即可。</p><h2 id="问题一：无法-Pull-Mongo、Redis-和-Sharelatex-镜像"><a href="#问题一：无法-Pull-Mongo、Redis-和-Sharelatex-镜像" class="headerlink" title="问题一：无法 Pull Mongo、Redis 和 Sharelatex 镜像"></a>问题一：无法 Pull Mongo、Redis 和 Sharelatex 镜像</h2><p>在执行 <code>bin/up</code> 脚本启动服务时，发现 Mongo、Redis 和 Sharelatex 镜像无法拉取。主要原因是 Docker 在国内网络环境中，直接访问 Docker Hub 可能会被限制，导致拉取镜像失败。</p><p>截至这篇博客编写时网上提供的镜像均无法解决只能使用代理。</p><h3 id="解决方案：为-Docker-设置代理"><a href="#解决方案：为-Docker-设置代理" class="headerlink" title="解决方案：为 Docker 设置代理"></a>解决方案：为 Docker 设置代理</h3><p>通过配置 Docker 的代理，可以解决拉取镜像受限的问题。步骤如下：</p><ol><li><p>创建一个 <code>systemd</code> 服务文件，为 Docker 设置代理。</p></li><li><p>编辑 <code>/etc/systemd/system/docker.service.d/proxy.conf</code> 文件，添加以下内容（确保已经设置了代理服务器）：</p> <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[Service]</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;HTTP_PROXY=http://&lt;your-proxy-server&gt;:&lt;port&gt;&quot;</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;HTTPS_PROXY=http://&lt;your-proxy-server&gt;:&lt;port&gt;&quot;</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;NO_PROXY=localhost,127.0.0.1&quot;</span><br></code></pre></td></tr></table></figure></li><li><p>重新加载 <code>systemd</code> 配置并重启 Docker：</p> <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo systemctl daemon-reload<br>sudo systemctl restart docker<br></code></pre></td></tr></table></figure></li><li><p>重启 Docker 后再次执行 <code>sudo ./up</code>，此时应该可以正常拉取 Mongo、Redis 和 Sharelatex 的镜像。等待执行完成即可。</p></li></ol><hr><h2 id="问题二：外部机器无法访问-Overleaf-Web-服务"><a href="#问题二：外部机器无法访问-Overleaf-Web-服务" class="headerlink" title="问题二：外部机器无法访问 Overleaf Web 服务"></a>问题二：外部机器无法访问 Overleaf Web 服务</h2><p>先确认ipv4和ipv6转发功能没有问题，但是依旧出现只能本机访问127.0.0.1，其他方式均无法访问，甚至nmap扫描端口也发现并未开放sharelatex端口，可以通过修改docker-compose配置文件解决。</p><p>注意到在默认的 <code>lib/docker-compose.base.yml</code> 配置中，Overleaf Web 服务的端口映射方式为 <code>&quot;$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;:$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</code>。</p><h3 id="解决方案：修改端口映射"><a href="#解决方案：修改端口映射" class="headerlink" title="解决方案：修改端口映射"></a>解决方案：修改端口映射</h3><p>在 <code>docker-compose.base.yml</code> 文件中，删除 <code>$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;</code> 前缀，将 <code>&quot;$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;:$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</code> 修改为 <code>&quot;$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</code>。这样可以使 Docker 将 Overleaf 的 Web 服务端口暴露给所有网络接口，从而允许外部机器访问。</p><p>修改后的 <code>docker-compose.base.yml</code> 端口映射配置如下：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-meta">---</span><br><span class="hljs-attr">services:</span><br><br>    <span class="hljs-attr">sharelatex:</span><br>        <span class="hljs-attr">restart:</span> <span class="hljs-string">always</span><br>        <span class="hljs-attr">image:</span> <span class="hljs-string">&quot;$&#123;IMAGE&#125;&quot;</span><br>        <span class="hljs-attr">container_name:</span> <span class="hljs-string">sharelatex</span><br>        <span class="hljs-attr">volumes:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;$&#123;OVERLEAF_DATA_PATH&#125;:$&#123;OVERLEAF_IN_CONTAINER_DATA_PATH&#125;&quot;</span><br>        <span class="hljs-attr">ports:</span><br>            <span class="hljs-comment">#- &quot;$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;:$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</span><br>        <span class="hljs-attr">environment:</span><br>          <span class="hljs-attr">GIT_BRIDGE_ENABLED:</span> <span class="hljs-string">&quot;$&#123;GIT_BRIDGE_ENABLED&#125;&quot;</span><br>          <span class="hljs-attr">GIT_BRIDGE_HOST:</span> <span class="hljs-string">&quot;git-bridge&quot;</span><br>          <span class="hljs-attr">GIT_BRIDGE_PORT:</span> <span class="hljs-string">&quot;8000&quot;</span><br>          <span class="hljs-attr">REDIS_HOST:</span> <span class="hljs-string">&quot;$&#123;REDIS_HOST&#125;&quot;</span><br>          <span class="hljs-attr">REDIS_PORT:</span> <span class="hljs-string">&quot;$&#123;REDIS_PORT&#125;&quot;</span><br>          <span class="hljs-attr">V1_HISTORY_URL:</span> <span class="hljs-string">&quot;http://sharelatex:3100/api&quot;</span><br>        <span class="hljs-attr">env_file:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">../config/variables.env</span><br>        <span class="hljs-attr">stop_grace_period:</span> <span class="hljs-string">60s</span><br></code></pre></td></tr></table></figure><p>完成修改后，重新启动 Docker 服务：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo ./start<br></code></pre></td></tr></table></figure><p>现在，外部机器可以通过服务器的 IP 地址加端口 <code>&#123;Overleaf_Port&#125;</code> 访问 Overleaf Web 服务。</p><hr><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这次安装 Overleaf Toolkit 时，主要遇到的两个问题分别是镜像拉取失败和端口映射受限。通过为 Docker 设置代理解决了拉取镜像的问题，而通过修改 <code>docker-compose.base.yml</code> 中的端口映射使外部设备可以访问 Overleaf 服务。</p><p>可以在这里参考我的本地<a href="https://overleaf.hifuu.ink/">Overleaf</a>效果，注意安装完后还需要配置latex包和中文字体。</p><p>这篇记录希望能为遇到类似问题的朋友提供帮助。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术分享</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>技术</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>时隔一年再次拿起数位板能画出什么东西</title>
     <link href="/2024/11/04/loopers/"/>
     <url>/2024/11/04/loopers/</url>
     
-    <content type="html"><![CDATA[<p>如题，前段时间推完LOOPERS的时候有感而发对着画了张海报</p><p>时隔一年，终于又拿起了数位板</p><p><img src="/images/20241027_222225.png" alt="LOOPERS" title="LOOPERS"></p>]]></content>
+    <content type="html"><![CDATA[<p>如题，前段时间推完LOOPERS的时候有感而发对着画了张海报</p><p>时隔一年，终于又拿起了数位板</p><p><img src="/images/20241027_222225.png" srcset="/img/loading.gif" lazyload alt="LOOPERS" title="LOOPERS"></p>]]></content>
     
     
     
@@ -81,7 +131,7 @@
     <link href="/2024/11/04/%E6%80%AA%E7%89%A9%E7%8C%8E%E4%BA%BA-%E8%8D%92%E9%87%8E%E4%B8%80%E6%B5%8B%E5%AE%9E%E5%86%B5/"/>
     <url>/2024/11/04/%E6%80%AA%E7%89%A9%E7%8C%8E%E4%BA%BA-%E8%8D%92%E9%87%8E%E4%B8%80%E6%B5%8B%E5%AE%9E%E5%86%B5/</url>
     
-    <content type="html"><![CDATA[<p>2024年11月4日万众期待的怪物猎人新作PC端第一次公测正式结束，要说评价的话简直可以用灾难来形容，显存没达到8G的显卡几乎集体阵亡。</p><p>尽管玩家们纷纷吐槽卡普空这次优化技术太烂了RE引擎太垃圾了，但是仔细想想真的烂吗？评价是如烂，毕竟只要能启动就能玩哪怕爆了显存帧率也不虚，最抽象的莫过于笔者在轻薄本用核显的运行效果甚至还优于游戏本使用独显。</p><p>RTX4050拼尽全力无法战胜</p><p><img src="/images/mhwilds4050.jpg" title="RTX4050"></p><p>Radeon780M天赋异禀轻松拿下</p><p><img src="/images/mhwilds780M.jpg" title="Radeon780M"></p><p>实际原因是4050只有6G显存而780M除了本身专用核显显存VRAM大约1G还有7G的GTT内存映射显存</p><p><img src="/images/1730728153314.png" title="Radeontop"></p>]]></content>
+    <content type="html"><![CDATA[<p>2024年11月4日万众期待的怪物猎人新作PC端第一次公测正式结束，要说评价的话简直可以用灾难来形容，显存没达到8G的显卡几乎集体阵亡。</p><p>尽管玩家们纷纷吐槽卡普空这次优化技术太烂了RE引擎太垃圾了，但是仔细想想真的烂吗？评价是如烂，毕竟只要能启动就能玩哪怕爆了显存帧率也不虚，最抽象的莫过于笔者在轻薄本用核显的运行效果甚至还优于游戏本使用独显。</p><p>RTX4050拼尽全力无法战胜</p><p><img src="/images/mhwilds4050.jpg" srcset="/img/loading.gif" lazyload title="RTX4050"></p><p>Radeon780M天赋异禀轻松拿下</p><p><img src="/images/mhwilds780M.jpg" srcset="/img/loading.gif" lazyload title="Radeon780M"></p><p>实际原因是4050只有6G显存而780M除了本身专用核显显存VRAM大约1G还有7G的GTT内存映射显存</p><p><img src="/images/1730728153314.png" srcset="/img/loading.gif" lazyload title="Radeontop"></p>]]></content>
     
     
     

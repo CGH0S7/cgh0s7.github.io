@@ -84,7 +84,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"blog.hifuu.ink","root":"/","version":"1.9.8","typing":{"cursorChar":"_","enable":"yes","loop":"no","scope":[],"typeSpeed":70},"anchorjs":{"element":"h1,h2,h3,h4,h5,h6","enable":"yes","icon":"","placement":"left","visible":"hover"},"progressbar":{"color":"#29d","enable":"yes","height_px":3,"options":{"showSpinner":"no","trickleSpeed":100}},"code_language":{"default":"TEXT","enable":"yes"},"copy_btn":"yes","image_caption":{"enable":"yes"},"image_zoom":{"enable":"yes","img_url_replace":["",""]},"toc":{"collapseDepth":0,"enable":"yes","headingSelector":"h1,h2,h3,h4,h5,h6","placement":"right"},"lazyload":{"enable":"yes","loading_img":"/img/loading.gif","offset_factor":2,"onlypost":"no"},"web_analytics":{"baidu":null,"enable":"no","follow_dnt":"yes","google":{"measurement_id":null},"leancloud":{"app_id":null,"app_key":null,"ignore_local":"no","path":"window.location.pathname","server_url":null},"tencent":{"cid":null,"sid":null},"umami":{"api_server":null,"domains":null,"src":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"website_id":null}},"search_path":"/local-search.xml","include_content_in_search":"yes"};
+    var CONFIG = {"hostname":"blog.hifuu.ink","root":"/","version":"1.9.8","typing":{"cursorChar":"_","enable":"yes","loop":false,"scope":[],"typeSpeed":70},"anchorjs":{"element":"h1,h2,h3,h4,h5,h6","enable":"yes","icon":"","placement":"left","visible":"hover"},"progressbar":{"color":"#29d","enable":"yes","height_px":3,"options":{"showSpinner":"no","trickleSpeed":100}},"code_language":{"default":"TEXT","enable":"yes"},"copy_btn":"yes","image_caption":{"enable":"yes"},"image_zoom":{"enable":"yes","img_url_replace":["",""]},"toc":{"collapseDepth":0,"enable":"yes","headingSelector":"h1,h2,h3,h4,h5,h6","placement":"right"},"lazyload":{"enable":"yes","loading_img":"/img/loading.gif","offset_factor":2,"onlypost":"no"},"web_analytics":{"baidu":null,"enable":"no","follow_dnt":"yes","google":{"measurement_id":null},"leancloud":{"app_id":null,"app_key":null,"ignore_local":"no","path":"window.location.pathname","server_url":null},"tencent":{"cid":null,"sid":null},"umami":{"api_server":null,"domains":null,"src":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"website_id":null}},"search_path":"/local-search.xml","include_content_in_search":"yes"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -338,11 +338,11 @@
                 <p>2024年11月4日万众期待的怪物猎人新作PC端第一次公测正式结束，要说评价的话简直可以用灾难来形容，显存没达到8G的显卡几乎集体阵亡。</p>
 <p>尽管玩家们纷纷吐槽卡普空这次优化技术太烂了RE引擎太垃圾了，但是仔细想想真的烂吗？评价是如烂，毕竟只要能启动就能玩哪怕爆了显存帧率也不虚，最抽象的莫过于笔者在轻薄本用核显的运行效果甚至还优于游戏本使用独显。</p>
 <p>RTX4050拼尽全力无法战胜</p>
-<p><img src="/images/mhwilds4050.jpg" title="RTX4050"></p>
+<p><img src="/images/mhwilds4050.jpg" srcset="/img/loading.gif" lazyload title="RTX4050"></p>
 <p>Radeon780M天赋异禀轻松拿下</p>
-<p><img src="/images/mhwilds780M.jpg" title="Radeon780M"></p>
+<p><img src="/images/mhwilds780M.jpg" srcset="/img/loading.gif" lazyload title="Radeon780M"></p>
 <p>实际原因是4050只有6G显存而780M除了本身专用核显显存VRAM大约1G还有7G的GTT内存映射显存</p>
-<p><img src="/images/1730728153314.png" title="Radeontop"></p>
+<p><img src="/images/1730728153314.png" srcset="/img/loading.gif" lazyload title="Radeontop"></p>
 
                 
               </div>
