@@ -1,0 +1,693 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="../../../../img/hifuu.png">
+  <link rel="icon" href="../../../../img/hifuu.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="CGH0S7">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="在安装 Overleaf Toolkit 时，表面上看起来很简单只要执行一些脚本就行，但是在某地区网络环境下还是遇到了一些问题和困难，这里记录安装过程中的问题和解决方案，方便以后参考。 具体流程就不赘述了，先将访问Overleaf Toolkit官方仓库将代码clone下来并按照手册执行即可。 问题一：无法 Pull Mongo、Redis 和 Sharelatex 镜像在执行 bin&#x2F;up 脚本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Overleaf Toolkit踩坑记录">
+<meta property="og:url" content="http://blog.hifuu.ink/2024/11/06/overleaf/index.html">
+<meta property="og:site_name" content="CGH0S7&#39;s Blog">
+<meta property="og:description" content="在安装 Overleaf Toolkit 时，表面上看起来很简单只要执行一些脚本就行，但是在某地区网络环境下还是遇到了一些问题和困难，这里记录安装过程中的问题和解决方案，方便以后参考。 具体流程就不赘述了，先将访问Overleaf Toolkit官方仓库将代码clone下来并按照手册执行即可。 问题一：无法 Pull Mongo、Redis 和 Sharelatex 镜像在执行 bin&#x2F;up 脚本">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-11-06T01:56:18.000Z">
+<meta property="article:modified_time" content="2024-11-06T02:31:56.685Z">
+<meta property="article:author" content="CGH0S7">
+<meta property="article:tag" content="技术">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Overleaf Toolkit踩坑记录 - CGH0S7&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="../../../../css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="../../../../css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="../../../../css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.hifuu.ink","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="../../../../js/utils.js" ></script>
+  <script  src="../../../../js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="../../../../index.html">
+      <strong>CGH0S7&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../index.html" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('../../../../img/gensokyo.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Overleaf Toolkit踩坑记录"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-11-06 09:56" pubdate>
+          2024年11月6日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          830 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          7 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Overleaf Toolkit踩坑记录</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>在安装 Overleaf Toolkit 时，表面上看起来很简单只要执行一些脚本就行，但是在某地区网络环境下还是遇到了一些问题和困难，这里记录安装过程中的问题和解决方案，方便以后参考。</p>
+<p>具体流程就不赘述了，先将访问<a target="_blank" rel="noopener" href="https://github.com/overleaf/toolkit">Overleaf Toolkit官方仓库</a>将代码clone下来并按照手册执行即可。</p>
+<h2 id="问题一：无法-Pull-Mongo、Redis-和-Sharelatex-镜像"><a href="#问题一：无法-Pull-Mongo、Redis-和-Sharelatex-镜像" class="headerlink" title="问题一：无法 Pull Mongo、Redis 和 Sharelatex 镜像"></a>问题一：无法 Pull Mongo、Redis 和 Sharelatex 镜像</h2><p>在执行 <code>bin/up</code> 脚本启动服务时，发现 Mongo、Redis 和 Sharelatex 镜像无法拉取。主要原因是 Docker 在国内网络环境中，直接访问 Docker Hub 可能会被限制，导致拉取镜像失败。</p>
+<p>截至这篇博客编写时网上提供的镜像均无法解决只能使用代理。</p>
+<h3 id="解决方案：为-Docker-设置代理"><a href="#解决方案：为-Docker-设置代理" class="headerlink" title="解决方案：为 Docker 设置代理"></a>解决方案：为 Docker 设置代理</h3><p>通过配置 Docker 的代理，可以解决拉取镜像受限的问题。步骤如下：</p>
+<ol>
+<li><p>创建一个 <code>systemd</code> 服务文件，为 Docker 设置代理。</p>
+</li>
+<li><p>编辑 <code>/etc/systemd/system/docker.service.d/proxy.conf</code> 文件，添加以下内容（确保已经设置了代理服务器）：</p>
+ <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[Service]</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;HTTP_PROXY=http://&lt;your-proxy-server&gt;:&lt;port&gt;&quot;</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;HTTPS_PROXY=http://&lt;your-proxy-server&gt;:&lt;port&gt;&quot;</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;NO_PROXY=localhost,127.0.0.1&quot;</span><br></code></pre></td></tr></table></figure>
+</li>
+<li><p>重新加载 <code>systemd</code> 配置并重启 Docker：</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo systemctl daemon-reload<br>sudo systemctl restart docker<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>重启 Docker 后再次执行 <code>sudo ./up</code>，此时应该可以正常拉取 Mongo、Redis 和 Sharelatex 的镜像。等待执行完成即可。</p>
+</li>
+</ol>
+<hr>
+<h2 id="问题二：外部机器无法访问-Overleaf-Web-服务"><a href="#问题二：外部机器无法访问-Overleaf-Web-服务" class="headerlink" title="问题二：外部机器无法访问 Overleaf Web 服务"></a>问题二：外部机器无法访问 Overleaf Web 服务</h2><p>先确认ipv4和ipv6转发功能没有问题，但是依旧出现只能本机访问127.0.0.1，其他方式均无法访问，甚至nmap扫描端口也发现并未开放sharelatex端口，可以通过修改docker-compose配置文件解决。</p>
+<p>注意到在默认的 <code>lib/docker-compose.base.yml</code> 配置中，Overleaf Web 服务的端口映射方式为 <code>&quot;$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;:$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</code>。</p>
+<h3 id="解决方案：修改端口映射"><a href="#解决方案：修改端口映射" class="headerlink" title="解决方案：修改端口映射"></a>解决方案：修改端口映射</h3><p>在 <code>docker-compose.base.yml</code> 文件中，删除 <code>$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;</code> 前缀，将 <code>&quot;$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;:$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</code> 修改为 <code>&quot;$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</code>。这样可以使 Docker 将 Overleaf 的 Web 服务端口暴露给所有网络接口，从而允许外部机器访问。</p>
+<p>修改后的 <code>docker-compose.base.yml</code> 端口映射配置如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-meta">---</span><br><span class="hljs-attr">services:</span><br><br>    <span class="hljs-attr">sharelatex:</span><br>        <span class="hljs-attr">restart:</span> <span class="hljs-string">always</span><br>        <span class="hljs-attr">image:</span> <span class="hljs-string">&quot;$&#123;IMAGE&#125;&quot;</span><br>        <span class="hljs-attr">container_name:</span> <span class="hljs-string">sharelatex</span><br>        <span class="hljs-attr">volumes:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;$&#123;OVERLEAF_DATA_PATH&#125;:$&#123;OVERLEAF_IN_CONTAINER_DATA_PATH&#125;&quot;</span><br>        <span class="hljs-attr">ports:</span><br>            <span class="hljs-comment">#- &quot;$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;:$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</span><br>        <span class="hljs-attr">environment:</span><br>          <span class="hljs-attr">GIT_BRIDGE_ENABLED:</span> <span class="hljs-string">&quot;$&#123;GIT_BRIDGE_ENABLED&#125;&quot;</span><br>          <span class="hljs-attr">GIT_BRIDGE_HOST:</span> <span class="hljs-string">&quot;git-bridge&quot;</span><br>          <span class="hljs-attr">GIT_BRIDGE_PORT:</span> <span class="hljs-string">&quot;8000&quot;</span><br>          <span class="hljs-attr">REDIS_HOST:</span> <span class="hljs-string">&quot;$&#123;REDIS_HOST&#125;&quot;</span><br>          <span class="hljs-attr">REDIS_PORT:</span> <span class="hljs-string">&quot;$&#123;REDIS_PORT&#125;&quot;</span><br>          <span class="hljs-attr">V1_HISTORY_URL:</span> <span class="hljs-string">&quot;http://sharelatex:3100/api&quot;</span><br>        <span class="hljs-attr">env_file:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">../config/variables.env</span><br>        <span class="hljs-attr">stop_grace_period:</span> <span class="hljs-string">60s</span><br></code></pre></td></tr></table></figure>
+
+<p>完成修改后，重新启动 Docker 服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo ./start<br></code></pre></td></tr></table></figure>
+
+<p>现在，外部机器可以通过服务器的 IP 地址加端口 <code>&#123;Overleaf_Port&#125;</code> 访问 Overleaf Web 服务。</p>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这次安装 Overleaf Toolkit 时，主要遇到的两个问题分别是镜像拉取失败和端口映射受限。通过为 Docker 设置代理解决了拉取镜像的问题，而通过修改 <code>docker-compose.base.yml</code> 中的端口映射使外部设备可以访问 Overleaf 服务。</p>
+<p>可以在这里参考我的本地<a target="_blank" rel="noopener" href="https://overleaf.hifuu.ink/">Overleaf</a>效果，注意安装完后还需要配置latex包和中文字体。</p>
+<p>这篇记录希望能为遇到类似问题的朋友提供帮助。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="../../../../categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" class="category-chain-item">技术分享</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="../../../../tags/%E6%8A%80%E6%9C%AF/" class="print-no-link">#技术</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Overleaf Toolkit踩坑记录</div>
+      <div>http://blog.hifuu.ink/2024/11/06/overleaf/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>CGH0S7</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年11月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="../arch-nvidia/" title="Archlinux的KDE Plasma优先启用Nvidia独立显卡和混合显卡配置指北">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Archlinux的KDE Plasma优先启用Nvidia独立显卡和混合显卡配置指北</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="../../04/loopers/" title="时隔一年再次拿起数位板能画出什么东西">
+                        <span class="hidden-mobile">时隔一年再次拿起数位板能画出什么东西</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/CGH0S7" target="_blank" rel="nofollow noopener"><span>CGH0S7</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="../../../../js/events.js" ></script>
+<script  src="../../../../js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="../../../../js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="../../../../js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="../../../../js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

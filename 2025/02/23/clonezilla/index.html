@@ -1,0 +1,725 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="../../../../img/hifuu.png">
+  <link rel="icon" href="../../../../img/hifuu.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="CGH0S7">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Clonezilla是一款非常好用的系统迁移工具，本文将介绍其基本用法（不包含网络迁移及Clonezilla服务器等进阶内容）以及在克隆Btrfs磁盘时遇到的问题解法。  零.事前准备： 下载Clonezilla Live镜像（ISO），制作启动U盘（有手就行）。 准备目标存储设备（如U盘，需要迁移的新硬盘等），确保有足够空间（建议大于源硬盘已用空间的1.2倍）。  一.备份镜像到硬盘（Devic">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Clonezilla备份和克隆系统">
+<meta property="og:url" content="http://blog.hifuu.ink/2025/02/23/clonezilla/index.html">
+<meta property="og:site_name" content="CGH0S7&#39;s Blog">
+<meta property="og:description" content="Clonezilla是一款非常好用的系统迁移工具，本文将介绍其基本用法（不包含网络迁移及Clonezilla服务器等进阶内容）以及在克隆Btrfs磁盘时遇到的问题解法。  零.事前准备： 下载Clonezilla Live镜像（ISO），制作启动U盘（有手就行）。 准备目标存储设备（如U盘，需要迁移的新硬盘等），确保有足够空间（建议大于源硬盘已用空间的1.2倍）。  一.备份镜像到硬盘（Devic">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://blog.hifuu.ink/images/clonezilla.png">
+<meta property="article:published_time" content="2025-02-23T13:40:03.000Z">
+<meta property="article:modified_time" content="2025-02-23T14:12:10.654Z">
+<meta property="article:author" content="CGH0S7">
+<meta property="article:tag" content="技术分享">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://blog.hifuu.ink/images/clonezilla.png">
+  
+  
+  
+  <title>使用Clonezilla备份和克隆系统 - CGH0S7&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="../../../../css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="../../../../css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="../../../../css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.hifuu.ink","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="../../../../js/utils.js" ></script>
+  <script  src="../../../../js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="../../../../index.html">
+      <strong>CGH0S7&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../index.html" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('../../../../img/gensokyo.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="使用Clonezilla备份和克隆系统"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-02-23 21:40" pubdate>
+          2025年2月23日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          9 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">使用Clonezilla备份和克隆系统</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><img src="/images/clonezilla.png" srcset="/img/loading.gif" lazyload alt="Clonezilla官网"><br><a target="_blank" rel="noopener" href="https://clonezilla.org/">Clonezilla</a>是一款非常好用的系统迁移工具，本文将介绍其基本用法（不包含网络迁移及Clonezilla服务器等进阶内容）以及在克隆Btrfs磁盘时遇到的问题解法。</p>
+<hr>
+<h3 id="零-事前准备："><a href="#零-事前准备：" class="headerlink" title="零.事前准备："></a><strong>零.事前准备</strong>：</h3><ul>
+<li>下载Clonezilla Live镜像（ISO），制作启动U盘（有手就行）。</li>
+<li>准备目标存储设备（如U盘，需要迁移的新硬盘等），确保有足够空间（建议大于源硬盘已用空间的1.2倍）。</li>
+</ul>
+<h3 id="一-备份镜像到硬盘（Device-to-Image）"><a href="#一-备份镜像到硬盘（Device-to-Image）" class="headerlink" title="一.备份镜像到硬盘（Device-to-Image）"></a><strong>一.备份镜像到硬盘（Device-to-Image）</strong></h3><p>这个模式可以将硬盘完整备份为一个镜像文件（可保存到本地硬盘、外置硬盘或网络存储）方便多机部署。注意如果只是将一个硬盘的系统完全克隆到新盘可以跳过此部分。</p>
+<h4 id="步骤说明："><a href="#步骤说明：" class="headerlink" title="步骤说明："></a><strong>步骤说明</strong>：</h4><ol start="2">
+<li><p><strong>启动Clonezilla</strong>：</p>
+<ul>
+<li>插入U盘，重启电脑并从U盘启动。</li>
+<li>选择默认选项（语言，键盘布局，Beginner模式）进入Clonezilla的TUI界面。</li>
+</ul>
+</li>
+<li><p><strong>选择备份模式</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Choose mode:         选择 &quot;device-image&quot;（设备到镜像）<br>Mount storage media: 选择 &quot;local_dev&quot;（本地存储设备）<br></code></pre></td></tr></table></figure>
+<ul>
+<li>按提示挂载目标存储设备（注意这里选择的是你要存储镜像的设备且文件系统一般不限，如外置硬盘），确认路径（如 <code>/dev/sdb1</code>）。</li>
+</ul>
+</li>
+<li><p><strong>配置备份参数</strong>：</p>
+<ul>
+<li><strong>源硬盘</strong>：选择需要备份的硬盘（如 <code>/dev/sda</code>）。</li>
+<li><strong>镜像存储路径</strong>：指定目标位置（如外置硬盘的挂载目录）。</li>
+<li><strong>镜像名称</strong>：自定义名称（如 <code>2025-img-rockylinux-2-21</code>）。</li>
+<li><strong>压缩选项</strong>：默认即可，支持并行压缩加速。</li>
+<li><strong>镜像分割</strong>：若目标存储设备为FAT32格式（单文件最大4GB），选择自动分割。</li>
+</ul>
+</li>
+<li><p><strong>确认操作</strong>：</p>
+<ul>
+<li>检查提示信息，输入 <code>y</code> 开始备份。</li>
+<li>完成后关机或重启。</li>
+</ul>
+</li>
+<li><p><strong>镜像还原</strong>：和备份非常相似，只是选项换成restore to disk，顺着指引操作即可。</p>
+</li>
+</ol>
+<hr>
+<h3 id="二、直接克隆硬盘（Device-to-Device）"><a href="#二、直接克隆硬盘（Device-to-Device）" class="headerlink" title="二、直接克隆硬盘（Device-to-Device）"></a><strong>二、直接克隆硬盘（Device-to-Device）</strong></h3><p>将源硬盘完整克隆到目标硬盘（适合硬盘升级或快速迁移），比如笔者最近白嫖了一个三星的2T硬盘直接把原来512G硬盘里的CachyOS无损迁移了进去。</p>
+<h4 id="步骤说明：-1"><a href="#步骤说明：-1" class="headerlink" title="步骤说明："></a><strong>步骤说明</strong>：</h4><ol>
+<li><p><strong>准备工作</strong>：</p>
+<ul>
+<li>连接目标硬盘（需容量≥源硬盘已用空间，还原镜像操作也是如此，注意Clonezilla支持小分区到大分区迁移不支持大分区到小分区，后者出门右转Rsync）</li>
+<li><strong>警告</strong>：目标硬盘数据将被覆盖，操作前如有需要务必备份重要数据！</li>
+</ul>
+</li>
+<li><p><strong>启动Clonezilla</strong>：</p>
+<ul>
+<li>同上，从U盘启动进入Clonezilla界面。</li>
+</ul>
+</li>
+<li><p><strong>选择克隆模式</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Choose mode:         选择 &quot;device-device&quot;（设备到设备）<br></code></pre></td></tr></table></figure>
+</li>
+<li><p><strong>选择硬盘</strong>：</p>
+<ul>
+<li><strong>母碟硬盘</strong>：选择原始硬盘（如 <code>/dev/sda</code>）。</li>
+<li><strong>目标硬盘</strong>：选择新硬盘（如 <code>/dev/sdb</code>）。</li>
+</ul>
+</li>
+<li><p><strong>克隆选项</strong>：<br> 需要进入专家模式才能看到，一般直接新手模式默认即可。</p>
+</li>
+<li><p><strong>执行克隆</strong>：</p>
+<ul>
+<li>确认提示信息后输入 <code>y</code>，等待完成。</li>
+<li>克隆结束后关机，移除旧硬盘并测试新硬盘（主要是查看能不能启动进入系统，若能进入一般不会有问题，而且一般都能进入因为Clonezilla是高精确的块对块克隆）。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="两种模式对比："><a href="#两种模式对比：" class="headerlink" title="两种模式对比："></a><strong>两种模式对比</strong>：</h3><table>
+<thead>
+<tr>
+<th><strong>模式</strong></th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>备份镜像</td>
+<td>方便多机部署也可以用于留档</td>
+</tr>
+<tr>
+<td>直接克隆</td>
+<td>换硬盘快速迁移无需恢复过程</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="Btrfs务必注意："><a href="#Btrfs务必注意：" class="headerlink" title="Btrfs务必注意："></a><strong>Btrfs务必注意</strong>：</h3><p>对Btrfs直接进行Clonezilla克隆大概率会碰到一个边界错误，这是由于Btrfs本身使用一段时间后碎片化存储导致的，你需要执行<code>sudo btrfs balance start --full-balance /</code>来进行整理，但是这也算是一个风险操作要确保完整执行不能在执行时意外中断导致文件系统出错，并且在后续克隆时不能使用新手模式要进入专家模式勾选-p1支持所有文件系统但是效率降低的选项来确保顺利克隆（未勾选此选项可能导致文件系统无法识别的错误），其他步骤参照前文即可。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="../../../../tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" class="print-no-link">#技术分享</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>使用Clonezilla备份和克隆系统</div>
+      <div>http://blog.hifuu.ink/2025/02/23/clonezilla/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>CGH0S7</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年2月23日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="../../02/archlinux-optimization/" title="Archlinux KDE体验优化总结">
+                        <span class="hidden-mobile">Archlinux KDE体验优化总结</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/CGH0S7" target="_blank" rel="nofollow noopener"><span>CGH0S7</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="../../../../js/events.js" ></script>
+<script  src="../../../../js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="../../../../js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="../../../../js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="../../../../js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

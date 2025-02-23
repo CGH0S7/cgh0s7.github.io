@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>使用Clonezilla备份和克隆系统</title>
+    <link href="/2025/02/23/clonezilla/"/>
+    <url>/2025/02/23/clonezilla/</url>
+    
+    <content type="html"><![CDATA[<p><img src="/images/clonezilla.png" alt="Clonezilla官网"><br><a href="https://clonezilla.org/">Clonezilla</a>是一款非常好用的系统迁移工具，本文将介绍其基本用法（不包含网络迁移及Clonezilla服务器等进阶内容）以及在克隆Btrfs磁盘时遇到的问题解法。</p><hr><h3 id="零-事前准备："><a href="#零-事前准备：" class="headerlink" title="零.事前准备："></a><strong>零.事前准备</strong>：</h3><ul><li>下载Clonezilla Live镜像（ISO），制作启动U盘（有手就行）。</li><li>准备目标存储设备（如U盘，需要迁移的新硬盘等），确保有足够空间（建议大于源硬盘已用空间的1.2倍）。</li></ul><h3 id="一-备份镜像到硬盘（Device-to-Image）"><a href="#一-备份镜像到硬盘（Device-to-Image）" class="headerlink" title="一.备份镜像到硬盘（Device-to-Image）"></a><strong>一.备份镜像到硬盘（Device-to-Image）</strong></h3><p>这个模式可以将硬盘完整备份为一个镜像文件（可保存到本地硬盘、外置硬盘或网络存储）方便多机部署。注意如果只是将一个硬盘的系统完全克隆到新盘可以跳过此部分。</p><h4 id="步骤说明："><a href="#步骤说明：" class="headerlink" title="步骤说明："></a><strong>步骤说明</strong>：</h4><ol start="2"><li><p><strong>启动Clonezilla</strong>：</p><ul><li>插入U盘，重启电脑并从U盘启动。</li><li>选择默认选项（语言，键盘布局，Beginner模式）进入Clonezilla的TUI界面。</li></ul></li><li><p><strong>选择备份模式</strong>：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Choose mode:         选择 &quot;device-image&quot;（设备到镜像）<br>Mount storage media: 选择 &quot;local_dev&quot;（本地存储设备）<br></code></pre></td></tr></table></figure><ul><li>按提示挂载目标存储设备（注意这里选择的是你要存储镜像的设备且文件系统一般不限，如外置硬盘），确认路径（如 <code>/dev/sdb1</code>）。</li></ul></li><li><p><strong>配置备份参数</strong>：</p><ul><li><strong>源硬盘</strong>：选择需要备份的硬盘（如 <code>/dev/sda</code>）。</li><li><strong>镜像存储路径</strong>：指定目标位置（如外置硬盘的挂载目录）。</li><li><strong>镜像名称</strong>：自定义名称（如 <code>2025-img-rockylinux-2-21</code>）。</li><li><strong>压缩选项</strong>：默认即可，支持并行压缩加速。</li><li><strong>镜像分割</strong>：若目标存储设备为FAT32格式（单文件最大4GB），选择自动分割。</li></ul></li><li><p><strong>确认操作</strong>：</p><ul><li>检查提示信息，输入 <code>y</code> 开始备份。</li><li>完成后关机或重启。</li></ul></li><li><p><strong>镜像还原</strong>：和备份非常相似，只是选项换成restore to disk，顺着指引操作即可。</p></li></ol><hr><h3 id="二、直接克隆硬盘（Device-to-Device）"><a href="#二、直接克隆硬盘（Device-to-Device）" class="headerlink" title="二、直接克隆硬盘（Device-to-Device）"></a><strong>二、直接克隆硬盘（Device-to-Device）</strong></h3><p>将源硬盘完整克隆到目标硬盘（适合硬盘升级或快速迁移），比如笔者最近白嫖了一个三星的2T硬盘直接把原来512G硬盘里的CachyOS无损迁移了进去。</p><h4 id="步骤说明：-1"><a href="#步骤说明：-1" class="headerlink" title="步骤说明："></a><strong>步骤说明</strong>：</h4><ol><li><p><strong>准备工作</strong>：</p><ul><li>连接目标硬盘（需容量≥源硬盘已用空间，还原镜像操作也是如此，注意Clonezilla支持小分区到大分区迁移不支持大分区到小分区，后者出门右转Rsync）</li><li><strong>警告</strong>：目标硬盘数据将被覆盖，操作前如有需要务必备份重要数据！</li></ul></li><li><p><strong>启动Clonezilla</strong>：</p><ul><li>同上，从U盘启动进入Clonezilla界面。</li></ul></li><li><p><strong>选择克隆模式</strong>：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Choose mode:         选择 &quot;device-device&quot;（设备到设备）<br></code></pre></td></tr></table></figure></li><li><p><strong>选择硬盘</strong>：</p><ul><li><strong>母碟硬盘</strong>：选择原始硬盘（如 <code>/dev/sda</code>）。</li><li><strong>目标硬盘</strong>：选择新硬盘（如 <code>/dev/sdb</code>）。</li></ul></li><li><p><strong>克隆选项</strong>：<br> 需要进入专家模式才能看到，一般直接新手模式默认即可。</p></li><li><p><strong>执行克隆</strong>：</p><ul><li>确认提示信息后输入 <code>y</code>，等待完成。</li><li>克隆结束后关机，移除旧硬盘并测试新硬盘（主要是查看能不能启动进入系统，若能进入一般不会有问题，而且一般都能进入因为Clonezilla是高精确的块对块克隆）。</li></ul></li></ol><hr><h3 id="两种模式对比："><a href="#两种模式对比：" class="headerlink" title="两种模式对比："></a><strong>两种模式对比</strong>：</h3><table><thead><tr><th><strong>模式</strong></th><th>特点</th></tr></thead><tbody><tr><td>备份镜像</td><td>方便多机部署也可以用于留档</td></tr><tr><td>直接克隆</td><td>换硬盘快速迁移无需恢复过程</td></tr></tbody></table><hr><h3 id="Btrfs务必注意："><a href="#Btrfs务必注意：" class="headerlink" title="Btrfs务必注意："></a><strong>Btrfs务必注意</strong>：</h3><p>对Btrfs直接进行Clonezilla克隆大概率会碰到一个边界错误，这是由于Btrfs本身使用一段时间后碎片化存储导致的，你需要执行<code>sudo btrfs balance start --full-balance /</code>来进行整理，但是这也算是一个风险操作要确保完整执行不能在执行时意外中断导致文件系统出错，并且在后续克隆时不能使用新手模式要进入专家模式勾选-p1支持所有文件系统但是效率降低的选项来确保顺利克隆（未勾选此选项可能导致文件系统无法识别的错误），其他步骤参照前文即可。</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>技术分享</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Archlinux KDE体验优化总结</title>
+    <link href="/2025/02/02/archlinux-optimization/"/>
+    <url>/2025/02/02/archlinux-optimization/</url>
+    
+    <content type="html"><![CDATA[<p>打算开一个坑记录这么久以来的Archlinux系统性能和操作体验优化经验</p><p>本文章长期更新</p><hr><h2 id="软件优化"><a href="#软件优化" class="headerlink" title="软件优化"></a>软件优化</h2><h2 id="快捷键设置"><a href="#快捷键设置" class="headerlink" title="快捷键设置"></a>快捷键设置</h2><h2 id=""><a href="#" class="headerlink" title=""></a></h2>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>技术分享</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>命令行编辑器的优雅新选择</title>
+    <link href="/2024/12/13/zellij-helix/"/>
+    <url>/2024/12/13/zellij-helix/</url>
+    
+    <content type="html"><![CDATA[<p>意外发现Zellij+Helix还挺好用的</p><p>避免了vim&#x2F;neovim的配置流程直接就能上手的轻量命令行开发环境</p><p>稍微了解一下二者的快捷键就能舒适码字了</p><p>甚至还都是rust出品</p><p>即刻尝试一下<a href="https://zellij.dev/">Zellij</a>和<a href="https://helix-editor.com/">Helix</a>吧!</p><p>&#x2F;&#x2F; 至于Helix没有文件树显示的方案，反正Helix选择文件挺方便的要文件树无非是希望编辑窗口居于窗口中央，倒是可以用watch和tree命令来代替还能手动设置哪些文件不用显示hhh</p><p><img src="/images/zellij-helix.jpg" alt="实际效果"></p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>技术分享</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>愿指引明路的苍蓝星永远为你闪耀</title>
+    <link href="/2024/11/11/mhwi/"/>
+    <url>/2024/11/11/mhwi/</url>
+    
+    <content type="html"><![CDATA[<p>使用东方Project软音源THFont简单重置的MHWI主题曲</p><p>雄关漫道真如铁，而今迈步从头越</p><iframe src="//player.bilibili.com/player.html?bvid=BV1WymmYNEAk&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" width="100%" height="500"></iframe>]]></content>
+    
+    
+    <categories>
+      
+      <category>Rearrangement</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>音乐</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Archlinux的KDE Plasma优先启用Nvidia独立显卡和混合显卡配置指北</title>
+    <link href="/2024/11/06/arch-nvidia/"/>
+    <url>/2024/11/06/arch-nvidia/</url>
+    
+    <content type="html"><![CDATA[<p>本文将介绍在 <strong>X11</strong> 和 <strong>Wayland</strong> 两种会话下，如何在 KDE Plasma 中优先启用 Nvidia 独立显卡，并提供 I+N 混合显卡的配置方案。<strong>首先，请确保您已经正确安装了 Nvidia 驱动</strong>（如果非 Mainline 内核，请使用 <code>nvidia-dkms</code> 或 <code>nvidia-open-dkms</code> 版本）。</p><p><img src="/images/5364bba6d035326e82c53504dd53e7c2454454985.png" alt="Nvidia设置示意图"></p><h3 id="适用系统"><a href="#适用系统" class="headerlink" title="适用系统"></a>适用系统</h3><p>对于 <strong>CachyOS</strong> 或 <strong>EndeavourOS</strong> 等 Arch Linux 衍生版，这些配置大多开箱即用，但对于刚刚入坑 Arch Linux 且使用 KDE 的新手可能会遇到这样的问题：</p><ul><li>Nvidia 驱动已安装，<code>nvidia-smi</code> 输出正常</li><li>KDE 系统信息显示仍在使用核显，程序运行时也优先使用核显</li><li>导致某些应用（如浏览器、Blender）可能出现卡顿或掉帧现象</li></ul><p>这是因为 Arch Linux 的高自定义性，许多功能需要用户手动配置。以下是详细的解决方案。</p><hr><h2 id="配置-X11-下的-Nvidia-显卡优先"><a href="#配置-X11-下的-Nvidia-显卡优先" class="headerlink" title="配置 X11 下的 Nvidia 显卡优先"></a>配置 X11 下的 Nvidia 显卡优先</h2><p>可以通过配置 <code>/etc/X11/xorg.conf</code> 实现 Nvidia 独显输出。幸运的是，Nvidia 提供了自动生成配置文件的工具，用户无需手动编写：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo nvidia-xconfig --prime<br></code></pre></td></tr></table></figure><p>该命令会根据硬件情况自动生成配置文件。执行后 <strong>重新登录会话</strong> 即可生效（即使是 Wayland 用户也可以执行一次此命令）。</p><p><img src="/images/1613f5602b203b38230f19699deb0219454454985.png" alt="X11 Nvidia配置"></p><hr><h2 id="配置-Wayland-下的-Nvidia-显卡优先"><a href="#配置-Wayland-下的-Nvidia-显卡优先" class="headerlink" title="配置 Wayland 下的 Nvidia 显卡优先"></a>配置 Wayland 下的 Nvidia 显卡优先</h2><p>在 Wayland 下优先启用 Nvidia 显卡的步骤如下：</p><ol><li><p>编辑 <strong>GRUB 配置</strong>文件：</p><p>打开 <code>/etc/default/grub</code> 文件，在 <code>GRUB_CMDLINE_LINUX_DEFAULT=&quot;&quot;</code> 中添加 <code>nvidia_drm.modeset=1</code>：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">GRUB_CMDLINE_LINUX_DEFAULT=<span class="hljs-string">&quot;nvidia_drm.modeset=1&quot;</span><br></code></pre></td></tr></table></figure></li><li><p>重新生成 grub 配置：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo grub-mkconfig -o /boot/grub/grub.cfg<br></code></pre></td></tr></table></figure></li><li><p>配置 <strong>Plasma 环境</strong>文件：</p><p>在 <code>~/.config/plasma-workspace/env/nvidia.sh</code> 中写入以下内容：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#!/bin/bash </span><br><span class="hljs-built_in">export</span> __NV_PRIME_RENDER_OFFLOAD=1 <br><span class="hljs-built_in">export</span> __GLX_VENDOR_LIBRARY_NAME=nvidia<br></code></pre></td></tr></table></figure></li><li><p>保存并重启电脑，即可生效。</p></li></ol><p><img src="/images/b2054bbaf6197624d38cc2007d885fd1454454985.png" alt="Wayland Nvidia配置"></p><hr><h2 id="I-N-混合显卡方案"><a href="#I-N-混合显卡方案" class="headerlink" title="I+N 混合显卡方案"></a>I+N 混合显卡方案</h2><p>如果不希望全局启用独显，可以选择让大部分程序默认使用核显，而少数高性能需求的程序使用独显。这种方法能有效节省功耗，同时将独显资源集中分配给需要的程序（如 Steam 游戏、Blender 等）。缺点是每个程序需要手动配置启动项。</p><h3 id="配置步骤"><a href="#配置步骤" class="headerlink" title="配置步骤"></a>配置步骤</h3><ol><li><p>打开程序的 <code>.desktop</code> 启动文件：</p><p>位置可能在 <code>/usr/share/applications</code> 或 <code>~/.local/share/applications</code> 中。</p></li><li><p>在 <code>Exec=</code> 后添加 <code>prime-run</code> 参数。例如：</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Exec=prime-run &lt;程序启动命令&gt;<br></code></pre></td></tr></table></figure><p><img src="/images/71a5357ef4bd808b10429bc2ea46cb6f454454985.png" alt="混合显卡配置示意图"></p></li></ol><h3 id="Vim-快捷配置"><a href="#Vim-快捷配置" class="headerlink" title="Vim 快捷配置"></a>Vim 快捷配置</h3><p>如果使用 Vim，可以使用以下快捷键快速批量替换 <code>Exec=</code> 为 <code>Exec=prime-run</code>：</p><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim">v -&gt; G -&gt; :s/Exec=/Exec=prime-run /g Enter -&gt; :<span class="hljs-keyword">wq</span> Enter<br></code></pre></td></tr></table></figure><hr><h2 id="让-Plasma-桌面也使用独显"><a href="#让-Plasma-桌面也使用独显" class="headerlink" title="让 Plasma 桌面也使用独显"></a>让 Plasma 桌面也使用独显</h2><p>如果希望 Plasma 桌面也通过独显运行，可以修改 Wayland 配置文件并删除第二行：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#!/bin/bash </span><br><span class="hljs-built_in">export</span> __GLX_VENDOR_LIBRARY_NAME=nvidia<br></code></pre></td></tr></table></figure><p>这样 Plasma 桌面会通过独显启动，其他程序则默认使用核显。</p><hr><p>希望以上经验能为有此需求的用户提供参考帮助。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术分享</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>技术</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Overleaf Toolkit踩坑记录</title>
+    <link href="/2024/11/06/overleaf/"/>
+    <url>/2024/11/06/overleaf/</url>
+    
+    <content type="html"><![CDATA[<p>在安装 Overleaf Toolkit 时，表面上看起来很简单只要执行一些脚本就行，但是在某地区网络环境下还是遇到了一些问题和困难，这里记录安装过程中的问题和解决方案，方便以后参考。</p><p>具体流程就不赘述了，先将访问<a href="https://github.com/overleaf/toolkit">Overleaf Toolkit官方仓库</a>将代码clone下来并按照手册执行即可。</p><h2 id="问题一：无法-Pull-Mongo、Redis-和-Sharelatex-镜像"><a href="#问题一：无法-Pull-Mongo、Redis-和-Sharelatex-镜像" class="headerlink" title="问题一：无法 Pull Mongo、Redis 和 Sharelatex 镜像"></a>问题一：无法 Pull Mongo、Redis 和 Sharelatex 镜像</h2><p>在执行 <code>bin/up</code> 脚本启动服务时，发现 Mongo、Redis 和 Sharelatex 镜像无法拉取。主要原因是 Docker 在国内网络环境中，直接访问 Docker Hub 可能会被限制，导致拉取镜像失败。</p><p>截至这篇博客编写时网上提供的镜像均无法解决只能使用代理。</p><h3 id="解决方案：为-Docker-设置代理"><a href="#解决方案：为-Docker-设置代理" class="headerlink" title="解决方案：为 Docker 设置代理"></a>解决方案：为 Docker 设置代理</h3><p>通过配置 Docker 的代理，可以解决拉取镜像受限的问题。步骤如下：</p><ol><li><p>创建一个 <code>systemd</code> 服务文件，为 Docker 设置代理。</p></li><li><p>编辑 <code>/etc/systemd/system/docker.service.d/proxy.conf</code> 文件，添加以下内容（确保已经设置了代理服务器）：</p> <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[Service]</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;HTTP_PROXY=http://&lt;your-proxy-server&gt;:&lt;port&gt;&quot;</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;HTTPS_PROXY=http://&lt;your-proxy-server&gt;:&lt;port&gt;&quot;</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;NO_PROXY=localhost,127.0.0.1&quot;</span><br></code></pre></td></tr></table></figure></li><li><p>重新加载 <code>systemd</code> 配置并重启 Docker：</p> <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo systemctl daemon-reload<br>sudo systemctl restart docker<br></code></pre></td></tr></table></figure></li><li><p>重启 Docker 后再次执行 <code>sudo ./up</code>，此时应该可以正常拉取 Mongo、Redis 和 Sharelatex 的镜像。等待执行完成即可。</p></li></ol><hr><h2 id="问题二：外部机器无法访问-Overleaf-Web-服务"><a href="#问题二：外部机器无法访问-Overleaf-Web-服务" class="headerlink" title="问题二：外部机器无法访问 Overleaf Web 服务"></a>问题二：外部机器无法访问 Overleaf Web 服务</h2><p>先确认ipv4和ipv6转发功能没有问题，但是依旧出现只能本机访问127.0.0.1，其他方式均无法访问，甚至nmap扫描端口也发现并未开放sharelatex端口，可以通过修改docker-compose配置文件解决。</p><p>注意到在默认的 <code>lib/docker-compose.base.yml</code> 配置中，Overleaf Web 服务的端口映射方式为 <code>&quot;$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;:$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</code>。</p><h3 id="解决方案：修改端口映射"><a href="#解决方案：修改端口映射" class="headerlink" title="解决方案：修改端口映射"></a>解决方案：修改端口映射</h3><p>在 <code>docker-compose.base.yml</code> 文件中，删除 <code>$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;</code> 前缀，将 <code>&quot;$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;:$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</code> 修改为 <code>&quot;$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</code>。这样可以使 Docker 将 Overleaf 的 Web 服务端口暴露给所有网络接口，从而允许外部机器访问。</p><p>修改后的 <code>docker-compose.base.yml</code> 端口映射配置如下：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-meta">---</span><br><span class="hljs-attr">services:</span><br><br>    <span class="hljs-attr">sharelatex:</span><br>        <span class="hljs-attr">restart:</span> <span class="hljs-string">always</span><br>        <span class="hljs-attr">image:</span> <span class="hljs-string">&quot;$&#123;IMAGE&#125;&quot;</span><br>        <span class="hljs-attr">container_name:</span> <span class="hljs-string">sharelatex</span><br>        <span class="hljs-attr">volumes:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;$&#123;OVERLEAF_DATA_PATH&#125;:$&#123;OVERLEAF_IN_CONTAINER_DATA_PATH&#125;&quot;</span><br>        <span class="hljs-attr">ports:</span><br>            <span class="hljs-comment">#- &quot;$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;:$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</span><br>        <span class="hljs-attr">environment:</span><br>          <span class="hljs-attr">GIT_BRIDGE_ENABLED:</span> <span class="hljs-string">&quot;$&#123;GIT_BRIDGE_ENABLED&#125;&quot;</span><br>          <span class="hljs-attr">GIT_BRIDGE_HOST:</span> <span class="hljs-string">&quot;git-bridge&quot;</span><br>          <span class="hljs-attr">GIT_BRIDGE_PORT:</span> <span class="hljs-string">&quot;8000&quot;</span><br>          <span class="hljs-attr">REDIS_HOST:</span> <span class="hljs-string">&quot;$&#123;REDIS_HOST&#125;&quot;</span><br>          <span class="hljs-attr">REDIS_PORT:</span> <span class="hljs-string">&quot;$&#123;REDIS_PORT&#125;&quot;</span><br>          <span class="hljs-attr">V1_HISTORY_URL:</span> <span class="hljs-string">&quot;http://sharelatex:3100/api&quot;</span><br>        <span class="hljs-attr">env_file:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">../config/variables.env</span><br>        <span class="hljs-attr">stop_grace_period:</span> <span class="hljs-string">60s</span><br></code></pre></td></tr></table></figure><p>完成修改后，重新启动 Docker 服务：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo ./start<br></code></pre></td></tr></table></figure><p>现在，外部机器可以通过服务器的 IP 地址加端口 <code>&#123;Overleaf_Port&#125;</code> 访问 Overleaf Web 服务。</p><hr><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这次安装 Overleaf Toolkit 时，主要遇到的两个问题分别是镜像拉取失败和端口映射受限。通过为 Docker 设置代理解决了拉取镜像的问题，而通过修改 <code>docker-compose.base.yml</code> 中的端口映射使外部设备可以访问 Overleaf 服务。</p><p>可以在这里参考我的本地<a href="https://overleaf.hifuu.ink/">Overleaf</a>效果，注意安装完后还需要配置latex包和中文字体。</p><p>这篇记录希望能为遇到类似问题的朋友提供帮助。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术分享</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>技术</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>时隔一年再次拿起数位板能画出什么东西</title>
+    <link href="/2024/11/04/loopers/"/>
+    <url>/2024/11/04/loopers/</url>
+    
+    <content type="html"><![CDATA[<p>如题，前段时间推完LOOPERS的时候有感而发对着画了张海报</p><p>时隔一年，终于又拿起了数位板</p><p><img src="/images/20241027_222225.png" alt="LOOPERS" title="LOOPERS"></p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>板绘</tag>
+      
+      <tag>生活</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>博客更新记录</title>
+    <link href="/2024/11/04/BlogUpdate/"/>
+    <url>/2024/11/04/BlogUpdate/</url>
+    
+    <content type="html"><![CDATA[<ul><li>博客主题更新为 <code>Fluid</code> 主题，原主题为 <code>Next</code></li><li>更新了访问地址为 <code>https://blog.hifuu.ink</code></li><li>新增了 <code>About</code> 页面</li><li>新增了 <code>友链</code> 页面</li><li>完善页面布局</li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>更新</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Vocaloid调教-晴天(洛天依V4)</title>
+    <link href="/2024/11/04/Vocaloid%E8%B0%83%E6%95%99-%E6%99%B4%E5%A4%A9/"/>
+    <url>/2024/11/04/Vocaloid%E8%B0%83%E6%95%99-%E6%99%B4%E5%A4%A9/</url>
+    
+    <content type="html"><![CDATA[<p>其实是今年年初的作品想起来可以搬上来，这是我调教的第一首v曲。</p><p>“故事的小黄花，从出生那年就飘着…”</p><video controls>  <source src="/videos/2024-09-22 09-54-26.mp4" type="video/mp4"></video>]]></content>
+    
+    
+    <categories>
+      
+      <category>Vocaloid</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>音乐</tag>
+      
+      <tag>Vocaloid</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>《怪物猎人:荒野》一测实况</title>
+    <link href="/2024/11/04/%E6%80%AA%E7%89%A9%E7%8C%8E%E4%BA%BA-%E8%8D%92%E9%87%8E%E4%B8%80%E6%B5%8B%E5%AE%9E%E5%86%B5/"/>
+    <url>/2024/11/04/%E6%80%AA%E7%89%A9%E7%8C%8E%E4%BA%BA-%E8%8D%92%E9%87%8E%E4%B8%80%E6%B5%8B%E5%AE%9E%E5%86%B5/</url>
+    
+    <content type="html"><![CDATA[<p>2024年11月4日万众期待的怪物猎人新作PC端第一次公测正式结束，要说评价的话简直可以用灾难来形容，显存没达到8G的显卡几乎集体阵亡。</p><p>尽管玩家们纷纷吐槽卡普空这次优化技术太烂了RE引擎太垃圾了，但是仔细想想真的烂吗？评价是如烂，毕竟只要能启动就能玩哪怕爆了显存帧率也不虚，最抽象的莫过于笔者在轻薄本用核显的运行效果甚至还优于游戏本使用独显。</p><p>RTX4050拼尽全力无法战胜</p><p>Radeon780M天赋异禀轻松拿下</p><video controls>  <source src="/videos/petal_20241104_015731.mp4" type="video/mp4"></video><p>实际原因是4050只有6G显存而780M除了本身专用核显显存VRAM大约1G还有7G的GTT内存映射显存</p><p><img src="/images/1730728153314.png" title="Radeontop"></p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+      <tag>生活</tag>
+      
+      <tag>游戏</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Gentle Jena</title>
+    <link href="/2024/10/30/GentleJena/"/>
+    <url>/2024/10/30/GentleJena/</url>
+    
+    <content type="html"><![CDATA[<p>很喜欢的一首曲子<br>顺便测试一下视频上传<br>以后随缘更新各种乱七八糟的东西。。</p><video controls>  <source src="/videos/2024-09-22 14-05-02.mp4" type="video/mp4"></video>]]></content>
+    
+    
+    <categories>
+      
+      <category>Rearrangement</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>音乐</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>原来我还有个博客</title>
+    <link href="/2024/06/03/%E5%8E%9F%E6%9D%A5%E6%88%91%E8%BF%98%E6%9C%89%E4%B8%AA%E5%8D%9A%E5%AE%A2/"/>
+    <url>/2024/06/03/%E5%8E%9F%E6%9D%A5%E6%88%91%E8%BF%98%E6%9C%89%E4%B8%AA%E5%8D%9A%E5%AE%A2/</url>
+    
+    <content type="html"><![CDATA[<p>哎呦我去，原来我还有个博客，这么久都没有更新了，之前还说要养成写东西的习惯最近属实忙忘记了哈哈哈。(然而大二了依旧没养成)</p><p>不过忙归忙虽然大一被迫浪费时间去做了一些对专业技术无益的事情，但是思路确实越忙越清楚了，知道自己该去学什么怎么学了，也不再受某些出生干扰了，这周还要出个差，下周又要英语六级+期末考试，真是忙完一阵又一阵。</p><p>先这样吧，今天总得来说还是很爽的，考完电工如释重负，以后有时间再记录记录生活，暑假前再写个学期总结，晚安～</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>12月30-31日进度报告</title>
+    <link href="/2023/12/31/12%E6%9C%8831%E6%97%A5%E8%BF%9B%E5%BA%A6%E6%8A%A5%E5%91%8A/"/>
+    <url>/2023/12/31/12%E6%9C%8831%E6%97%A5%E8%BF%9B%E5%BA%A6%E6%8A%A5%E5%91%8A/</url>
+    
+    <content type="html"><![CDATA[<h2 id="12月30-31日"><a href="#12月30-31日" class="headerlink" title="12月30-31日"></a>12月30-31日</h2><p>OpenCAEPoro 小组（黄<strong>，梁</strong>，程<strong>，刘</strong>）</p><ol><li>服务器上的Opencaeporo改用nvhpc编译器编译以支持cuda;</li><li>收集运行数据用于proposal绘制图表;</li><li>继续尝试优化，同时已经查阅收集了一些相关资料以尽量理解相关含义便于工作开展.</li></ol>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>12月28日进度报告</title>
+    <link href="/2023/12/28/12%E6%9C%8828%E6%97%A5%E8%BF%9B%E5%BA%A6%E6%8A%A5%E5%91%8A/"/>
+    <url>/2023/12/28/12%E6%9C%8828%E6%97%A5%E8%BF%9B%E5%BA%A6%E6%8A%A5%E5%91%8A/</url>
+    
+    <content type="html"><![CDATA[<h2 id="12月28日"><a href="#12月28日" class="headerlink" title="12月28日"></a>12月28日</h2><p>OpenCAEPoro 小组（黄<strong>，梁</strong>，程<strong>，刘</strong>）</p><ol><li>各组员继续进行优化工作,部分函数完成cuda移植，取得一定优化效果</li><li>继续学习openacc及cuda相关知识</li><li>搜集多孔介质流动模拟与opencaeporo相关论文资料为proposal做准备</li></ol>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>12月20日工作记录</title>
+    <link href="/2023/12/20/12%E6%9C%8820%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/"/>
+    <url>/2023/12/20/12%E6%9C%8820%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/</url>
+    
+    <content type="html"><![CDATA[<h2 id="12月20日"><a href="#12月20日" class="headerlink" title="12月20日"></a>12月20日</h2><p>OpenCAEPoro 小组（黄<strong>，梁</strong>，程**）</p><ol><li>阅读代码，开展优化工作,初步使用openacc完成petsc_solver的优化，取得一定优化效果</li></ol><blockquote><p>优化方向基本确定为OpenMP&#x2F;OpenACC并行化+cuda移植</p></blockquote><ol start="2"><li>赛题环境汇总，目前各组工作有序开展，CentOS 7符合要求暂未发现更换系统需求</li></ol>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>12月19日工作记录</title>
+    <link href="/2023/12/19/12%E6%9C%8819%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/"/>
+    <url>/2023/12/19/12%E6%9C%8819%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/</url>
+    
+    <content type="html"><![CDATA[<h2 id="12月18日"><a href="#12月18日" class="headerlink" title="12月18日"></a>12月18日</h2><ol><li>彻底完成opencaeporo安装部署，本地和服务器均已安装，明天正式开始调优工作;</li><li>学习cuda编程.</li></ol>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>12月18日工作记录</title>
+    <link href="/2023/12/18/12%E6%9C%8818%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/"/>
+    <url>/2023/12/18/12%E6%9C%8818%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/</url>
+    
+    <content type="html"><![CDATA[<h2 id="12月18日"><a href="#12月18日" class="headerlink" title="12月18日"></a>12月18日</h2><ol><li>初步了解opencaeporo，尝试在本地docker环境使用gcc完成编译安装，目前完成各项依赖安装，由于晚上停电计划明天开始编译安装opencaeporo本体并在本地调优;</li><li>协助Neko组完成任务;</li><li>找出spack存在网络原因无法下载时的手动解决方案.</li></ol>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>12月16-17日工作记录</title>
+    <link href="/2023/12/17/12%E6%9C%8816-17%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/"/>
+    <url>/2023/12/17/12%E6%9C%8816-17%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/</url>
+    
+    <content type="html"><![CDATA[<h2 id="12月16-17日"><a href="#12月16-17日" class="headerlink" title="12月16-17日"></a>12月16-17日</h2><ol><li>四级考试</li><li>自学cuda，openacc，了解GPU架构知识</li><li>参加超算队启动会</li><li>大计和高数期中考试</li><li>研究spack使用</li><li>学习cuda编程</li><li>补作业</li></ol>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>梦开始的地方</title>
+    <link href="/2023/12/06/%E6%A2%A6%E5%BC%80%E5%A7%8B%E7%9A%84%E5%9C%B0%E6%96%B9/"/>
+    <url>/2023/12/06/%E6%A2%A6%E5%BC%80%E5%A7%8B%E7%9A%84%E5%9C%B0%E6%96%B9/</url>
+    
+    <content type="html"><![CDATA[<p>不知不觉已经高中毕业快半年了，现在在NUDT的生活还算适应吧，交到了一些很有趣的朋友并且在技术方面取得了一定突破（很期待明年的asc2024呢），今天看到华科一位学长的博客突然想起我还没好好搭建过自己的Blog，于是心血来潮搞了下我的Github Pages。</p><p>今后会在这里更新记录自己的生活，学习，工作，以及一些想法，希望能坚持下来吧。</p><blockquote><p>P.S.最近我都经历了些什么:</p><ol><li>时长21天军训，认识了一群很可爱的班长（尤其是负责我们5班6班的英子），初步和队里的同学了解;</li><li>学习了一些C++基础，在洛谷上刷了不少算法题;</li><li>ACM招新赛被薄纱，差一题进入校队;</li><li>对算法竞赛感到疑惑，尝试学习Flutter和操作系统开阔视野;</li><li>入坑战地，爽爽爽;</li><li>被一位巨强的学长发掘，加入NUDT超算队;</li><li>面临三个考试周，熬过去就是胜利;</li></ol></blockquote><p>虽然天天早八满课很不爽，但是平时还是可以学习自己想学的技术周末也可以打游戏感觉还行吧，我还是相信NUDT，既来之则安之。</p><p>这里，毕竟是我梦开始的地方。</p><blockquote><p>胸怀祖国，团结协作，志在高峰，奋勇拼搏!</p></blockquote><p>今天是2023年12月6日，加油！</p><hr><p>现在是2024年10月30日，距离Monster Hunter: Wilds公测不到两天，如今再看看自己以前写的东西觉得自己像个傻逼</p><p>傻孩子们，快逃啊!</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Welcome to CGH0S7&#39;s Blog</title>
+    <link href="/2023/12/06/CGH0S7-s-Blog/"/>
+    <url>/2023/12/06/CGH0S7-s-Blog/</url>
+    
+    <content type="html"><![CDATA[<p>Hello World !</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>TEST</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  
+</search>
