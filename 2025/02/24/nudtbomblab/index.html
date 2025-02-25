@@ -29,14 +29,14 @@
 <meta property="og:description" content="这篇文章记录高地CSAPP课程Bomblab实验操作流程，仅供参考交流（答案是随机生成的和学号相关）。 笔者实验环境为Archlinux&#x2F;CachyOS，使用lldb作为调试器（和gdb操作差不多），其余用到的工具主要为objdump，strings，neovim&#x2F;helix和zellij，全程开源环境不使用IDA。 Phase_1静态分析strings扫描1strings b">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://blog.hifuu.ink/images/phase1_strings.png">
-<meta property="og:image" content="http://blog.hifuu.ink/images/phase2.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/phase1.png">
 <meta property="og:image" content="http://blog.hifuu.ink/images/phase_2_14.png">
 <meta property="og:image" content="http://blog.hifuu.ink/images/caseclosed.png">
 <meta property="article:published_time" content="2025-02-24T07:09:11.000Z">
-<meta property="article:modified_time" content="2025-02-25T03:43:38.960Z">
+<meta property="article:modified_time" content="2025-02-25T03:50:59.024Z">
 <meta property="article:author" content="CGH0S7">
-<meta property="article:tag" content="技术">
 <meta property="article:tag" content="生活">
+<meta property="article:tag" content="技术">
 <meta property="article:tag" content="学习">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="http://blog.hifuu.ink/images/phase1_strings.png">
@@ -312,7 +312,7 @@
 <li>用户输入的字符串需要与此生成的字符串完全匹配。</li>
 </ul>
 <hr>
-<h3 id="动态调试"><a href="#动态调试" class="headerlink" title="动态调试"></a><strong>动态调试</strong></h3><p><img src="/images/phase2.png" srcset="/img/loading.gif" lazyload alt="phase_1"><br>下面是phase_1求解的完整流程：</p>
+<h3 id="动态调试"><a href="#动态调试" class="headerlink" title="动态调试"></a><strong>动态调试</strong></h3><p><img src="/images/phase1.png" srcset="/img/loading.gif" lazyload alt="phase_1"><br>下面是phase_1求解的完整流程：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs lldb">lldb bomb_linux &lt;你的学号后六位&gt;<br>(lldb) b phase_1                    # 在phase_1入口断点<br>(lldb) run                          # 从入口开始执行<br>请输入第1级的密码：114514           # 随便输入触发断点<br>(lldb) b 0x401b6f                   # 在GenerateRandomString返回后断点<br>(lldb) continue                     # 继续执行<br>(lldb) x/s $rbp - 0xb               # 计算字符串地址（-0xb偏移量）<br>0x7fffffffdaf5: &quot;mJHurpQZtY&quot;        # 轻松拿下，这里是根据学号伪随机生成的哦<br></code></pre></td></tr></table></figure>
 <p>将得到的密码保存入bomb_&lt;学号后六位&gt;.txt即可，避免后续重复输入。</p>
 <hr>
@@ -374,9 +374,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="../../../../tags/%E6%8A%80%E6%9C%AF/" class="print-no-link">#技术</a>
-      
         <a href="../../../../tags/%E7%94%9F%E6%B4%BB/" class="print-no-link">#生活</a>
+      
+        <a href="../../../../tags/%E6%8A%80%E6%9C%AF/" class="print-no-link">#技术</a>
       
         <a href="../../../../tags/%E5%AD%A6%E4%B9%A0/" class="print-no-link">#学习</a>
       
