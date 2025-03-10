@@ -21,26 +21,23 @@
   <meta name="author" content="CGH0S7">
   <meta name="keywords" content="">
   
-    <meta name="description" content="打算开一个坑记录这么久以来的Archlinux系统性能和操作体验优化经验 本文章长期更新  更换CachyOS优化仓库通过 CachyOS 优化仓库获取 CPU 指令集级优化（x86-64-v3&#x2F;v4&#x2F;zen4）的软件包，提升 Arch Linux 系统性能。该仓库提供 PGO&#x2F;LTO&#x2F;BOLT 编译优化及持续维护的定制软件包。  ▎前置准备⚠️ 兼容性警告">
+    <meta name="description" content="前几周在使用 Arch Linux 时遇到了两个有趣的问题，顺手记录在此，或许能帮到有类似困扰的朋友～  1. 显卡功耗上限解锁问题现象使用 nvidia-smi 查看显卡功耗时，发现最大功耗被限制在 55W，性能无法完全释放： 1nvidia-smi  # 输出显示 Power Limit: 55.00 W  解决方案启用 NVIDIA 动态功耗管理服务即可： 1sudo systemctl e">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Archlinux KDE体验优化总结">
-<meta property="og:url" content="http://blog.hifuu.ink/2025/02/02/archlinux-optimization/index.html">
+<meta property="og:title" content="Archlinux问题记录">
+<meta property="og:url" content="http://blog.hifuu.ink/2025/03/10/archlinux-game-fix/index.html">
 <meta property="og:site_name" content="CGH0S7&#39;s Blog">
-<meta property="og:description" content="打算开一个坑记录这么久以来的Archlinux系统性能和操作体验优化经验 本文章长期更新  更换CachyOS优化仓库通过 CachyOS 优化仓库获取 CPU 指令集级优化（x86-64-v3&#x2F;v4&#x2F;zen4）的软件包，提升 Arch Linux 系统性能。该仓库提供 PGO&#x2F;LTO&#x2F;BOLT 编译优化及持续维护的定制软件包。  ▎前置准备⚠️ 兼容性警告">
+<meta property="og:description" content="前几周在使用 Arch Linux 时遇到了两个有趣的问题，顺手记录在此，或许能帮到有类似困扰的朋友～  1. 显卡功耗上限解锁问题现象使用 nvidia-smi 查看显卡功耗时，发现最大功耗被限制在 55W，性能无法完全释放： 1nvidia-smi  # 输出显示 Power Limit: 55.00 W  解决方案启用 NVIDIA 动态功耗管理服务即可： 1sudo systemctl e">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://wiki.cachyos.org/_astro/logo.DVTdAJi6.svg">
-<meta property="article:published_time" content="2025-02-02T10:43:26.000Z">
-<meta property="article:modified_time" content="2025-03-10T15:07:26.618Z">
+<meta property="article:published_time" content="2025-03-10T14:47:08.000Z">
+<meta property="article:modified_time" content="2025-03-10T14:54:16.788Z">
 <meta property="article:author" content="CGH0S7">
+<meta property="article:tag" content="生活">
 <meta property="article:tag" content="Archlinux">
-<meta property="article:tag" content="系统优化">
-<meta property="article:tag" content="技术分享">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://wiki.cachyos.org/_astro/logo.DVTdAJi6.svg">
   
   
   
-  <title>Archlinux KDE体验优化总结 - CGH0S7&#39;s Blog</title>
+  <title>Archlinux问题记录 - CGH0S7&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -218,7 +215,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Archlinux KDE体验优化总结"></span>
+            <span id="subtitle" data-typed-text="Archlinux问题记录"></span>
           
         </div>
 
@@ -229,8 +226,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-02-02 18:43" pubdate>
-          2025年2月2日 晚上
+        <time datetime="2025-03-10 22:47" pubdate>
+          2025年3月10日 晚上
         </time>
       </span>
     
@@ -241,7 +238,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          385 字
+          182 字
         
       </span>
     
@@ -252,7 +249,7 @@
         
         
         
-          4 分钟
+          2 分钟
         
       </span>
     
@@ -289,46 +286,26 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Archlinux KDE体验优化总结</h1>
+            <h1 id="seo-header">Archlinux问题记录</h1>
             
             
               <div class="markdown-body">
                 
-                <p>打算开一个坑记录这么久以来的Archlinux系统性能和操作体验优化经验</p>
-<p>本文章长期更新</p>
+                <p>前几周在使用 Arch Linux 时遇到了两个有趣的问题，顺手记录在此，或许能帮到有类似困扰的朋友～</p>
 <hr>
-<h2 id="更换CachyOS优化仓库"><a href="#更换CachyOS优化仓库" class="headerlink" title="更换CachyOS优化仓库"></a>更换CachyOS优化仓库</h2><p><img src="https://wiki.cachyos.org/_astro/logo.DVTdAJi6.svg" srcset="/img/loading.gif" lazyload alt="CachyOS Logo"><br>通过 CachyOS 优化仓库获取 CPU 指令集级优化（x86-64-v3&#x2F;v4&#x2F;zen4）的软件包，提升 Arch Linux 系统性能。该仓库提供 PGO&#x2F;LTO&#x2F;BOLT 编译优化及持续维护的定制软件包。</p>
-<hr>
-<h3 id="▎前置准备"><a href="#▎前置准备" class="headerlink" title="▎前置准备"></a>▎前置准备</h3><p><strong>⚠️ 兼容性警告</strong>  </p>
-<ol>
-<li>可以先通过命令<code>/usr/lib64/ld-linux-x86-64.so.2 --help | grep -i x86-64-</code>来查看你的处理器支持等级。</li>
-<li>注意添加 <code>cachyos</code> 主仓库会替换官方 pacman 仓库（含 INSTALLED_FROM 等特性）  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">cachyos-v3    <span class="hljs-comment"># AVX2 优化</span><br>cachyos-v4    <span class="hljs-comment"># AVX512 优化</span><br>cachyos-extra <span class="hljs-comment"># 扩展软件包</span><br></code></pre></td></tr></table></figure></li>
-<li>CachyOS官方在前段时间专门推出了针对 AMD 的Zen4和Zen5架构优化仓库，如有需要可以<a target="_blank" rel="noopener" href="https://discuss.cachyos.org/t/zen-4-5-optimized-repository-testing/713/7">点击这里</a>查看如何部署。</li>
-</ol>
-<hr>
-<h3 id="▎仓库配置流程"><a href="#▎仓库配置流程" class="headerlink" title="▎仓库配置流程"></a>▎仓库配置流程</h3><h4 id="▶-自动配置脚本"><a href="#▶-自动配置脚本" class="headerlink" title="▶ 自动配置脚本"></a>▶ 自动配置脚本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 下载配置工具</span><br>curl -LO https://mirror.cachyos.org/cachyos-repo.tar.xz<br>tar xvf cachyos-repo.tar.xz &amp;&amp; <span class="hljs-built_in">cd</span> cachyos-repo<br><br><span class="hljs-comment"># 执行自动配置（自动检测 CPU 指令集）</span><br>sudo ./cachyos-repo.sh<br></code></pre></td></tr></table></figure>
-<p>📌 脚本特性：  </p>
-<ul>
-<li>自动备份 <code>/etc/pacman.conf</code>  </li>
-<li>智能匹配最优指令集版本 (v3&#x2F;v4)  </li>
-<li>支持 x86_64 和 aarch64 架构</li>
-</ul>
-<h4 id="▶-手动配置方式"><a href="#▶-手动配置方式" class="headerlink" title="▶ 手动配置方式"></a>▶ 手动配置方式</h4><ol>
-<li><p>编辑 pacman.conf</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-comment"># 在 /etc/pacman.conf 末尾添加（示例为 AVX2 优化）</span><br><span class="hljs-section">[cachyos-v3]</span><br><span class="hljs-attr">SigLevel</span> = Optional TrustAll<br><span class="hljs-attr">Include</span> = /etc/pacman.d/cachyos-v3<br></code></pre></td></tr></table></figure>
-</li>
-<li><p>✅同步仓库数据库</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -Syu<br></code></pre></td></tr></table></figure></li>
-</ol>
-<hr>
-<h3 id="▎仓库卸载方法"><a href="#▎仓库卸载方法" class="headerlink" title="▎仓库卸载方法"></a>▎仓库卸载方法</h3><h4 id="▶-自动卸载"><a href="#▶-自动卸载" class="headerlink" title="▶ 自动卸载"></a>▶ 自动卸载</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> cachyos-repo<br>sudo ./cachyos-repo.sh --remove<br></code></pre></td></tr></table></figure>
+<h3 id="1-显卡功耗上限解锁"><a href="#1-显卡功耗上限解锁" class="headerlink" title="1. 显卡功耗上限解锁"></a>1. 显卡功耗上限解锁</h3><p><strong>问题现象</strong><br>使用 <code>nvidia-smi</code> 查看显卡功耗时，发现最大功耗被限制在 55W，性能无法完全释放：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">nvidia-smi  <span class="hljs-comment"># 输出显示 Power Limit: 55.00 W</span><br></code></pre></td></tr></table></figure>
 
-<h4 id="▶-手动卸载"><a href="#▶-手动卸载" class="headerlink" title="▶ 手动卸载"></a>▶ 手动卸载</h4><ol>
-<li>删除 pacman.conf 中的 cachyos 仓库段</li>
-<li>移除配置文件<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo <span class="hljs-built_in">rm</span> -rf /etc/pacman.d/cachyos*<br></code></pre></td></tr></table></figure></li>
-</ol>
+<p><strong>解决方案</strong><br>启用 NVIDIA 动态功耗管理服务即可：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo systemctl <span class="hljs-built_in">enable</span> --now nvidia-powerd<br></code></pre></td></tr></table></figure>
+
 <hr>
-<h2 id="内核更换"><a href="#内核更换" class="headerlink" title="内核更换"></a>内核更换</h2><h2 id="KDE-配置"><a href="#KDE-配置" class="headerlink" title="KDE 配置"></a>KDE 配置</h2>
+<h3 id="2-Steam-Proton-输入失效"><a href="#2-Steam-Proton-输入失效" class="headerlink" title="2. Steam Proton 输入失效"></a>2. Steam Proton 输入失效</h3><p><strong>问题描述</strong><br>使用 proton-cachyos 和 proton-ge-custom 版本时，Steam 游戏无法接收任何输入（键盘&#x2F;手柄）。<br>⚠️ 经排查发现是 Wayland 协议兼容性问题导致。</p>
+<p><strong>解决方案</strong><br>在 Steam 游戏启动选项中加入环境变量禁用 Wayland：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">PROTON_ENABLE_WAYLAND=0 %<span class="hljs-built_in">command</span>%<br></code></pre></td></tr></table></figure>
+
+<hr>
+
                 
               </div>
             
@@ -340,11 +317,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
+        <a href="../../../../tags/%E7%94%9F%E6%B4%BB/" class="print-no-link">#生活</a>
+      
         <a href="../../../../tags/Archlinux/" class="print-no-link">#Archlinux</a>
-      
-        <a href="../../../../tags/%E7%B3%BB%E7%BB%9F%E4%BC%98%E5%8C%96/" class="print-no-link">#系统优化</a>
-      
-        <a href="../../../../tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" class="print-no-link">#技术分享</a>
       
     </div>
   
@@ -356,8 +331,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Archlinux KDE体验优化总结</div>
-      <div>http://blog.hifuu.ink/2025/02/02/archlinux-optimization/</div>
+      <div>Archlinux问题记录</div>
+      <div>http://blog.hifuu.ink/2025/03/10/archlinux-game-fix/</div>
     </div>
     <div class="license-meta">
       
@@ -369,7 +344,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年2月2日</div>
+          <div>2025年3月10日</div>
         </div>
       
       
@@ -401,9 +376,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="../../23/clonezilla/" title="使用Clonezilla备份和克隆系统">
+                      <a href="../searxng/" title="相见恨晚的 SearXNG：打造私人搜索引擎全指南">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">使用Clonezilla备份和克隆系统</span>
+                        <span class="hidden-mobile">相见恨晚的 SearXNG：打造私人搜索引擎全指南</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -411,8 +386,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="../../../../2024/12/13/zellij-helix/" title="命令行编辑器的优雅新选择">
-                        <span class="hidden-mobile">命令行编辑器的优雅新选择</span>
+                      <a href="../../../02/24/nudtbomblab/" title="高地特供版CSAPP Bomb Lab全流程攻略">
+                        <span class="hidden-mobile">高地特供版CSAPP Bomb Lab全流程攻略</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

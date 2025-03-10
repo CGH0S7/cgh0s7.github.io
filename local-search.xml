@@ -4,6 +4,48 @@
   
   
   <entry>
+    <title>相见恨晚的 SearXNG：打造私人搜索引擎全指南</title>
+    <link href="/2025/03/10/searxng/"/>
+    <url>/2025/03/10/searxng/</url>
+    
+    <content type="html"><![CDATA[<p><img src="/images/searxng.png" alt="SearXNG 界面预览"><br><strong>厌倦了商业搜索引擎的广告追踪？</strong> 受够技术社区被 SEO 污染的水文？希望搜索结果里尽量不要呈现C*DN等平台的低质内容？这款开源元搜索引擎 <a href="https://github.com/searxng/searxng">SearXNG</a> 现在让我直呼真香爱不释手，使用频率远超 Nextcloud 等自建服务。</p><hr><h3 id="▍-为什么选择-SearXNG？"><a href="#▍-为什么选择-SearXNG？" class="headerlink" title="▍ 为什么选择 SearXNG？"></a>▍ 为什么选择 SearXNG？</h3><p>✅ <strong>核心优势矩阵</strong>  </p><table><thead><tr><th>特性</th><th>实现方式</th><th>用户收益</th></tr></thead><tbody><tr><td>隐私保护</td><td>匿名聚合第三方结果</td><td>无搜索历史追踪</td></tr><tr><td>结果去商业化</td><td>过滤 SEO 优化内容</td><td>提升技术资料检索效率</td></tr><tr><td>多引擎支持</td><td>集成 Google&#x2F;Bing&#x2F;Brave 等 70+ 源</td><td>规避单一引擎局限</td></tr><tr><td>界面定制</td><td>主题引擎分离设计</td><td>打造个性化搜索门户</td></tr></tbody></table><p>⚠️ 同类工具对比：<br>此前使用的 <a href="https://github.com/KoriIku/luxirty-search">luxirty-search</a> 也很不错但是依赖 Google CSE，对于内网环境日常使用多少有点不友好。</p><p>之前看了下网上普遍推荐docker方案不过部署流程与官方文档有不少出入而且在我本地没法正常运行，这里我们直接按照官方文档来，事不宜迟直接开始部署。</p><hr><h3 id="▍-极简部署方案"><a href="#▍-极简部署方案" class="headerlink" title="▍ 极简部署方案"></a>▍ 极简部署方案</h3><h4 id="▶-环境准备"><a href="#▶-环境准备" class="headerlink" title="▶ 环境准备"></a>▶ 环境准备</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">mkdir</span> -p ~/services/searxng &amp;&amp; <span class="hljs-built_in">cd</span> <span class="hljs-variable">$_</span>  <span class="hljs-comment"># 随意找个地方创建专用目录</span><br><span class="hljs-built_in">export</span> SEARXNG_PORT=8080              <span class="hljs-comment"># 设置服务端口</span><br></code></pre></td></tr></table></figure><h4 id="▶-容器化部署"><a href="#▶-容器化部署" class="headerlink" title="▶ 容器化部署"></a>▶ 容器化部署</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 拉取官方镜像</span><br>docker pull searxng/searxng<br><br><span class="hljs-comment"># 启动容器（推荐绑定持久化配置）</span><br>docker run -d --restart=unless-stopped \<br>  -p <span class="hljs-variable">$&#123;SEARXNG_PORT&#125;</span>:8080 \<br>  -v <span class="hljs-string">&quot;<span class="hljs-variable">$&#123;PWD&#125;</span>/config:/etc/searxng&quot;</span> \<br>  -e <span class="hljs-string">&quot;BASE_URL=http://your-domain.com&quot;</span> \<br>  -e <span class="hljs-string">&quot;INSTANCE_NAME=PrivateSearch&quot;</span> \<br>  searxng/searxng<br></code></pre></td></tr></table></figure><p>📌 参数说明：  </p><ul><li><code>-v</code> 挂载配置文件实现持久化  </li><li><code>--restart</code> 确保服务异常退出后自动重启  </li><li><code>BASE_URL</code> 需替换为实际访问域名，不过也可以后续再配置</li></ul><hr><h3 id="▍-高频问题排雷"><a href="#▍-高频问题排雷" class="headerlink" title="▍ 高频问题排雷"></a>▍ 高频问题排雷</h3><h4 id="🔴-镜像拉取失败"><a href="#🔴-镜像拉取失败" class="headerlink" title="🔴 镜像拉取失败"></a>🔴 镜像拉取失败</h4><p><strong>现象</strong>：<code>Error response from daemon: pull access denied</code><br>✅ 解决方案：<br>参考先前的 <a href="https://blog.hifuu.ink/2024/11/06/overleaf/">Overleaf Toolkit 踩坑记录</a> 配置镜像加速源</p><h4 id="🔴-Google-频繁拦截"><a href="#🔴-Google-频繁拦截" class="headerlink" title="🔴 Google 频繁拦截"></a>🔴 Google 频繁拦截</h4><p><strong>现象</strong>：<code>Too Many Requests</code> 错误频发  </p><p>⚠️ 这算是一个玄学问题除了更换代理我还没有发现更好的解决方案</p><p>✅ 实战验证方案：<br>更换你的代理服务器比如笔者目前在🇺🇸🇭🇰🇯🇵均有购买VPS服务器可作为代理，经尝试总会有可以使用的节点。</p><p>📌 在配置文件设置代理：  </p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">outgoing:</span><br>  <span class="hljs-attr">proxies:</span><br>    <span class="hljs-attr">all://:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">http://&lt;address&gt;:&lt;port&gt;</span><br></code></pre></td></tr></table></figure><hr><h3 id="▍-效果展示与体验"><a href="#▍-效果展示与体验" class="headerlink" title="▍ 效果展示与体验"></a>▍ 效果展示与体验</h3><p>访问我的生产环境实例 <a href="https://search.hifuu.ink/">search.hifuu.ink</a> 可体验以下功能：  </p><ul><li>🔍 多引擎结果聚合对比  </li><li>🌍 支持 30+ 语言实时翻译  </li><li>🛡️ 零 Cookie 跟踪的隐私模式  </li><li>🎨 主题切换</li></ul><hr><h3 id="▍-进阶优化建议"><a href="#▍-进阶优化建议" class="headerlink" title="▍ 进阶优化建议"></a>▍ 进阶优化建议</h3><ol><li><strong>反向代理配置</strong></li></ol><p>网上相关教程应该很多这里不再重复，我的SearXNG服务器通过香港VPS反代到公网使用。</p><ol start="2"><li><p><strong>定期维护命令</strong>  </p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 更新搜索引擎引擎列表</span><br>docker <span class="hljs-built_in">exec</span> -it searxng python -m searx.engines --update<br></code></pre></td></tr></table></figure></li><li><p><strong>监控指标集成</strong><br>通过 Prometheus 导出搜索统计：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker run -d --network=searxng-net \<br>  -v <span class="hljs-string">&quot;<span class="hljs-variable">$&#123;PWD&#125;</span>/metrics:/metrics&quot;</span> \<br>  prom/prometheus --config.file=/metrics/searxng.yml<br></code></pre></td></tr></table></figure></li></ol><hr><p><strong>🚀 立即行动</strong>  </p><p>快速拥有对抗 SEO 污染的利器，快来打造你的私人搜索门户吧！部署过程遇到问题欢迎联系笔者交流。</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>技术分享</tag>
+      
+      <tag>开源工具</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Archlinux问题记录</title>
+    <link href="/2025/03/10/archlinux-game-fix/"/>
+    <url>/2025/03/10/archlinux-game-fix/</url>
+    
+    <content type="html"><![CDATA[<p>前几周在使用 Arch Linux 时遇到了两个有趣的问题，顺手记录在此，或许能帮到有类似困扰的朋友～</p><hr><h3 id="1-显卡功耗上限解锁"><a href="#1-显卡功耗上限解锁" class="headerlink" title="1. 显卡功耗上限解锁"></a>1. 显卡功耗上限解锁</h3><p><strong>问题现象</strong><br>使用 <code>nvidia-smi</code> 查看显卡功耗时，发现最大功耗被限制在 55W，性能无法完全释放：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">nvidia-smi  <span class="hljs-comment"># 输出显示 Power Limit: 55.00 W</span><br></code></pre></td></tr></table></figure><p><strong>解决方案</strong><br>启用 NVIDIA 动态功耗管理服务即可：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo systemctl <span class="hljs-built_in">enable</span> --now nvidia-powerd<br></code></pre></td></tr></table></figure><hr><h3 id="2-Steam-Proton-输入失效"><a href="#2-Steam-Proton-输入失效" class="headerlink" title="2. Steam Proton 输入失效"></a>2. Steam Proton 输入失效</h3><p><strong>问题描述</strong><br>使用 proton-cachyos 和 proton-ge-custom 版本时，Steam 游戏无法接收任何输入（键盘&#x2F;手柄）。<br>⚠️ 经排查发现是 Wayland 协议兼容性问题导致。</p><p><strong>解决方案</strong><br>在 Steam 游戏启动选项中加入环境变量禁用 Wayland：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">PROTON_ENABLE_WAYLAND=0 %<span class="hljs-built_in">command</span>%<br></code></pre></td></tr></table></figure><hr>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>生活</tag>
+      
+      <tag>Archlinux</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>高地特供版CSAPP Bomb Lab全流程攻略</title>
     <link href="/2025/02/24/nudtbomblab/"/>
     <url>/2025/02/24/nudtbomblab/</url>
@@ -50,11 +92,15 @@
     <link href="/2025/02/02/archlinux-optimization/"/>
     <url>/2025/02/02/archlinux-optimization/</url>
     
-    <content type="html"><![CDATA[<p>打算开一个坑记录这么久以来的Archlinux系统性能和操作体验优化经验</p><p>本文章长期更新</p><hr><h2 id="软件优化"><a href="#软件优化" class="headerlink" title="软件优化"></a>软件优化</h2><h2 id="快捷键设置"><a href="#快捷键设置" class="headerlink" title="快捷键设置"></a>快捷键设置</h2><h2 id=""><a href="#" class="headerlink" title=""></a></h2>]]></content>
+    <content type="html"><![CDATA[<p>打算开一个坑记录这么久以来的Archlinux系统性能和操作体验优化经验</p><p>本文章长期更新</p><hr><h2 id="更换CachyOS优化仓库"><a href="#更换CachyOS优化仓库" class="headerlink" title="更换CachyOS优化仓库"></a>更换CachyOS优化仓库</h2><p><img src="https://wiki.cachyos.org/_astro/logo.DVTdAJi6.svg" alt="CachyOS Logo"><br>通过 CachyOS 优化仓库获取 CPU 指令集级优化（x86-64-v3&#x2F;v4&#x2F;zen4）的软件包，提升 Arch Linux 系统性能。该仓库提供 PGO&#x2F;LTO&#x2F;BOLT 编译优化及持续维护的定制软件包。</p><hr><h3 id="▎前置准备"><a href="#▎前置准备" class="headerlink" title="▎前置准备"></a>▎前置准备</h3><p><strong>⚠️ 兼容性警告</strong>  </p><ol><li>可以先通过命令<code>/usr/lib64/ld-linux-x86-64.so.2 --help | grep -i x86-64-</code>来查看你的处理器支持等级。</li><li>注意添加 <code>cachyos</code> 主仓库会替换官方 pacman 仓库（含 INSTALLED_FROM 等特性）  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">cachyos-v3    <span class="hljs-comment"># AVX2 优化</span><br>cachyos-v4    <span class="hljs-comment"># AVX512 优化</span><br>cachyos-extra <span class="hljs-comment"># 扩展软件包</span><br></code></pre></td></tr></table></figure></li><li>CachyOS官方在前段时间专门推出了针对 AMD 的Zen4和Zen5架构优化仓库，如有需要可以<a href="https://discuss.cachyos.org/t/zen-4-5-optimized-repository-testing/713/7">点击这里</a>查看如何部署。</li></ol><hr><h3 id="▎仓库配置流程"><a href="#▎仓库配置流程" class="headerlink" title="▎仓库配置流程"></a>▎仓库配置流程</h3><h4 id="▶-自动配置脚本"><a href="#▶-自动配置脚本" class="headerlink" title="▶ 自动配置脚本"></a>▶ 自动配置脚本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 下载配置工具</span><br>curl -LO https://mirror.cachyos.org/cachyos-repo.tar.xz<br>tar xvf cachyos-repo.tar.xz &amp;&amp; <span class="hljs-built_in">cd</span> cachyos-repo<br><br><span class="hljs-comment"># 执行自动配置（自动检测 CPU 指令集）</span><br>sudo ./cachyos-repo.sh<br></code></pre></td></tr></table></figure><p>📌 脚本特性：  </p><ul><li>自动备份 <code>/etc/pacman.conf</code>  </li><li>智能匹配最优指令集版本 (v3&#x2F;v4)  </li><li>支持 x86_64 和 aarch64 架构</li></ul><h4 id="▶-手动配置方式"><a href="#▶-手动配置方式" class="headerlink" title="▶ 手动配置方式"></a>▶ 手动配置方式</h4><ol><li><p>编辑 pacman.conf</p><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-comment"># 在 /etc/pacman.conf 末尾添加（示例为 AVX2 优化）</span><br><span class="hljs-section">[cachyos-v3]</span><br><span class="hljs-attr">SigLevel</span> = Optional TrustAll<br><span class="hljs-attr">Include</span> = /etc/pacman.d/cachyos-v3<br></code></pre></td></tr></table></figure></li><li><p>✅同步仓库数据库</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -Syu<br></code></pre></td></tr></table></figure></li></ol><hr><h3 id="▎仓库卸载方法"><a href="#▎仓库卸载方法" class="headerlink" title="▎仓库卸载方法"></a>▎仓库卸载方法</h3><h4 id="▶-自动卸载"><a href="#▶-自动卸载" class="headerlink" title="▶ 自动卸载"></a>▶ 自动卸载</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> cachyos-repo<br>sudo ./cachyos-repo.sh --remove<br></code></pre></td></tr></table></figure><h4 id="▶-手动卸载"><a href="#▶-手动卸载" class="headerlink" title="▶ 手动卸载"></a>▶ 手动卸载</h4><ol><li>删除 pacman.conf 中的 cachyos 仓库段</li><li>移除配置文件<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo <span class="hljs-built_in">rm</span> -rf /etc/pacman.d/cachyos*<br></code></pre></td></tr></table></figure></li></ol><hr><h2 id="内核更换"><a href="#内核更换" class="headerlink" title="内核更换"></a>内核更换</h2><h2 id="KDE-配置"><a href="#KDE-配置" class="headerlink" title="KDE 配置"></a>KDE 配置</h2>]]></content>
     
     
     
     <tags>
+      
+      <tag>Archlinux</tag>
+      
+      <tag>系统优化</tag>
       
       <tag>技术分享</tag>
       
@@ -169,9 +215,9 @@
     
     <tags>
       
-      <tag>板绘</tag>
-      
       <tag>生活</tag>
+      
+      <tag>板绘</tag>
       
     </tags>
     
