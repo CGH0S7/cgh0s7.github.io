@@ -4,6 +4,25 @@
   
   
   <entry>
+    <title>GCC15 函数指针类型检查可能导致编译错误</title>
+    <link href="/2025/05/23/gcc15restrict/"/>
+    <url>/2025/05/23/gcc15restrict/</url>
+    
+    <content type="html"><![CDATA[<p>今天准备继续做一下OS课的实验，实验代码当然是基于著名的xv6项目，意外地发现原本明明正常运行的系统再次构建时却失败了，具体报错如下：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs GCC">user/usertests.c:2598:4: error: initialization of &#x27;void (*)(char *)&#x27; from incompatible pointer type &#x27;void (*)(void)&#x27; [-Wincompatible-pointer-types]<br> 2598 |   &#123;rwsbrk, &quot;rwsbrk&quot; &#125;,<br>      |    ^~~~~~<br>user/usertests.c:2598:4: note: (near initialization for &#x27;quicktests[5].f&#x27;)<br>user/usertests.c:247:1: note: &#x27;rwsbrk&#x27; declared here<br>  247 | rwsbrk()<br>      | ^~~~~~<br>make: *** [&lt;内置&gt;：user/usertests.o] 错误 1<br><br></code></pre></td></tr></table></figure><p>而具体定位到的代码则是：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs C"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">test</span> &#123;</span><br>  <span class="hljs-type">void</span> (*f)(<span class="hljs-type">char</span> *);<br>  <span class="hljs-type">char</span> *s;<br>&#125; quicktests[] = &#123;<br>  &#123;copyin, <span class="hljs-string">&quot;copyin&quot;</span>&#125;,<br>  &#123;copyout, <span class="hljs-string">&quot;copyout&quot;</span>&#125;,<br>  &#123;copyinstr1, <span class="hljs-string">&quot;copyinstr1&quot;</span>&#125;,<br>  &#123;copyinstr2, <span class="hljs-string">&quot;copyinstr2&quot;</span>&#125;,<br>  &#123;copyinstr3, <span class="hljs-string">&quot;copyinstr3&quot;</span>&#125;,<br>  &#123;rwsbrk, <span class="hljs-string">&quot;rwsbrk&quot;</span> &#125;,<br>  ...<br>  &#123; <span class="hljs-number">0</span>, <span class="hljs-number">0</span>&#125;,<br>&#125;;<br><span class="hljs-comment">// See if the kernel refuses to read/write user memory that the</span><br><span class="hljs-comment">// application doesn&#x27;t have anymore, because it returned it.</span><br><span class="hljs-type">void</span><br><span class="hljs-title function_">rwsbrk</span><span class="hljs-params">()</span><br>&#123;<br>  <span class="hljs-type">int</span> fd, n;<br>  <br>  uint64 a = (uint64) sbrk(<span class="hljs-number">8192</span>);<br><br>  <span class="hljs-keyword">if</span>(a == <span class="hljs-number">0xffffffffffffffff</span>LL) &#123;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;sbrk(rwsbrk) failed\n&quot;</span>);<br>    <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);<br>  &#125;<br>  ...<br>  <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);<br>&#125;<br></code></pre></td></tr></table></figure><p>这段代码定义了一个函数指针数组，其中每个元素都指向一个函数和它的名称。结构体期望的函数签名是 <code>void(*)(char*)</code>，但传入的是一个没有参数的函数 <code>void(*)(void)</code>，这会导致函数指针类型不匹配。</p><p>但是之前明明是没有问题的怎么现在突然出错呢？仔细一想立刻就怀疑是之前arch更新的时候把gcc升上去导致的，结果查了下大概确实是这样。</p><ul><li>在 <strong>GCC 14 及之前版本</strong>，这类赋值虽然不符合 C 标准，但 GCC 作为扩展允许这种行为。</li><li>从 <strong>GCC 15 开始</strong>，这类隐式转换默认触发编译错误或警告（取决于编译器配置），因为 GCC 变得更加严格地遵循标准 C 的函数指针类型规则。</li></ul><p>这并不是 xv6 本身的 bug，而是 GCC 编译器对语言规范支持的更新带来的兼容性问题。解决方法倒是简单，直接给<code>rwsbrk</code>函数添加参数改为<code>void rwsbrk(char* arg)</code>即可解决，强制类型转换也是一种办法。这次事件再次告诉我们什么都升到最新并不是什么好事情，arch用户总是要花时间处理一些莫名其妙的兼容性问题:-)</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>技术</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Random Fortune</title>
     <link href="/2025/05/22/fortune/"/>
     <url>/2025/05/22/fortune/</url>
