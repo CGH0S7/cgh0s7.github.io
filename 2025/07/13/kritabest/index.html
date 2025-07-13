@@ -21,22 +21,25 @@
   <meta name="author" content="CGH0S7">
   <meta name="keywords" content="">
   
-    <meta name="description" content="今天准备继续做一下OS课的实验，实验代码当然是基于著名的xv6项目，意外地发现原本明明正常运行的系统再次构建时却失败了，具体报错如下： 123456789user&#x2F;usertests.c:2598:4: error: initialization of &#x27;void (*)(char *)&#x27; from incompatible pointer type &#x27;void (*">
+    <meta name="description" content="在谈论这个问题之前，我想先说说其他软件相较于 Krita 究竟差在了哪里。  首先是犯下傲慢之罪的 Adobe Photoshop依靠其在商业设计领域的绝对霸主地位赢来的市场，却不愿真正听取数字绘画创作者的声音！这种傲慢的软件注定无法触及绘画的灵魂。事实也是如此，因为高昂的订阅费用和臃肿的体量，以及对触摸屏设备支持的迟滞，Photoshop 在许多数字画师心中的地位一直在走下坡路，最终沦为商业生">
 <meta property="og:type" content="article">
-<meta property="og:title" content="GCC15 函数指针类型检查可能导致编译错误">
-<meta property="og:url" content="http://blog.hifuu.ink/2025/05/23/gcc15restrict/index.html">
+<meta property="og:title" content="Krita 为什么是神？">
+<meta property="og:url" content="http://blog.hifuu.ink/2025/07/13/kritabest/index.html">
 <meta property="og:site_name" content="CGH0S7&#39;s Blog">
-<meta property="og:description" content="今天准备继续做一下OS课的实验，实验代码当然是基于著名的xv6项目，意外地发现原本明明正常运行的系统再次构建时却失败了，具体报错如下： 123456789user&#x2F;usertests.c:2598:4: error: initialization of &#x27;void (*)(char *)&#x27; from incompatible pointer type &#x27;void (*">
+<meta property="og:description" content="在谈论这个问题之前，我想先说说其他软件相较于 Krita 究竟差在了哪里。  首先是犯下傲慢之罪的 Adobe Photoshop依靠其在商业设计领域的绝对霸主地位赢来的市场，却不愿真正听取数字绘画创作者的声音！这种傲慢的软件注定无法触及绘画的灵魂。事实也是如此，因为高昂的订阅费用和臃肿的体量，以及对触摸屏设备支持的迟滞，Photoshop 在许多数字画师心中的地位一直在走下坡路，最终沦为商业生">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-05-23T13:49:02.000Z">
-<meta property="article:modified_time" content="2025-05-23T14:01:33.929Z">
+<meta property="og:image" content="http://blog.hifuu.ink/images/krita-official.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/yana.jpg">
+<meta property="article:published_time" content="2025-07-13T11:46:39.000Z">
+<meta property="article:modified_time" content="2025-07-13T15:47:28.539Z">
 <meta property="article:author" content="CGH0S7">
-<meta property="article:tag" content="技术">
+<meta property="article:tag" content="生活">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://blog.hifuu.ink/images/krita-official.png">
   
   
   
-  <title>GCC15 函数指针类型检查可能导致编译错误 - CGH0S7&#39;s Blog</title>
+  <title>Krita 为什么是神？ - CGH0S7&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -214,7 +217,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="GCC15 函数指针类型检查可能导致编译错误"></span>
+            <span id="subtitle" data-typed-text="Krita 为什么是神？"></span>
           
         </div>
 
@@ -225,8 +228,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-05-23 21:49" pubdate>
-          2025年5月23日 晚上
+        <time datetime="2025-07-13 19:46" pubdate>
+          2025年7月13日 晚上
         </time>
       </span>
     
@@ -237,7 +240,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          547 字
+          1.2k 字
         
       </span>
     
@@ -248,7 +251,7 @@
         
         
         
-          5 分钟
+          10 分钟
         
       </span>
     
@@ -285,23 +288,25 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">GCC15 函数指针类型检查可能导致编译错误</h1>
+            <h1 id="seo-header">Krita 为什么是神？</h1>
             
             
               <div class="markdown-body">
                 
-                <p>今天准备继续做一下OS课的实验，实验代码当然是基于著名的xv6项目，意外地发现原本明明正常运行的系统再次构建时却失败了，具体报错如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs GCC">user/usertests.c:2598:4: error: initialization of &#x27;void (*)(char *)&#x27; from incompatible pointer type &#x27;void (*)(void)&#x27; [-Wincompatible-pointer-types]<br> 2598 |   &#123;rwsbrk, &quot;rwsbrk&quot; &#125;,<br>      |    ^~~~~~<br>user/usertests.c:2598:4: note: (near initialization for &#x27;quicktests[5].f&#x27;)<br>user/usertests.c:247:1: note: &#x27;rwsbrk&#x27; declared here<br>  247 | rwsbrk()<br>      | ^~~~~~<br>make: *** [&lt;内置&gt;：user/usertests.o] 错误 1<br><br></code></pre></td></tr></table></figure>
-<p>而具体定位到的代码则是：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs C"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">test</span> &#123;</span><br>  <span class="hljs-type">void</span> (*f)(<span class="hljs-type">char</span> *);<br>  <span class="hljs-type">char</span> *s;<br>&#125; quicktests[] = &#123;<br>  &#123;copyin, <span class="hljs-string">&quot;copyin&quot;</span>&#125;,<br>  &#123;copyout, <span class="hljs-string">&quot;copyout&quot;</span>&#125;,<br>  &#123;copyinstr1, <span class="hljs-string">&quot;copyinstr1&quot;</span>&#125;,<br>  &#123;copyinstr2, <span class="hljs-string">&quot;copyinstr2&quot;</span>&#125;,<br>  &#123;copyinstr3, <span class="hljs-string">&quot;copyinstr3&quot;</span>&#125;,<br>  &#123;rwsbrk, <span class="hljs-string">&quot;rwsbrk&quot;</span> &#125;,<br>  ...<br>  &#123; <span class="hljs-number">0</span>, <span class="hljs-number">0</span>&#125;,<br>&#125;;<br><span class="hljs-comment">// See if the kernel refuses to read/write user memory that the</span><br><span class="hljs-comment">// application doesn&#x27;t have anymore, because it returned it.</span><br><span class="hljs-type">void</span><br><span class="hljs-title function_">rwsbrk</span><span class="hljs-params">()</span><br>&#123;<br>  <span class="hljs-type">int</span> fd, n;<br>  <br>  uint64 a = (uint64) sbrk(<span class="hljs-number">8192</span>);<br><br>  <span class="hljs-keyword">if</span>(a == <span class="hljs-number">0xffffffffffffffff</span>LL) &#123;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;sbrk(rwsbrk) failed\n&quot;</span>);<br>    <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);<br>  &#125;<br>  ...<br>  <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<p>这段代码定义了一个函数指针数组，其中每个元素都指向一个函数和它的名称。结构体期望的函数签名是 <code>void(*)(char*)</code>，但传入的是一个没有参数的函数 <code>void(*)(void)</code>，这会导致函数指针类型不匹配。</p>
-<p>但是之前明明是没有问题的怎么现在突然出错呢？仔细一想立刻就怀疑是之前arch更新的时候把gcc升上去导致的，结果查了下大概确实是这样。</p>
-<ul>
-<li>在 <strong>GCC 14 及之前版本</strong>，这类赋值虽然不符合 C 标准，但 GCC 作为扩展允许这种行为。</li>
-<li>从 <strong>GCC 15 开始</strong>，这类隐式转换默认触发编译错误或警告（取决于编译器配置），因为 GCC 变得更加严格地遵循标准 C 的函数指针类型规则。</li>
-</ul>
-<p>这并不是 xv6 本身的 bug，而是 GCC 编译器对语言规范支持的更新带来的兼容性问题。解决方法倒是简单，直接给<code>rwsbrk</code>函数添加参数改为<code>void rwsbrk(char* arg)</code>即可解决，强制类型转换也是一种办法。这次事件再次告诉我们什么都升到最新并不是什么好事情，arch用户总是要花时间处理一些莫名其妙的兼容性问题:-)</p>
+                <p><img src="/images/krita-official.png" srcset="/img/loading.gif" lazyload alt="神的官网"></p>
+<p>在谈论这个问题之前，我想先说说其他软件相较于 <a target="_blank" rel="noopener" href="https://krita.org/en/">Krita</a> 究竟差在了哪里。</p>
+<hr>
+<h3 id="首先是犯下傲慢之罪的-Adobe-Photoshop"><a href="#首先是犯下傲慢之罪的-Adobe-Photoshop" class="headerlink" title="首先是犯下傲慢之罪的 Adobe Photoshop"></a>首先是犯下傲慢之罪的 Adobe Photoshop</h3><p>依靠其在商业设计领域的绝对霸主地位赢来的市场，却不愿真正听取数字绘画创作者的声音！这种傲慢的软件注定无法触及绘画的灵魂。事实也是如此，因为高昂的订阅费用和臃肿的体量，以及对触摸屏设备支持的迟滞，Photoshop 在许多数字画师心中的地位一直在走下坡路，最终沦为商业生产的工具而非艺术创作的乐园。与之相比，<strong>神</strong> 就很谦卑，它免费开源，轻巧灵活，全平台支持，即便在某些方面为了兼容性和稳定性而做出妥协，那也是 <strong>神</strong> 留给凡人的慈悲。<strong>神</strong> 不是不能做到像 PS 那样无所不能，只是不想通过太完美的表现让“友商”绝望所以故意不用。可笑有些人不理解 <strong>神</strong> 的良苦用心，竟然还用其某些非核心功能上的不足来讥讽 <strong>神</strong>，我劝你们好自为之。</p>
+<hr>
+<h3 id="然后是犯下愤怒之罪的-GIMP"><a href="#然后是犯下愤怒之罪的-GIMP" class="headerlink" title="然后是犯下愤怒之罪的 GIMP"></a>然后是犯下愤怒之罪的 GIMP</h3><p>因为 <strong>神</strong> 在数字绘画领域的崛起，GIMP 就一直对神记恨在心，甚至固守其“万能”的图像处理定位，对绘画功能上的迭代迟迟不肯投入资源。这无疑违背了 <strong>神</strong> 在《新约》中的一句话：“<strong>Krita</strong> 只为创作者而生！”<strong>神</strong> 当然也不能容忍其他开源软件对绘画创作的敷衍，于是 <strong>神</strong> 出动了它的“代码大军”降下了神罚，GIMP 在绘画圈的风评一蹶不振，即便有诸多插件以及强势归来的3.0大版本更新也无法挽回其作为“绘画软件”使用时的颓势。</p>
+<hr>
+<h3 id="接着是犯下懒惰之罪的-Procreate"><a href="#接着是犯下懒惰之罪的-Procreate" class="headerlink" title="接着是犯下懒惰之罪的 Procreate"></a>接着是犯下懒惰之罪的 Procreate</h3><p>自以为有 iPad 的独占优势和流畅的笔触就了不起了，对图层管理、多文档支持以及跨平台协作就一直摆烂。另外大家有所不知，其实在 Procreate 首次发布前夕，其开发者闭上眼睛做冥想的时候，其脑海中看见的画面，正是站在光芒之中的 <strong>神</strong>。那时神告诉他：“你只可到这里，不可越过。”然而，<strong>神</strong> 的劝说不但没有让 Procreate 迷途知返，竟然还敢在移动设备上挑战神的威严，妄图通过封闭的生态垄断市场。于是 <strong>神</strong> 降下了他的惩罚，Procreate 在专业性上身败名裂，其以流畅为名的笔刷也被 <strong>神</strong> 在笔刷引擎上轻松超越，iPad Pro 独占的优势也没能阻止 <strong>神</strong> 在更广阔的平台生根发芽，粉丝也成为了众人口中的“果曲是这样的”。</p>
+<hr>
+<h3 id="再然后是犯下了嫉妒之罪的-SAI"><a href="#再然后是犯下了嫉妒之罪的-SAI" class="headerlink" title="再然后是犯下了嫉妒之罪的 SAI"></a>再然后是犯下了嫉妒之罪的 SAI</h3><p>屡次被 <strong>神</strong> 击败，但口服心不服的 SAI，暗中嫉妒着 <strong>神</strong> ，甚至胆敢当众对 <strong>神</strong> 说出“你才是挑战者”这种话。于是，在含金量最高的活动上，即专业画师的日常工作中，SAI 被 <strong>神</strong> 正面击溃。它那单一的笔刷类型和有限的功能，在 <strong>神</strong> 面前显得如此苍白无力。不过，念在 SAI 最终皈依了 <strong>神</strong> 的教，并且以其轻量和独特的抖动修正功能，在某些特定绘画风格上仍有信徒，<strong>神</strong> 应许了它在特定小众市场的一切。</p>
+<hr>
+<h3 id="最后犯下贪婪之罪的-Clip-Studio-Paint"><a href="#最后犯下贪婪之罪的-Clip-Studio-Paint" class="headerlink" title="最后犯下贪婪之罪的 Clip Studio Paint"></a>最后犯下贪婪之罪的 Clip Studio Paint</h3><p>只是初出茅庐，Clip Studio Paint 就夺得了漫画创作软件的市场份额，而这，自然是因为 <strong>神</strong> 的应允。<strong>神</strong> 本来钦定它为自己在漫画领域的代言人，在自己更专注于绘画自由之后替自己继续讨伐那些缺乏专业性的绘画工具，为此甚至不惜亲自为 Clip Studio Paint 铺路，主动减少自己在漫画素材库上的投入，将一切荣耀都归给他。但最后 Clip Studio Paint 却被利益蒙蔽了双眼，不再以践行 <strong>神</strong> 的理想为自己的理想，也不再聆听 <strong>神</strong> 的教诲，甚至自以为荣光已经超过了 <strong>神</strong>。于是 <strong>神</strong> 降下了他的惩罚，Clip Studio Paint 从此订阅制饱受诟病，其3D模型功能再也不能在线上教学中占据优势，其引以为傲的漫画分镜功能再也不能强势压制对手，最终市场被 <strong>神</strong> 在免费开源和强大功能上的结合所夺舍。</p>
+<p>&#x2F;&#x2F; 都很好用口牙，本文仅供娱乐</p>
+<p><img src="/images/yana.jpg" srcset="/img/loading.gif" lazyload alt="老八可爱捏"></p>
 
                 
               </div>
@@ -314,7 +319,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="../../../../tags/%E6%8A%80%E6%9C%AF/" class="print-no-link">#技术</a>
+        <a href="../../../../tags/%E7%94%9F%E6%B4%BB/" class="print-no-link">#生活</a>
       
     </div>
   
@@ -326,8 +331,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>GCC15 函数指针类型检查可能导致编译错误</div>
-      <div>http://blog.hifuu.ink/2025/05/23/gcc15restrict/</div>
+      <div>Krita 为什么是神？</div>
+      <div>http://blog.hifuu.ink/2025/07/13/kritabest/</div>
     </div>
     <div class="license-meta">
       
@@ -339,7 +344,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年5月23日</div>
+          <div>2025年7月13日</div>
         </div>
       
       
@@ -371,18 +376,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="../../../07/13/kritabest/" title="Krita 为什么是神？">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Krita 为什么是神？</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="../../22/fortune/" title="Random Fortune">
-                        <span class="hidden-mobile">Random Fortune</span>
+                      <a href="../../../05/23/gcc15restrict/" title="GCC15 函数指针类型检查可能导致编译错误">
+                        <span class="hidden-mobile">GCC15 函数指针类型检查可能导致编译错误</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
