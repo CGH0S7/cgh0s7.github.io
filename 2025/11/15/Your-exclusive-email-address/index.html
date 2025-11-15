@@ -33,7 +33,7 @@
 <meta property="og:image" content="http://blog.hifuu.ink/images/rusendhelp2.png">
 <meta property="og:image" content="http://blog.hifuu.ink/images/rusendhelp3.png">
 <meta property="article:published_time" content="2025-11-15T15:36:22.000Z">
-<meta property="article:modified_time" content="2025-11-15T16:36:44.495Z">
+<meta property="article:modified_time" content="2025-11-15T16:42:50.086Z">
 <meta property="article:author" content="CGH0S7">
 <meta property="article:tag" content="技术分享">
 <meta name="twitter:card" content="summary_large_image">
@@ -242,7 +242,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          746 字
+          907 字
         
       </span>
     
@@ -253,7 +253,7 @@
         
         
         
-          7 分钟
+          8 分钟
         
       </span>
     
@@ -303,7 +303,7 @@
 <li>任何前缀都能即时生成： <code>helloworld@your.com</code> &#x2F; <code>fknudt@your.com</code> &#x2F; <code>ilovethu@your.com</code>  </li>
 <li>在终端里使用命令收发邮件，无需专门打开各种邮件客户端。</li>
 </ul>
-<p>整套方案 <strong>只花域名钱</strong>（￥6-￥10 &#x2F; 年），<strong>0 服务器 0 运维</strong>，完全白嫖 Resend 免费额度。</p>
+<p>整套方案 <strong>只花域名注册费用</strong>，<strong>0 服务器 0 运维</strong>，完全白嫖 Resend 免费额度。</p>
 <hr>
 <h2 id="2-准备工作（2-min）"><a href="#2-准备工作（2-min）" class="headerlink" title="2. 准备工作（2 min）"></a>2. 准备工作（2 min）</h2><table>
 <thead>
@@ -316,7 +316,7 @@
 <tbody><tr>
 <td>一枚域名</td>
 <td>做邮箱后缀</td>
-<td>￥30+ &#x2F; 年（阿里云 Namecheap Cloudflare 均可）</td>
+<td>约 ￥30+ &#x2F; 年（阿里云 Namecheap Cloudflare 均可）</td>
 </tr>
 <tr>
 <td>Resend 账号</td>
@@ -329,30 +329,37 @@
 <h2 id="3-3-步完成域名绑定（5-min）"><a href="#3-3-步完成域名绑定（5-min）" class="headerlink" title="3. 3 步完成域名绑定（5 min）"></a>3. 3 步完成域名绑定（5 min）</h2><ol>
 <li><p>登录 <a target="_blank" rel="noopener" href="https://resend.com/">Resend</a> → <strong>Domains</strong> → <strong>Add Domain</strong><br>输入 <code>your.com</code> → 得到一组 DNS 记录（TXT + MX + DKIM）。  </p>
 </li>
-<li><p>去域名注册商把记录全部照抄粘贴，保存。<br>⚠️ 只需改 <strong>DNS 解析</strong>，不用转 nameserver，1 min 搞定。  </p>
+<li><p>去域名注册商把记录全部照抄粘贴，保存。(由于笔者为免费用户并且已经配置域名无法再次配置，因此未能提供截图但是步骤非常简单）。</p>
+<ul>
+<li>登录你的域名注册商账号，找到DNS管理页面。</li>
+<li>添加Resend提供的TXT记录，用于验证域名所有权。</li>
+<li>添加Resend提供的MX记录，用于接收邮件。</li>
+<li>根据Resend的要求，配置完整所有必要的DNS记录。</li>
+<li>保存更改后，等待DNS记录生效，通常需要几分钟到24小时不等（这是resend官方的说法，笔者实测只需要几分钟不到）。<br>⚠️ 只需改 <strong>DNS 解析</strong>，不用转 nameserver，1 min 搞定。</li>
+</ul>
 </li>
 <li><p>回到 Resend 点 <strong>Verify</strong>，状态变绿 ✅ 即生效（实测 30s-3min，并不会像官方说的有可能要24小时）。</p>
 </li>
 </ol>
 <hr>
-<h2 id="4-无限别名-转发（立刻能用）"><a href="#4-无限别名-转发（立刻能用）" class="headerlink" title="4. 无限别名 + 转发（立刻能用）"></a>4. 无限别名 + 转发（立刻能用）</h2><p>Resend 对「 catch-all 」免费！<br>意思是你 <strong>不用提前新建账号</strong>，任何 <code>@your.com</code> 的信都会飞进你设定的转发地址。</p>
+<h2 id="4-无限别名-转发（立刻能用）"><a href="#4-无限别名-转发（立刻能用）" class="headerlink" title="4. 无限别名 + 转发（立刻能用）"></a>4. 无限别名 + 转发（立刻能用）</h2><p>Resend 对「 catch-all 」免费！<br>意思是你 <strong>不用提前新建账号</strong>，任何 <code>@your.com</code> 的信都会飞进你设定的地址，只需要在 Resend 官网查收即可。</p>
 <hr>
 <h2 id="5-终端发邮件（可选，8-min-部署）"><a href="#5-终端发邮件（可选，8-min-部署）" class="headerlink" title="5. 终端发邮件（可选，8 min 部署）"></a>5. 终端发邮件（可选，8 min 部署）</h2><p>网页收发邮件显然太麻烦，我用<strong>rust</strong>写了个可爱的 CLI 客户端 <a target="_blank" rel="noopener" href="https://github.com/CGH0S7/rusend"><strong>rusend</strong></a>，基于 Resend 官方 API，支持发送与查收邮件非常方便。（好吧其实是Gemini小姐帮忙写的@@）</p>
 <h3 id="①-1-下载预构建可执行文件"><a href="#①-1-下载预构建可执行文件" class="headerlink" title="①-1 下载预构建可执行文件"></a>①-1 下载预构建可执行文件</h3><p>在<a target="_blank" rel="noopener" href="https://github.com/CGH0S7/rusend/releases/tag/stable">Github Releases</a>里下载对应系统的预编译包，解压放到 <code>$PATH</code> 目录下即可。</p>
 <h3 id="①-2-源码构建"><a href="#①-2-源码构建" class="headerlink" title="①-2 源码构建"></a>①-2 源码构建</h3><p>下载并编译rusend，准备好rust工具链，具体编译命令如下：</p>
-<pre><code class="hljs"> <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">git <span class="hljs-built_in">clone</span> https://github.com/CGH0S7/rusend.git<br><span class="hljs-built_in">cd</span> rusend<br>cargo build --release<br></code></pre></td></tr></table></figure>
-</code></pre>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">git <span class="hljs-built_in">clone</span> https://github.com/CGH0S7/rusend.git<br><span class="hljs-built_in">cd</span> rusend<br>cargo build --release<br></code></pre></td></tr></table></figure>
+
 <p>将<code>rusend</code>二进制文件移动到系统的<code>$PATH</code>目录下，例如<code>/usr/local/bin</code>。</p>
 <h3 id="②-补全-API-Key配置"><a href="#②-补全-API-Key配置" class="headerlink" title="② 补全 &amp; API Key配置"></a>② 补全 &amp; API Key配置</h3><p>使用下面的命令进行命令行补全配置：</p>
-<pre><code class="hljs"><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;source &lt;(rusend completions bash)&quot;</span> &gt;&gt; ~/.bashrc<br><span class="hljs-built_in">source</span> ~/.bashrc<br></code></pre></td></tr></table></figure>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;source &lt;(rusend completions bash)&quot;</span> &gt;&gt; ~/.bashrc<br><span class="hljs-built_in">source</span> ~/.bashrc<br></code></pre></td></tr></table></figure>
 
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs zsh">echo &quot;source &lt;(rusend completions zsh)&quot; &gt;&gt; ~/.zshrc<br>source ~/.zshrc<br></code></pre></td></tr></table></figure>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs zsh">echo &quot;source &lt;(rusend completions zsh)&quot; &gt;&gt; ~/.zshrc<br>source ~/.zshrc<br></code></pre></td></tr></table></figure>
 
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs fish">rusend completions fish &gt; ~/.config/fish/completions/rusend.fish<br>source ~/.config/fish/config.fish<br></code></pre></td></tr></table></figure>
-</code></pre>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs fish">rusend completions fish &gt; ~/.config/fish/completions/rusend.fish<br>source ~/.config/fish/config.fish<br></code></pre></td></tr></table></figure>
+
 <p>在Resend控制面板中，找到<code>API Keys</code>选项，为你配置的域名生成一个新的API Key。然后在终端中运行以下命令进行配置：</p>
-<pre><code class="hljs"><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">rusend config --key re_xxxxxxxxx<br></code></pre></td></tr></table></figure>
-</code></pre>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">rusend config --key re_xxxxxxxxx<br></code></pre></td></tr></table></figure>
+
 <h3 id="③-使用-rusend-收发邮件"><a href="#③-使用-rusend-收发邮件" class="headerlink" title="③ 使用 rusend 收发邮件"></a>③ 使用 rusend 收发邮件</h3><p>详细功能请查看<a target="_blank" rel="noopener" href="https://github.com/CGH0S7/rusend">Readme</a>文档：</p>
 <p>  <img src="/images/rusendhelp1.png" srcset="/img/loading.gif" lazyload alt="rusend文档"><br>  <img src="/images/rusendhelp2.png" srcset="/img/loading.gif" lazyload alt="rusend文档"><br>  <img src="/images/rusendhelp3.png" srcset="/img/loading.gif" lazyload alt="rusend软件帮助"></p>
 <hr>
@@ -369,7 +376,7 @@
 </tr>
 <tr>
 <td>域名</td>
-<td>￥6+ &#x2F; 年</td>
+<td>约 ￥30+ &#x2F; 年</td>
 </tr>
 <tr>
 <td>rusend</td>
