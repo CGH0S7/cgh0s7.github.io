@@ -21,26 +21,27 @@
   <meta name="author" content="CGH0S7">
   <meta name="keywords" content="">
   
-    <meta name="description" content="打算开一个坑记录这么久以来的Archlinux系统性能和操作体验优化经验 本文章长期更新  更换CachyOS优化仓库通过 CachyOS 优化仓库获取 CPU 指令集级优化（x86-64-v3&#x2F;v4&#x2F;zen4）的软件包，提升 Arch Linux 系统性能。该仓库提供 PGO&#x2F;LTO&#x2F;BOLT 编译优化及持续维护的定制软件包。  ▎前置准备⚠️ 兼容性警告">
+    <meta name="description" content="失踪人口回归 👋如果你只想「有个能用的 @自己域名 邮箱」，却懒得租服务器、折腾 Postfix、跟 25 端口斗智斗勇、花费你宝贵的💰，那这篇 15 分钟速通教程就是写给你的（当然，一点💰都不花是不可能的，你至少需要买一个域名&#x3D;)   1. 最终效果 任何前缀都能即时生成： helloworld@your.com &#x2F; fknudt@your.com &#x2F; il">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Archlinux KDE体验优化总结">
-<meta property="og:url" content="http://blog.hifuu.ink/2025/02/02/archlinux-optimization/index.html">
+<meta property="og:title" content="低成本快速搞定专属域名邮箱：从 0 到 CLI 收发只要 15 分钟">
+<meta property="og:url" content="http://blog.hifuu.ink/2025/11/15/Your-exclusive-email-address/index.html">
 <meta property="og:site_name" content="CGH0S7&#39;s Blog">
-<meta property="og:description" content="打算开一个坑记录这么久以来的Archlinux系统性能和操作体验优化经验 本文章长期更新  更换CachyOS优化仓库通过 CachyOS 优化仓库获取 CPU 指令集级优化（x86-64-v3&#x2F;v4&#x2F;zen4）的软件包，提升 Arch Linux 系统性能。该仓库提供 PGO&#x2F;LTO&#x2F;BOLT 编译优化及持续维护的定制软件包。  ▎前置准备⚠️ 兼容性警告">
+<meta property="og:description" content="失踪人口回归 👋如果你只想「有个能用的 @自己域名 邮箱」，却懒得租服务器、折腾 Postfix、跟 25 端口斗智斗勇、花费你宝贵的💰，那这篇 15 分钟速通教程就是写给你的（当然，一点💰都不花是不可能的，你至少需要买一个域名&#x3D;)   1. 最终效果 任何前缀都能即时生成： helloworld@your.com &#x2F; fknudt@your.com &#x2F; il">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://wiki.cachyos.org/_astro/logo.DVTdAJi6.svg">
-<meta property="article:published_time" content="2025-02-02T10:43:26.000Z">
-<meta property="article:modified_time" content="2025-03-10T15:07:26.618Z">
+<meta property="og:image" content="http://blog.hifuu.ink/images/resendofficial.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/rusendhelp1.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/rusendhelp2.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/rusendhelp3.png">
+<meta property="article:published_time" content="2025-11-15T15:36:22.000Z">
+<meta property="article:modified_time" content="2025-11-15T16:36:44.495Z">
 <meta property="article:author" content="CGH0S7">
 <meta property="article:tag" content="技术分享">
-<meta property="article:tag" content="Archlinux">
-<meta property="article:tag" content="系统优化">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://wiki.cachyos.org/_astro/logo.DVTdAJi6.svg">
+<meta name="twitter:image" content="http://blog.hifuu.ink/images/resendofficial.png">
   
   
   
-  <title>Archlinux KDE体验优化总结 - CGH0S7&#39;s Blog</title>
+  <title>低成本快速搞定专属域名邮箱：从 0 到 CLI 收发只要 15 分钟 - CGH0S7&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -218,7 +219,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Archlinux KDE体验优化总结"></span>
+            <span id="subtitle" data-typed-text="低成本快速搞定专属域名邮箱：从 0 到 CLI 收发只要 15 分钟"></span>
           
         </div>
 
@@ -229,8 +230,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-02-02 18:43" pubdate>
-          2025年2月2日 晚上
+        <time datetime="2025-11-15 23:36" pubdate>
+          2025年11月15日 晚上
         </time>
       </span>
     
@@ -241,7 +242,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          385 字
+          746 字
         
       </span>
     
@@ -252,7 +253,7 @@
         
         
         
-          4 分钟
+          7 分钟
         
       </span>
     
@@ -289,46 +290,99 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Archlinux KDE体验优化总结</h1>
+            <h1 id="seo-header">低成本快速搞定专属域名邮箱：从 0 到 CLI 收发只要 15 分钟</h1>
             
             
               <div class="markdown-body">
                 
-                <p>打算开一个坑记录这么久以来的Archlinux系统性能和操作体验优化经验</p>
-<p>本文章长期更新</p>
+                <blockquote>
+<p>失踪人口回归 👋<br>如果你只想「有个能用的 <code>@自己域名</code> 邮箱」，却懒得租服务器、折腾 Postfix、跟 25 端口斗智斗勇、花费你宝贵的💰，那这篇 15 分钟速通教程就是写给你的（当然，一点💰都不花是不可能的，你至少需要买一个域名&#x3D;)</p>
+</blockquote>
 <hr>
-<h2 id="更换CachyOS优化仓库"><a href="#更换CachyOS优化仓库" class="headerlink" title="更换CachyOS优化仓库"></a>更换CachyOS优化仓库</h2><p><img src="https://wiki.cachyos.org/_astro/logo.DVTdAJi6.svg" srcset="/img/loading.gif" lazyload alt="CachyOS Logo"><br>通过 CachyOS 优化仓库获取 CPU 指令集级优化（x86-64-v3&#x2F;v4&#x2F;zen4）的软件包，提升 Arch Linux 系统性能。该仓库提供 PGO&#x2F;LTO&#x2F;BOLT 编译优化及持续维护的定制软件包。</p>
-<hr>
-<h3 id="▎前置准备"><a href="#▎前置准备" class="headerlink" title="▎前置准备"></a>▎前置准备</h3><p><strong>⚠️ 兼容性警告</strong>  </p>
-<ol>
-<li>可以先通过命令<code>/usr/lib64/ld-linux-x86-64.so.2 --help | grep -i x86-64-</code>来查看你的处理器支持等级。</li>
-<li>注意添加 <code>cachyos</code> 主仓库会替换官方 pacman 仓库（含 INSTALLED_FROM 等特性）  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">cachyos-v3    <span class="hljs-comment"># AVX2 优化</span><br>cachyos-v4    <span class="hljs-comment"># AVX512 优化</span><br>cachyos-extra <span class="hljs-comment"># 扩展软件包</span><br></code></pre></td></tr></table></figure></li>
-<li>CachyOS官方在前段时间专门推出了针对 AMD 的Zen4和Zen5架构优化仓库，如有需要可以<a target="_blank" rel="noopener" href="https://discuss.cachyos.org/t/zen-4-5-optimized-repository-testing/713/7">点击这里</a>查看如何部署。</li>
-</ol>
-<hr>
-<h3 id="▎仓库配置流程"><a href="#▎仓库配置流程" class="headerlink" title="▎仓库配置流程"></a>▎仓库配置流程</h3><h4 id="▶-自动配置脚本"><a href="#▶-自动配置脚本" class="headerlink" title="▶ 自动配置脚本"></a>▶ 自动配置脚本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 下载配置工具</span><br>curl -LO https://mirror.cachyos.org/cachyos-repo.tar.xz<br>tar xvf cachyos-repo.tar.xz &amp;&amp; <span class="hljs-built_in">cd</span> cachyos-repo<br><br><span class="hljs-comment"># 执行自动配置（自动检测 CPU 指令集）</span><br>sudo ./cachyos-repo.sh<br></code></pre></td></tr></table></figure>
-<p>📌 脚本特性：  </p>
-<ul>
-<li>自动备份 <code>/etc/pacman.conf</code>  </li>
-<li>智能匹配最优指令集版本 (v3&#x2F;v4)  </li>
-<li>支持 x86_64 和 aarch64 架构</li>
+<h2 id="1-最终效果"><a href="#1-最终效果" class="headerlink" title="1. 最终效果"></a>1. 最终效果</h2><ul>
+<li>任何前缀都能即时生成： <code>helloworld@your.com</code> &#x2F; <code>fknudt@your.com</code> &#x2F; <code>ilovethu@your.com</code>  </li>
+<li>在终端里使用命令收发邮件，无需专门打开各种邮件客户端。</li>
 </ul>
-<h4 id="▶-手动配置方式"><a href="#▶-手动配置方式" class="headerlink" title="▶ 手动配置方式"></a>▶ 手动配置方式</h4><ol>
-<li><p>编辑 pacman.conf</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-comment"># 在 /etc/pacman.conf 末尾添加（示例为 AVX2 优化）</span><br><span class="hljs-section">[cachyos-v3]</span><br><span class="hljs-attr">SigLevel</span> = Optional TrustAll<br><span class="hljs-attr">Include</span> = /etc/pacman.d/cachyos-v3<br></code></pre></td></tr></table></figure>
+<p>整套方案 <strong>只花域名钱</strong>（￥6-￥10 &#x2F; 年），<strong>0 服务器 0 运维</strong>，完全白嫖 Resend 免费额度。</p>
+<hr>
+<h2 id="2-准备工作（2-min）"><a href="#2-准备工作（2-min）" class="headerlink" title="2. 准备工作（2 min）"></a>2. 准备工作（2 min）</h2><table>
+<thead>
+<tr>
+<th>资源</th>
+<th>用途</th>
+<th>费用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>一枚域名</td>
+<td>做邮箱后缀</td>
+<td>￥30+ &#x2F; 年（阿里云 Namecheap Cloudflare 均可）</td>
+</tr>
+<tr>
+<td>Resend 账号</td>
+<td>托管邮服</td>
+<td>免费 100 封 &#x2F; 天</td>
+</tr>
+</tbody></table>
+<p><img src="/images/resendofficial.png" srcset="/img/loading.gif" lazyload alt="Resend文档"></p>
+<hr>
+<h2 id="3-3-步完成域名绑定（5-min）"><a href="#3-3-步完成域名绑定（5-min）" class="headerlink" title="3. 3 步完成域名绑定（5 min）"></a>3. 3 步完成域名绑定（5 min）</h2><ol>
+<li><p>登录 <a target="_blank" rel="noopener" href="https://resend.com/">Resend</a> → <strong>Domains</strong> → <strong>Add Domain</strong><br>输入 <code>your.com</code> → 得到一组 DNS 记录（TXT + MX + DKIM）。  </p>
 </li>
-<li><p>✅同步仓库数据库</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -Syu<br></code></pre></td></tr></table></figure></li>
+<li><p>去域名注册商把记录全部照抄粘贴，保存。<br>⚠️ 只需改 <strong>DNS 解析</strong>，不用转 nameserver，1 min 搞定。  </p>
+</li>
+<li><p>回到 Resend 点 <strong>Verify</strong>，状态变绿 ✅ 即生效（实测 30s-3min，并不会像官方说的有可能要24小时）。</p>
+</li>
 </ol>
 <hr>
-<h3 id="▎仓库卸载方法"><a href="#▎仓库卸载方法" class="headerlink" title="▎仓库卸载方法"></a>▎仓库卸载方法</h3><h4 id="▶-自动卸载"><a href="#▶-自动卸载" class="headerlink" title="▶ 自动卸载"></a>▶ 自动卸载</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> cachyos-repo<br>sudo ./cachyos-repo.sh --remove<br></code></pre></td></tr></table></figure>
+<h2 id="4-无限别名-转发（立刻能用）"><a href="#4-无限别名-转发（立刻能用）" class="headerlink" title="4. 无限别名 + 转发（立刻能用）"></a>4. 无限别名 + 转发（立刻能用）</h2><p>Resend 对「 catch-all 」免费！<br>意思是你 <strong>不用提前新建账号</strong>，任何 <code>@your.com</code> 的信都会飞进你设定的转发地址。</p>
+<hr>
+<h2 id="5-终端发邮件（可选，8-min-部署）"><a href="#5-终端发邮件（可选，8-min-部署）" class="headerlink" title="5. 终端发邮件（可选，8 min 部署）"></a>5. 终端发邮件（可选，8 min 部署）</h2><p>网页收发邮件显然太麻烦，我用<strong>rust</strong>写了个可爱的 CLI 客户端 <a target="_blank" rel="noopener" href="https://github.com/CGH0S7/rusend"><strong>rusend</strong></a>，基于 Resend 官方 API，支持发送与查收邮件非常方便。（好吧其实是Gemini小姐帮忙写的@@）</p>
+<h3 id="①-1-下载预构建可执行文件"><a href="#①-1-下载预构建可执行文件" class="headerlink" title="①-1 下载预构建可执行文件"></a>①-1 下载预构建可执行文件</h3><p>在<a target="_blank" rel="noopener" href="https://github.com/CGH0S7/rusend/releases/tag/stable">Github Releases</a>里下载对应系统的预编译包，解压放到 <code>$PATH</code> 目录下即可。</p>
+<h3 id="①-2-源码构建"><a href="#①-2-源码构建" class="headerlink" title="①-2 源码构建"></a>①-2 源码构建</h3><p>下载并编译rusend，准备好rust工具链，具体编译命令如下：</p>
+<pre><code class="hljs"> <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">git <span class="hljs-built_in">clone</span> https://github.com/CGH0S7/rusend.git<br><span class="hljs-built_in">cd</span> rusend<br>cargo build --release<br></code></pre></td></tr></table></figure>
+</code></pre>
+<p>将<code>rusend</code>二进制文件移动到系统的<code>$PATH</code>目录下，例如<code>/usr/local/bin</code>。</p>
+<h3 id="②-补全-API-Key配置"><a href="#②-补全-API-Key配置" class="headerlink" title="② 补全 &amp; API Key配置"></a>② 补全 &amp; API Key配置</h3><p>使用下面的命令进行命令行补全配置：</p>
+<pre><code class="hljs"><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;source &lt;(rusend completions bash)&quot;</span> &gt;&gt; ~/.bashrc<br><span class="hljs-built_in">source</span> ~/.bashrc<br></code></pre></td></tr></table></figure>
 
-<h4 id="▶-手动卸载"><a href="#▶-手动卸载" class="headerlink" title="▶ 手动卸载"></a>▶ 手动卸载</h4><ol>
-<li>删除 pacman.conf 中的 cachyos 仓库段</li>
-<li>移除配置文件<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo <span class="hljs-built_in">rm</span> -rf /etc/pacman.d/cachyos*<br></code></pre></td></tr></table></figure></li>
-</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs zsh">echo &quot;source &lt;(rusend completions zsh)&quot; &gt;&gt; ~/.zshrc<br>source ~/.zshrc<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs fish">rusend completions fish &gt; ~/.config/fish/completions/rusend.fish<br>source ~/.config/fish/config.fish<br></code></pre></td></tr></table></figure>
+</code></pre>
+<p>在Resend控制面板中，找到<code>API Keys</code>选项，为你配置的域名生成一个新的API Key。然后在终端中运行以下命令进行配置：</p>
+<pre><code class="hljs"><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">rusend config --key re_xxxxxxxxx<br></code></pre></td></tr></table></figure>
+</code></pre>
+<h3 id="③-使用-rusend-收发邮件"><a href="#③-使用-rusend-收发邮件" class="headerlink" title="③ 使用 rusend 收发邮件"></a>③ 使用 rusend 收发邮件</h3><p>详细功能请查看<a target="_blank" rel="noopener" href="https://github.com/CGH0S7/rusend">Readme</a>文档：</p>
+<p>  <img src="/images/rusendhelp1.png" srcset="/img/loading.gif" lazyload alt="rusend文档"><br>  <img src="/images/rusendhelp2.png" srcset="/img/loading.gif" lazyload alt="rusend文档"><br>  <img src="/images/rusendhelp3.png" srcset="/img/loading.gif" lazyload alt="rusend软件帮助"></p>
 <hr>
-<h2 id="内核更换"><a href="#内核更换" class="headerlink" title="内核更换"></a>内核更换</h2><h2 id="KDE-配置"><a href="#KDE-配置" class="headerlink" title="KDE 配置"></a>KDE 配置</h2>
+<h2 id="6-成本-限额总结"><a href="#6-成本-限额总结" class="headerlink" title="6. 成本 &amp; 限额总结"></a>6. 成本 &amp; 限额总结</h2><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>免费额度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Resend</td>
+<td>100 封 &#x2F; 天</td>
+</tr>
+<tr>
+<td>域名</td>
+<td>￥6+ &#x2F; 年</td>
+</tr>
+<tr>
+<td>rusend</td>
+<td>开源</td>
+</tr>
+</tbody></table>
+<p>非主力邮箱场景下完全够用，不建议用于接收各种广告或更新推送。</p>
+<p>若想要「匿名转发」隐藏真实地址，可以再套一层 <a target="_blank" rel="noopener" href="https://addy.io/">AnonAddy</a> 即可，本文不展开。</p>
+<hr>
+<h2 id="7-结语"><a href="#7-结语" class="headerlink" title="7. 结语"></a>7. 结语</h2><p>以上就是「低成本快速拥有个人专属域名邮箱」的全部流程。</p>
+<p>零服务器、零运维、全平台通用，甚至能在手机 Termux 里发邮。</p>
+<p>如果能帮到你，去 <a target="_blank" rel="noopener" href="https://github.com/CGH0S7/rusend">rusend</a> 点个 ⭐ 当稿费吧～😉</p>
+
                 
               </div>
             
@@ -342,10 +396,6 @@
       
         <a href="../../../../tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" class="print-no-link">#技术分享</a>
       
-        <a href="../../../../tags/Archlinux/" class="print-no-link">#Archlinux</a>
-      
-        <a href="../../../../tags/%E7%B3%BB%E7%BB%9F%E4%BC%98%E5%8C%96/" class="print-no-link">#系统优化</a>
-      
     </div>
   
 </div>
@@ -356,8 +406,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Archlinux KDE体验优化总结</div>
-      <div>http://blog.hifuu.ink/2025/02/02/archlinux-optimization/</div>
+      <div>低成本快速搞定专属域名邮箱：从 0 到 CLI 收发只要 15 分钟</div>
+      <div>http://blog.hifuu.ink/2025/11/15/Your-exclusive-email-address/</div>
     </div>
     <div class="license-meta">
       
@@ -369,7 +419,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年2月2日</div>
+          <div>2025年11月15日</div>
         </div>
       
       
@@ -401,18 +451,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="../../23/clonezilla/" title="使用Clonezilla备份和克隆系统">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">使用Clonezilla备份和克隆系统</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="../../../../2024/12/13/zellij-helix/" title="命令行编辑器的优雅新选择">
-                        <span class="hidden-mobile">命令行编辑器的优雅新选择</span>
+                      <a href="../../../07/13/kritabest/" title="Krita 为什么是神？">
+                        <span class="hidden-mobile">Krita 为什么是神？</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
