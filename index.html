@@ -1,0 +1,824 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/hifuu.png">
+  <link rel="icon" href="/img/hifuu.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="CGH0S7">
+  <meta name="keywords" content="">
+  
+    <meta property="og:type" content="website">
+<meta property="og:title" content="CGH0S7&#39;s Blog">
+<meta property="og:url" content="http://blog.hifuu.ink/index.html">
+<meta property="og:site_name" content="CGH0S7&#39;s Blog">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="CGH0S7">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>CGH0S7&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.hifuu.ink","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 100vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">
+      <strong>CGH0S7&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="index.html" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/gensokyo.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="The Gensokyo the Gods Loved"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+        <div class="scroll-down-bar">
+          <i class="iconfont icon-arrowdown"></i>
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          style="margin-top: 0">
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="2026/05/30/One-Last-ASC/" target="_self">
+          其作始也简，其将毕也必巨 - 回顾64-Bit Brainstorm三年ASC征程
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="2026/05/30/One-Last-ASC/" target="_self">
+        <div>
+          我的最后一次ASC之旅终于结束了，回望过去如今我想表达的唯有感激，不仅是对与我并肩作战的队友，还有参赛过程中其他战队的朋友们，以及辛苦付出的组委会老师们。正好借着这次机会，我也想回顾一下这三年来的ASC参赛经历，分享一些个人的感悟和体会。  ASC24：从零开始的挑战2023年年末，一位在网上认识的神秘学长lzd突然发给我一张招新海报，说是有个非常好玩的比赛正在进行校队招新赛让我也来试试，结果这一
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2026-05-30 10:10" pubdate>
+              2026-05-30
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="tags/%E7%94%9F%E6%B4%BB/">#生活</a>
+            
+              <a href="tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+            
+              <a href="tags/%E7%AB%9E%E8%B5%9B/">#竞赛</a>
+            
+              <a href="tags/ASC/">#ASC</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="2026/01/18/os-optimization/" target="_self">
+          面向竞赛环境的Linux系统性能调优实践
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="2026/01/18/os-optimization/" target="_self">
+        <div>
+          最初，我的想法是现在大伙都有AI工具了码力差距将不再像过去那么明显，这种情况下系统调优一定是有实战价值的。尤其是在面对极端计算任务时，操作系统内核的调度策略和中断处理方式对性能必然有着直接且显著的影响。为了在计算密集型任务（如本次天体物理模拟）中获得极致的性能与确定性，我作为运维必须尝试对Linux内核进行深度定制与隔离。 本文将详细记录我在Intel Sapphire Rapids平台（Dual
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2026-01-18 12:14" pubdate>
+              2026-01-18
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB%EF%BC%8CHPC/" class="category-chain-item">技术分享，HPC</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+            
+              <a href="tags/%E7%B3%BB%E7%BB%9F%E4%BC%98%E5%8C%96/">#系统优化</a>
+            
+              <a href="tags/HPC/">#HPC</a>
+            
+              <a href="tags/Linux%E5%86%85%E6%A0%B8/">#Linux内核</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="2025/11/15/Your-exclusive-email-address/" target="_self">
+          低成本快速搞定专属域名邮箱：从 0 到 CLI 收发只要 15 分钟
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="2025/11/15/Your-exclusive-email-address/" target="_self">
+        <div>
+          失踪人口回归 👋如果你只想「有个能用的 @自己域名 邮箱」，却懒得租服务器、折腾 Postfix、跟 25 端口斗智斗勇、花费你宝贵的💰，那这篇 15 分钟速通教程就是写给你的（当然，一点💰都不花是不可能的，你至少需要买一个域名&#x3D;)   1. 最终效果 任何前缀都能即时生成： helloworld@your.com &#x2F; fknudt@your.com &#x2F; il
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-15 23:36" pubdate>
+              2025-11-15
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">#技术分享</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="2025/07/13/kritabest/" target="_self">
+          Krita 为什么是神？
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="2025/07/13/kritabest/" target="_self">
+        <div>
+          在谈论这个问题之前，我想先说说其他软件相较于 Krita 究竟差在了哪里。  首先是犯下傲慢之罪的 Adobe Photoshop依靠其在商业设计领域的绝对霸主地位赢来的市场，却不愿真正听取数字绘画创作者的声音！这种傲慢的软件注定无法触及绘画的灵魂。事实也是如此，因为高昂的订阅费用和臃肿的体量，以及对触摸屏设备支持的迟滞，Photoshop 在许多数字画师心中的地位一直在走下坡路，最终沦为商业生
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-07-13 19:46" pubdate>
+              2025-07-13
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="tags/%E7%94%9F%E6%B4%BB/">#生活</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="2025/05/23/gcc15restrict/" target="_self">
+          GCC15 函数指针类型检查可能导致编译错误
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="2025/05/23/gcc15restrict/" target="_self">
+        <div>
+          今天准备继续做一下OS课的实验，实验代码当然是基于著名的xv6项目，意外地发现原本明明正常运行的系统再次构建时却失败了，具体报错如下： 123456789user/usertests.c:2598:4: error: initialization of &#x27;void (*)(char *)&#x27; from incompatible pointer type &#x27;void (*
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-05-23 21:49" pubdate>
+              2025-05-23
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="2025/05/22/fortune/" target="_self">
+          Random Fortune
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="2025/05/22/fortune/" target="_self">
+        <div>
+          Keep peace of mind with fortune… ❯ fortune The nice thing about standards is that there are so many of them to choosefrom.                – Andrew S. Tanenbaum ❯ fortune 看蓬门秋草，年年破巷，疏窗细雨，夜夜孤灯。    – 郑板桥
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-05-22 15:29" pubdate>
+              2025-05-22
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="tags/%E6%97%A5%E5%BF%97/">#日志</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="2025/05/21/2025-5-21/" target="_self">
+          小满随笔——决断
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="2025/05/21/2025-5-21/" target="_self">
+        <div>
+          Lost Days of Warmth - Yasunori Mitsuda             我本以为自己已经有足够的勇气和平静的心态去面对生活里的各种变故了，即便如此今天还是被突如其来的噩耗痛击得面目全非。 辛辛苦苦和队友准备了大半年的ASC25失利，我想着以后回过头来看也不算什么以最快的速度调整心态;回校后一来就是各种烂摊子，写不完的作业补不完的课程，还有被
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-05-21 19:59" pubdate>
+              2025-05-21
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="tags/%E6%97%A5%E5%BF%97/">#日志</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="2025/03/10/searxng/" target="_self">
+          相见恨晚的 SearXNG：打造私人搜索引擎全指南
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="2025/03/10/searxng/" target="_self">
+        <div>
+          厌倦了商业搜索引擎的广告追踪？ 受够技术社区被 SEO 污染的水文？希望搜索结果里尽量不要呈现C*DN等平台的低质内容？这款开源元搜索引擎 SearXNG 现在让我直呼真香爱不释手，使用频率远超 Nextcloud 等自建服务。  ▍ 为什么选择 SearXNG？✅ 核心优势矩阵      特性 实现方式 用户收益    隐私保护 匿名聚合第三方结果 无搜索历史追踪   结果去商业化 过滤 SEO
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-03-10 22:55" pubdate>
+              2025-03-10
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">#技术分享</a>
+            
+              <a href="tags/%E5%BC%80%E6%BA%90%E5%B7%A5%E5%85%B7/">#开源工具</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="2025/03/10/archlinux-game-fix/" target="_self">
+          Archlinux问题记录
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="2025/03/10/archlinux-game-fix/" target="_self">
+        <div>
+          前几周在使用 Arch Linux 时遇到了两个有趣的问题，顺手记录在此，或许能帮到有类似困扰的朋友～  1. 显卡功耗上限解锁问题现象使用 nvidia-smi 查看显卡功耗时，发现最大功耗被限制在 55W，性能无法完全释放： 1nvidia-smi  # 输出显示 Power Limit: 55.00 W  解决方案启用 NVIDIA 动态功耗管理服务即可： 1sudo systemctl e
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-03-10 22:47" pubdate>
+              2025-03-10
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="tags/%E7%94%9F%E6%B4%BB/">#生活</a>
+            
+              <a href="tags/Archlinux/">#Archlinux</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="2025/02/24/nudtbomblab/" target="_self">
+          高地特供版CSAPP Bomb Lab全流程攻略
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="2025/02/24/nudtbomblab/" target="_self">
+        <div>
+          这篇文章记录高地CSAPP课程Bomblab实验操作流程，仅供参考交流（答案是随机生成的和学号相关）。 笔者实验环境为Archlinux&#x2F;CachyOS，使用lldb作为调试器（和gdb操作差不多），其余用到的工具主要为objdump，strings，neovim&#x2F;helix和zellij，全程开源环境不使用IDA。 Phase_1静态分析strings扫描1strings b
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-02-24 15:09" pubdate>
+              2025-02-24
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+            
+              <a href="tags/%E7%94%9F%E6%B4%BB/">#生活</a>
+            
+              <a href="tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+
+
+  <nav aria-label="navigation">
+    <span class="pagination" id="pagination">
+      <span class="page-number current">1</span><a class="page-number" href="page/2/#board">2</a><a class="page-number" href="page/3/#board">3</a><a class="extend next" rel="next" href="page/2/#board"><i class="iconfont icon-arrowright"></i></a>
+    </span>
+  </nav>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/CGH0S7" target="_blank" rel="nofollow noopener"><span>CGH0S7</span></a> 
+    </div>
+  
+
+  <!-- 添加 logo 贴纸 -->
+  <div class="footer-logos">
+  <a href="https://archlinux.org" target="_blank">
+    <img src="/images/archlinux-logo.png" srcset="/img/loading.gif" lazyload alt="Arch Linux Logo" width="80">
+  </a>
+  <a href="https://kde.org" target="_blank">
+    <img src="/images/built_on_the_kde_platform.png" srcset="/img/loading.gif" lazyload alt="Built on the KDE Platform" width="80">
+  </a>
+  <a href="https://amd.com" target="_blank">
+    <img src="/images/amd.png" srcset="/img/loading.gif" lazyload alt="AMD Logo" width="80">
+  </a>
+  <a href="https://www.asc-events.net/" target="_blank">
+    <img src="/images/asc-events.png" srcset="/img/loading.gif" lazyload alt="ASC-Events" width="80">
+  </a>
+  <a href="https://notbyai.fyi/" target="_blank">
+    <img src="/images/Written-By-Human-Not-By-AI-Badge-white@2x.png" srcset="/img/loading.gif" lazyload alt="Written By Human Not By AI Badge" width="80">
+  </a>
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

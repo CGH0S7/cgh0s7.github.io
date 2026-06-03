@@ -1,0 +1,628 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>其作始也简，其将毕也必巨 - 回顾64-Bit Brainstorm三年ASC征程</title>
+    <link href="/2026/05/30/One-Last-ASC/"/>
+    <url>/2026/05/30/One-Last-ASC/</url>
+    
+    <content type="html"><![CDATA[<p>我的最后一次ASC之旅终于结束了，回望过去如今我想表达的唯有感激，不仅是对与我并肩作战的队友，还有参赛过程中其他战队的朋友们，以及辛苦付出的组委会老师们。正好借着这次机会，我也想回顾一下这三年来的ASC参赛经历，分享一些个人的感悟和体会。</p><p><img src="/images/MyASCStory/MyASCStory.jpg" alt="充满回忆的ASC照片墙"></p><h3 id="ASC24：从零开始的挑战"><a href="#ASC24：从零开始的挑战" class="headerlink" title="ASC24：从零开始的挑战"></a>ASC24：从零开始的挑战</h3><p>2023年年末，一位在网上认识的神秘学长lzd突然发给我一张招新海报，说是有个非常好玩的比赛正在进行校队招新赛让我也来试试，结果这一试直接进入了64-bit Brainstorm战队并开启了我长达三年的ASC之旅。</p><p>进入超算队后我听从学长的建议花了一个多月去自学MPI和CUDA编程。经过一段时间学习准备，ASC24的预赛赛题发布了，根据任务安排，我和另一位学长hxh分配到了OpenCAEPoro这个多相多组分渗流模拟科学计算程序的优化任务。依稀记得当时因为这个程序本身依赖较多还要手动构建不少软件导致我们花了三天才成功把这个程序的baseline跑起来，这让我第一次真正接触到了科学计算程序的复杂性和挑战性。之后我们又花了数周时间对这个程序进行了性能分析和优化，xh学长负责算法优化进行了一些手动循环展开和向量化以及一些算子库的高性能版本替代，我则负责一些算子的GPU移植工作并提供了快速fallback回CPU的宏控开关以防万一，预赛阶段我们最终实现的加速比只有1.3x不过好在也顺利进入了决赛。</p><p><img src="/images/MyASCStory/ASC24-1.jpg" alt="ASC24决赛现场"></p><p>决赛阶段是我最难忘的部分，我第一次见识到了完整的小型集群搭建维护流程，lzd学长简直像个超人一样什么都懂，他和cyq学长双人完成了整个集群的部署，系统方面有什么问题找他都能解决，功耗过高他也有各种办法来控制，真是太厉害了。终于到了OpenCAEPoro测例发布这天，决赛case可以说相当刁钻记得当时很多团队都卡在第一个测例无法运行，后面几个测例由于规模远远超过预赛测例导致我们的GPU版本直接崩溃，危急情况下，我和xh学长迅速做出决定马上fallback回CPU版本把结果运行出来，在运行后几个测例的同时，我们也在空闲节点排查第一个测例的问题，结果发现只要把我们选用的nvhpc编译链完全回退到gcc就能正确成功运行第一个测例了。最后结果也是非常出人意料，我们只是把所有测例运行完了实际没有特别明显的优化却在这道题上取得了第二名的成绩，通过赛后交流才知道有些队伍虽然有很快的加速比，但是因为精度无法通过所以没能拿到相应的分数。</p><p><img src="/images/MyASCStory/ASC24-2.jpg" alt="ASC24赛后合影"></p><p>这一年我们的总成绩是rank 5，是历年来最好的一次，大家都非常开心，晚宴阶段我也认识了非常多其他学校的新朋友并约定来年再见。值得一提的是，这一年由于AI工具还没发展起来，不管是程序排错还是性能优化我们都还是古法处理，现在身处Agent时代回想起来那段人工手动处理问题的经历真的是非常不易。</p><h3 id="ASC25：遭遇挫折的成长"><a href="#ASC25：遭遇挫折的成长" class="headerlink" title="ASC25：遭遇挫折的成长"></a>ASC25：遭遇挫折的成长</h3><p>时间转眼来到2024下半年，在新学期的战队招新赛中我们又迎来了三位优秀的新队员分别是wlx, yx和zqr。此时lzd学长面临毕业，由hxh和我领衔和三位新队员组建了一支新的超算团队出征ASC25。这一年我正值大二课业最为繁重的时候，因此在ASC25赛题发布后我被分配到的任务只有集群运维和HPL&#x2F;HPCG基准测试工作。为了尽可能更多地参与贡献，我在课余时间也耗费了不少精力研究系统调优并产生了一些自以为不错的方案，结果却是埋下了非常深的隐患让我赛后十分后悔。</p><p>这一年我给集群选用的发行版是Intel出品的Clear Linux（非常戏谑的是ASC25结束后不久Intel就宣布终止此项目并关闭了Clear Linux官网），当时我由于网络上的一些宣传过于迷信这个发行版的性能表现却忽视了其兼容性带来的问题，预赛阶段我们的机时大部分分给了AlphaFold和m5c两个赛题，直到最后才进行HPL&#x2F;HPCG测试，这时候我才发现Clear Linux软件源里提供的IB驱动和nvidia-peermem模块完全不兼容并且没有办法修复，而Nvidia官方的IB驱动也不支持Clear Linux无法在这个发行版上安装，为了解决这个问题我最终配置了Rocky + Clear这个非常抽象的双系统方案，虽然最终解决了兼容性问题但也为队友们的工作造成了不少麻烦。好在队友都非常给力，至少在预赛阶段我们的AlphaFold和m5c赛题都有亮眼表现，以不错的成绩再次进入了决赛。</p><p><img src="/images/MyASCStory/ASC25-2.jpg" alt="ASC25来到美丽的青海大学"></p><p>来到青海大学，我们从一开始就各种问题不断，先是装完机发现IB起不来，排查了快一个小时发现是Clear Linux起不了opensm服务只能单开一个节点用Rocky Linux启动。而后又是HPL测试结果一直异常，我们只能用双机跑出正常结果超过双机就会性能暴跌。最后更严重的是功耗不知为何完全压不下来即便所有核心都调整频率至最低。结果就是决赛正式运行阶段的两天我们整个过程都非常崩溃，虽然有五个节点但是大部分赛题我们都只能用三节点来跑才能控制功耗不会超出4KW限制。赛后我感到非常自责，觉得自己在系统选择和功耗控制的失误给整个团队带来了很大的麻烦和压力。</p><p><img src="/images/MyASCStory/ASC25-3.jpg" alt="ASC25令我们绝望的现场"></p><p>这一年是我们表现最差的一年排名直接倒数，除了wlx负责的AlphaFold表现不错之外其他赛题得分都非常惨淡。好在队友们都非常理解和包容我，原本我打算这一年就从超算队退役，但是带着这份歉意我还是决定明年ASC26干回来争取用一个更好的结果来弥补。在AI工具方面，相比去年这一年的不同是我们在网上发现了一个叫Deepseek V2.5的国产大语言模型，其性能丝毫不逊于同期国外的大模型，我们第一次感受到了AI工具在报错分析和代码优化方面的巨大帮助。</p><p><img src="/images/MyASCStory/ASC25-4.jpg" alt="整理心情备战ASC26"></p><h3 id="ASC26：Agent时代的机遇"><a href="#ASC26：Agent时代的机遇" class="headerlink" title="ASC26：Agent时代的机遇"></a>ASC26：Agent时代的机遇</h3><p>终于来到了2025年下半年，我们在新学期的战队招新中又迎来了三位新队员分别是和我同级的dyz，计算机学院大一的qhy以及电子科学学院大二的chb。这一年是我们人力资源最为丰富的一年，lzd回归指导超算队，hxh和wlx也分别被清华大学和上海交大录取，他们作为外援继续参与到超算队的工作中，同时我们另一支参加ISC的超算队也提供了不少帮助。</p><p><img src="/images/MyASCStory/ASC26-1.jpg" alt="我们的ASC26全员合影"></p><p>这一次我的工作依旧包括系统运维和基准测试，同时还和chb一起负责了AMSS-NCKU数值相对论模拟程序的优化工作。在系统方面由于去年的经验教训我直接选择了Rocky Linux 10作为我们的操作系统，它在兼容性和稳定性方面都非常可靠没有问题。而在程序优化方面，Agent时代的到来也对我们的工作流带来了前所未有的改变，我们可以把精力更多的放在性能分析和优化思路的探索上，具体的实现细节则可以交给AI工具来完成，这大大提高了我们的效率和创新能力。在AMSS-NCKU的优化过程中，我们通过perf和vtune等工具分析了程序的性能瓶颈，发现问题主要集中在通信和访存上，而这些问题最终又主要由低效的插值函数引起，于是在预赛阶段我们针对MPI和polint相关函数做了充分的针对性优化，包括选用点对点通信和异步通信，以及插值方面调换遍历顺序和提供快路径等，最终在预赛阶段对于GW150914测例我们的每步耗时从基准14s降低到了3s，取得了非常显著的加速效果。同时在世界模型赛题上dyz和qhy也表现良好，我们得以第三次闯入决赛来到无锡学院与各路优秀的同仁汇合继续切磋交流。</p><p>进入决赛阶段，我们在AMSS-NCKU的优化工作继续进行，但是当我们继续调整优化将步时压缩到了2.6s左右之后却陷入了一个瓶颈，即接下来我们无论再改动哪里耗时都不会降低了并且还会负优化，这对我和chb造成了巨大的困扰，接近两个礼拜我们都没有任何进展，并且由于没有明显进展汇报我们还不断被无理怀疑骄傲自满，躺平摆烂以及没有理解赛题，好在有学长的鼓励支持我还是坚持了下来尽量忽略掉不合理的外部干扰继续推进工作，最终我和chb决定推翻原本思路基于现在的CPU版本进行完整的GPU重构，虽然这个决定工作量巨大但是我们觉得这是唯一有可能突破瓶颈的办法。AMSS程序本身有着大量参数支持，为了充分准备决赛测例我们自费了大量token来利用Agent进行移植工作。移植初期由于效果不明显我们又被外部质疑找错了方向，然而我和chb都对我们的GPU方案很有信心知道还有大量优化空间，最终我们在前往无锡前取得了巨大突破，GPU版本的每步耗时从2.6s降低到了0.8s多同时还支持多种参数输入，满怀着信心和期待，我们踏上了前往无锡的旅程。</p><p>来到无锡学院，相比去年一切都显得有条不紊尽在掌握，我利用clonezilla顺利完成了现场四节点装机并且功耗也完全可控不像去年难以控制，测试阶段每个赛题都进行了充分测试也不像去年磕磕绊绊。然而在正赛阶段却没有我们预期的那么容易。首先是硬件因素带来的劣势，导致我们在HPL&#x2F;HPCG，UnifoLM-WMA和AMSS-NCKU上基本丧失了竞争力；同时由于大家都有了Agent加持，每个赛题都会出现超快版本导致很多团队只能拿到基础分数，这在过去是完全不可想象的，从前的ASC哪怕优化做得没那么好，但是只要能把所有测例运行完都能拿到不错的分数，而现在只要优化水平不在第一梯队就基本拿不到分数。最终我们大概除了AMSS以外其他赛题全都没能超过10分，也没能突破ASC24的成绩记录。</p><p><img src="/images/MyASCStory/ASC26-2.jpg" alt="难忘今宵，有缘再会"></p><p>ASC26的结果对我们而言并不完美，但是其经历依然非常宝贵。ASC的意义从来都不是最终排名，而是在优化过程中的技术积累，比赛过程中的团队协作，以及赛后交流中的友谊建立，这些都是无价的财富。通过这三年的ASC经历，我不仅提升了自己的技术能力，更重要的是结识了一群志同道合的朋友，收获了许多珍贵的回忆和经验。与此同时我们也充分认识到了自己和其他优秀团队之间的差距，这些差距既有技术层面的也有资源层面的，它们都为我们提供了未来努力的方向和动力。</p><p>最后，我想对所有支持和帮助过我们的人表达最诚挚的感谢。首先是我的队友们，与你们共事让我感到无比幸运和自豪，我从未觉得上大学开心过，除了在超算队和你们一起工作的时候。其次是我在其他高校超算队尤其是齐鲁工业大学，福州大学，西北工业大学，山西大学认识的朋友们，与你们的交流和切磋让我受益匪浅，也让我感受到了ASC赛事的温暖和活力。最后是组委会的老师们，你们的辛勤付出和专业支持为大家提供了一个展示自我和提升自我的平台，非常感激你们的努力。闭幕式结束离开时碰到两位组委会老师还向我们热情告别希望明年再见，口头上我们答应了下来然而遗憾的是明年我们都要奔赴新的前程已经难以重回ASC27赛场了，但愿将来还能有机会以非参赛队员的身份继续参与到ASC的活动中来。</p><p><img src="/images/MyASCStory/ASC26-3.jpg" alt="我们的最后一张ASC合影"></p><p>虽然我们的ASC之旅已经结束了，但我相信在这个过程中建立的友谊和积累的经验将会伴随我们继续前行。在此衷心祝愿ASC赛事越办越好，培养出更多优秀的超算人才，也祝愿每一位为ASC挥洒汗水的同学都能在未来的道路上取得更大的成功！</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>生活</tag>
+      
+      <tag>学习</tag>
+      
+      <tag>竞赛</tag>
+      
+      <tag>ASC</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>面向竞赛环境的Linux系统性能调优实践</title>
+    <link href="/2026/01/18/os-optimization/"/>
+    <url>/2026/01/18/os-optimization/</url>
+    
+    <content type="html"><![CDATA[<p>最初，我的想法是现在大伙都有AI工具了码力差距将不再像过去那么明显，这种情况下系统调优一定是有实战价值的。尤其是在面对极端计算任务时，操作系统内核的调度策略和中断处理方式对性能必然有着直接且显著的影响。为了在计算密集型任务（如本次天体物理模拟）中获得极致的性能与确定性，我作为运维必须尝试对Linux内核进行深度定制与隔离。</p><p>本文将详细记录我在Intel Sapphire Rapids平台（Dual Xeon 8480P+）上进行的系统调优探索。通过内核参数隔离、用户态调度器（sched_ext）以及IRQ亲和性管理，我成功在AMSS-NCKU双黑洞模拟算例中取得了肉眼可见的性能收益。</p><h2 id="1-测试环境与硬件拓扑"><a href="#1-测试环境与硬件拓扑" class="headerlink" title="1. 测试环境与硬件拓扑"></a>1. 测试环境与硬件拓扑</h2><p>本次调优的硬件平台具备极高的并行计算能力，但NUMA架构带来的延迟敏感性也对系统配置提出了挑战：</p><ul><li><strong>CPU</strong>: 2x Intel Xeon Platinum 8480+ (Sapphire Rapids)</li><li><strong>核心配置</strong>: 单路56核心，双路共112物理核心。</li><li><strong>超线程 (Hyper-Threading)</strong>: <strong>Disabled</strong>（为了避免逻辑核争抢浮点单元及缓存资源，确保计算流水线的独占性）。</li><li><strong>GPU</strong>: 无（纯CPU计算任务）。</li></ul><p>针对该拓扑，我制定了<strong>“核心隔离（Core Isolation）”</strong>策略：将系统中断、管理进程及内核Housekeeping任务通过<code>cpuset</code>和内核参数限制在特定的少数核心上（Housekeeping Cores），将绝大多数核心完全腾空，仅运行计算任务（Isolation Cores）。</p><ul><li><strong>Housekeeping Cores</strong>: 0-3 (Socket 0), 56-59 (Socket 1) — 共8核。</li><li><strong>Isolation Cores</strong>: 4-55 (Socket 0), 60-111 (Socket 1) — 共104核，用于纯计算。</li></ul><h2 id="2-内核启动参数（Kernel-Command-Line）深度解析"><a href="#2-内核启动参数（Kernel-Command-Line）深度解析" class="headerlink" title="2. 内核启动参数（Kernel Command Line）深度解析"></a>2. 内核启动参数（Kernel Command Line）深度解析</h2><p>首先需要确定的是这次我将选择Rockylinux 10作为操作系统基础，内核版本为6.12是首个支持sched_ext调度器的稳定版本，并且Rockylinux 10首次完全基于x86-64-v3构建，相比其他发行版有着必然的性能优势，而少数比它性能更好的发行版（CachyOS和已经逝世的Clearlinux）又没它稳定还不受nvidia ofed驱动支持，考虑到这些因素我不会多看其他任何发行版一秒。（现在都是2026年了坚决抵制CentOS 7&#x2F;8或Rockylinux 8信徒遗老，这么老的内核挂个exFAT硬盘传东西都费劲）。</p><p>为了实现我预期的隔离策略，我使用grubby在GRUB配置中启用了以下内核参数。这些参数共同构成了一个低延迟、低抖动的运行环境。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">transparent_hugepage=never iommu=pt mitigations=off \<br>nohz_full=4-55,60-111 rcu_nocbs=4-55,60-111 \<br>isolcpus=managed_irq,4-55,60-111<br></code></pre></td></tr></table></figure><h3 id="2-1-内存与IO子系统优化"><a href="#2-1-内存与IO子系统优化" class="headerlink" title="2.1 内存与IO子系统优化"></a>2.1 内存与IO子系统优化</h3><ul><li><strong><code>transparent_hugepage=never</code></strong>: 禁用透明大页（THP）。虽然THP能减少TLB Miss，但在高强度的随机内存访问或频繁申请释放场景下，THP的后台合并线程（khugepaged）会引入不可预测的延迟抖动（Jitter）。</li><li><strong><code>iommu=pt</code></strong>: 将IOMMU设置为Pass-Through模式。这允许设备在DMA传输时直接使用物理地址，绕过IOMMU的地址转换层，显著降低了IO密集型操作的CPU开销，同时保留了IOMMU的基本功能。</li></ul><h3 id="2-2-安全缓解措施禁用"><a href="#2-2-安全缓解措施禁用" class="headerlink" title="2.2 安全缓解措施禁用"></a>2.2 安全缓解措施禁用</h3><ul><li><strong><code>mitigations=off</code></strong>(让CPU回归其原本的样子): 该参数关闭了针对Spectre、Meltdown等侧信道攻击的所有CPU漏洞缓解措施。这些缓解措施通常涉及频繁的页表隔离（PTI）和间接分支预测限制，在旧时代这会带来非常明显的性能损耗（通常在15%-25%之间），但是在今天能够提供的性能提升根据之前不知道在哪里看到的Intel测评已经不到5%了。在追求极致速度的物理隔离环境中，我还是要物尽其用，认为关闭它们是提升IPC（Instructions Per Cycle）的必要手段。</li></ul><h3 id="2-3-核心隔离与时钟中断消除-核心措施"><a href="#2-3-核心隔离与时钟中断消除-核心措施" class="headerlink" title="2.3 核心隔离与时钟中断消除 (核心措施)"></a>2.3 核心隔离与时钟中断消除 (核心措施)</h3><ul><li><strong><code>nohz_full=4-55,60-111</code></strong>: 启用Full Dynticks模式。在指定的核心上，如果运行队列中只有一个任务（即我们的计算进程），内核将停止发送调度时钟中断（Tick）。这消除了周期性的上下文切换干扰，实现了“无干扰（Tickless）”执行。</li><li><strong><code>rcu_nocbs=4-55,60-111</code></strong>: 将指定核心上的RCU（Read-Copy-Update）回调函数卸载到非隔离核心（Housekeeping cores）的线程中执行。这防止了RCU软中断打断关键计算路径。</li><li><strong><code>isolcpus=managed_irq,4-55,60-111</code></strong>: 将指定核心从内核的通用SMP均衡调度器中移除，确保普通进程不会被随机调度到这些核心上。</li><li><strong><code>managed_irq</code></strong> 标志进一步指示内核尽量避免将受管中断（Managed Interrupts）分配给这些核心，为后续的用户态中断控制打下基础。</li></ul><h2 id="3-用户态环境与调度优化"><a href="#3-用户态环境与调度优化" class="headerlink" title="3. 用户态环境与调度优化"></a>3. 用户态环境与调度优化</h2><p>除了内核层面的静态配置，运行时的动态调优同样关键。</p><h3 id="3-1-基础系统调优-tuned"><a href="#3-1-基础系统调优-tuned" class="headerlink" title="3.1 基础系统调优 (tuned)"></a>3.1 基础系统调优 (<code>tuned</code>)</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">tuned-adm profile hpc-compute<br></code></pre></td></tr></table></figure><p>启用RedHat系的<code>hpc-compute</code>配置文件。该Profile会自动调整虚拟内存参数（如<code>vm.dirty_ratio</code>）、网络栈缓冲区大小以及CPU的电源管理策略（强制最大C-State为C1或C0），确保CPU始终处于高性能状态，避免频率升降带来的延迟。</p><h3 id="3-2-scx调度器：sched-ext-scx-tickless"><a href="#3-2-scx调度器：sched-ext-scx-tickless" class="headerlink" title="3.2 scx调度器：sched_ext (scx_tickless)"></a>3.2 scx调度器：sched_ext (<code>scx_tickless</code>)</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">/usr/local/bin/scx_tickless -m 0x0F0000000000000F<br></code></pre></td></tr></table></figure><p>利用较新的Linux内核特性（BPF-based extensible scheduler class），我引入了<code>scx_tickless</code>调度器。</p><ul><li>该调度器由英伟达工程师设计，通过eBPF程序接管调度决策，相比完全公平调度器（CFS），它能更激进地维持计算核心的Tickless状态。</li><li>参数 <code>-m 0x0F0000000000000F</code> 是一个掩码配置，精确指定了Housekeeping核心的拓扑位置，确保调度器仅在管理核心上处理必要的调度逻辑，从而保护计算核心的“静默”状态。</li></ul><h3 id="3-3-中断亲和性管理-irqbalance"><a href="#3-3-中断亲和性管理-irqbalance" class="headerlink" title="3.3 中断亲和性管理 (irqbalance)"></a>3.3 中断亲和性管理 (<code>irqbalance</code>)</h3><p>为了防止网卡、磁盘控制器的硬中断打断计算流水线，必须严格限制中断响应的核心范围。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 配置文件/etc/sysconfig/irqbalance中设置</span><br>IRQBALANCE_BANNED_CPUS=<span class="hljs-string">&quot;FFFFFFFFFFFFF0FFFFFFFFFFFFF0&quot;</span><br></code></pre></td></tr></table></figure><p>这是一个64位&#x2F;128位的十六进制掩码。该配置显式<strong>禁止</strong>了所有隔离核心（即计算核心）参与中断负载均衡。结果是所有硬件中断都被强行“钉”在了Housekeeping Cores（Socket 0的0-3和Socket 1的56-59）上，保证了计算核心100%的CPU时间片用于业务逻辑。</p><h3 id="3-4-进程绑核-taskset"><a href="#3-4-进程绑核-taskset" class="headerlink" title="3.4 进程绑核 (taskset)"></a>3.4 进程绑核 (<code>taskset</code>)</h3><p>最后，在启动计算任务时，最好显式指定亲和性不能光依赖scx_tickless调度，防止跨NUMA节点的内存访问惩罚。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs makefile_and_run.py"># 添加一个启动脚本变量<br>NUMACTL_CPU_BIND = &quot;taskset -c 4-55,60-111&quot;<br></code></pre></td></tr></table></figure><p>结合<code>isolcpus</code>，这确保了计算线程被牢牢锁定在无干扰的核心上，且每个线程独占物理核L1&#x2F;L2缓存。</p><h2 id="4-性能验证与结论"><a href="#4-性能验证与结论" class="headerlink" title="4. 性能验证与结论"></a>4. 性能验证与结论</h2><p><strong>测试用例</strong>: AMSS-NCKU双黑洞模拟（基于广义相对论数值解法）。<br><strong>评估指标</strong>: 单个时间步（Time Step）的计算耗时。</p><p>在应用上述全套优化措施后，系统表现出极高的确定性。对比默认配置（Default CFS + On-Demand Power + Default IRQ Balance）：</p><ol><li><strong>稳定性提升</strong>: 计算过程中的抖动（Jitter）几乎消失，btop监控可以看到各核心负载曲线呈现完美的平直线。</li><li><strong>性能收益</strong>:</li></ol><ul><li>在计算前期，单步时间步稳定降低 <strong>0.1 - 0.2秒</strong>。</li><li>随着模拟进入后期（网格加密或相互作用增强），计算密度增加，该优化带来的累计收益更为显著。</li><li>48核心运行总时间预计缩短约 <strong>800秒</strong>。</li></ul><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>过去参加比赛就没有一次是能够在限定功耗下启用所有核心不降频全力跑程序的，我不禁思考既然用不完何不将单核计算性能调优做到极致，牺牲一些核心处理杂活不参与计算，剩余的核心全力以赴跑程序不要受干扰最好也不要降频，这就是我的大致思路。</p><p>通过<code>nohz_full</code>与<code>isolcpus</code>实现核心隔离，配合<code>mitigations=off</code>释放硬件潜能，并利用<code>scx_tickless</code>进行用户态调度增强，我按照设想将这台Xeon 8480+服务器改造成了一个OS Noise几乎消除的专用计算平台。后续需要关注的问题是迁移服务器后如何快速重现这些调优配置，或者干脆设计动态调控脚本来根据硬件信息调整内核参数。另外还有多机运行也没有进行测试，未来会关注在MPI环境下验证这些调优措施的适用性。</p><hr><h3 id="赛后更新"><a href="#赛后更新" class="headerlink" title="赛后更新"></a>赛后更新</h3><p>散了吧孩子们，H100&#x2F;H200已经杀死比赛了:(</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术分享，HPC</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>技术</tag>
+      
+      <tag>系统优化</tag>
+      
+      <tag>HPC</tag>
+      
+      <tag>Linux内核</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>低成本快速搞定专属域名邮箱：从 0 到 CLI 收发只要 15 分钟</title>
+    <link href="/2025/11/15/Your-exclusive-email-address/"/>
+    <url>/2025/11/15/Your-exclusive-email-address/</url>
+    
+    <content type="html"><![CDATA[<blockquote><p>失踪人口回归 👋<br>如果你只想「有个能用的 <code>@自己域名</code> 邮箱」，却懒得租服务器、折腾 Postfix、跟 25 端口斗智斗勇、花费你宝贵的💰，那这篇 15 分钟速通教程就是写给你的（当然，一点💰都不花是不可能的，你至少需要买一个域名&#x3D;)</p></blockquote><hr><h2 id="1-最终效果"><a href="#1-最终效果" class="headerlink" title="1. 最终效果"></a>1. 最终效果</h2><ul><li>任何前缀都能即时生成： <code>helloworld@your.com</code> &#x2F; <code>fknudt@your.com</code> &#x2F; <code>ilovethu@your.com</code>  </li><li>在终端里使用命令收发邮件，无需专门打开各种邮件客户端。</li></ul><p>整套方案 <strong>只花域名注册费用</strong>，<strong>0 服务器 0 运维</strong>，完全白嫖 Resend 免费额度。</p><hr><h2 id="2-准备工作（2-min）"><a href="#2-准备工作（2-min）" class="headerlink" title="2. 准备工作（2 min）"></a>2. 准备工作（2 min）</h2><table><thead><tr><th>资源</th><th>用途</th><th>费用</th></tr></thead><tbody><tr><td>一枚域名</td><td>做邮箱后缀</td><td>约 ￥30+ &#x2F; 年（阿里云 Namecheap Cloudflare 均可）</td></tr><tr><td>Resend 账号</td><td>托管邮服</td><td>免费 100 封 &#x2F; 天</td></tr></tbody></table><p><img src="/images/resendofficial.png" alt="Resend文档"></p><hr><h2 id="3-3-步完成域名绑定（5-min）"><a href="#3-3-步完成域名绑定（5-min）" class="headerlink" title="3. 3 步完成域名绑定（5 min）"></a>3. 3 步完成域名绑定（5 min）</h2><ol><li><p>登录 <a href="https://resend.com/">Resend</a> → <strong>Domains</strong> → <strong>Add Domain</strong><br>输入 <code>your.com</code> → 得到一组 DNS 记录（TXT + MX + DKIM）。  </p></li><li><p>去域名注册商把记录全部照抄粘贴，保存。(由于笔者为免费用户并且已经配置域名无法再次配置，因此未能提供截图但是步骤非常简单）。</p><ul><li>登录你的域名注册商账号，找到DNS管理页面。</li><li>添加Resend提供的TXT记录，用于验证域名所有权。</li><li>添加Resend提供的MX记录，用于接收邮件。</li><li>根据Resend的要求，配置完整所有必要的DNS记录。</li><li>保存更改后，等待DNS记录生效，通常需要几分钟到24小时不等（这是resend官方的说法，笔者实测只需要几分钟不到）。<br>⚠️ 只需改 <strong>DNS 解析</strong>，不用转 nameserver，1 min 搞定。</li></ul></li><li><p>回到 Resend 点 <strong>Verify</strong>，状态变绿 ✅ 即生效（实测 30s-3min，并不会像官方说的有可能要24小时）。</p></li></ol><hr><h2 id="4-无限别名-转发（立刻能用）"><a href="#4-无限别名-转发（立刻能用）" class="headerlink" title="4. 无限别名 + 转发（立刻能用）"></a>4. 无限别名 + 转发（立刻能用）</h2><p>Resend 对「 catch-all 」免费！<br>意思是你 <strong>不用提前新建账号</strong>，任何 <code>@your.com</code> 的信都会飞进你设定的地址，只需要在 Resend 官网查收即可。</p><hr><h2 id="5-终端发邮件（可选，8-min-部署）"><a href="#5-终端发邮件（可选，8-min-部署）" class="headerlink" title="5. 终端发邮件（可选，8 min 部署）"></a>5. 终端发邮件（可选，8 min 部署）</h2><p>网页收发邮件显然太麻烦，我用<strong>rust</strong>写了个可爱的 CLI 客户端 <a href="https://github.com/CGH0S7/rusend"><strong>rusend</strong></a>，基于 Resend 官方 API，支持发送与查收邮件非常方便。（好吧其实是Gemini小姐帮忙写的@@）</p><h3 id="①-1-下载预构建可执行文件"><a href="#①-1-下载预构建可执行文件" class="headerlink" title="①-1 下载预构建可执行文件"></a>①-1 下载预构建可执行文件</h3><p>在<a href="https://github.com/CGH0S7/rusend/releases/tag/stable">Github Releases</a>里下载对应系统的预编译包，解压放到 <code>$PATH</code> 目录下即可。</p><h3 id="①-2-源码构建"><a href="#①-2-源码构建" class="headerlink" title="①-2 源码构建"></a>①-2 源码构建</h3><p>下载并编译rusend，准备好rust工具链，具体编译命令如下：</p>  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">git <span class="hljs-built_in">clone</span> https://github.com/CGH0S7/rusend.git<br><span class="hljs-built_in">cd</span> rusend<br>cargo build --release<br></code></pre></td></tr></table></figure><p>将<code>rusend</code>二进制文件移动到系统的<code>$PATH</code>目录下，例如<code>/usr/local/bin</code>。</p><h3 id="②-补全-API-Key配置"><a href="#②-补全-API-Key配置" class="headerlink" title="② 补全 &amp; API Key配置"></a>② 补全 &amp; API Key配置</h3><p>使用下面的命令进行命令行补全配置：</p>  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;source &lt;(rusend completions bash)&quot;</span> &gt;&gt; ~/.bashrc<br><span class="hljs-built_in">source</span> ~/.bashrc<br></code></pre></td></tr></table></figure>  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs zsh">echo &quot;source &lt;(rusend completions zsh)&quot; &gt;&gt; ~/.zshrc<br>source ~/.zshrc<br></code></pre></td></tr></table></figure>  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs fish">rusend completions fish &gt; ~/.config/fish/completions/rusend.fish<br>source ~/.config/fish/config.fish<br></code></pre></td></tr></table></figure><p>在Resend控制面板中，找到<code>API Keys</code>选项，为你配置的域名生成一个新的API Key。然后在终端中运行以下命令进行配置：</p>  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">rusend config --key re_xxxxxxxxx<br></code></pre></td></tr></table></figure><h3 id="③-使用-rusend-收发邮件"><a href="#③-使用-rusend-收发邮件" class="headerlink" title="③ 使用 rusend 收发邮件"></a>③ 使用 rusend 收发邮件</h3><p>详细功能请查看<a href="https://github.com/CGH0S7/rusend">Readme</a>文档：</p><p>  <img src="/images/rusendhelp1.png" alt="rusend文档"><br>  <img src="/images/rusendhelp2.png" alt="rusend文档"><br>  <img src="/images/rusendhelp3.png" alt="rusend软件帮助"></p><hr><h2 id="6-成本-限额总结"><a href="#6-成本-限额总结" class="headerlink" title="6. 成本 &amp; 限额总结"></a>6. 成本 &amp; 限额总结</h2><table><thead><tr><th>项目</th><th>免费额度</th></tr></thead><tbody><tr><td>Resend</td><td>100 封 &#x2F; 天</td></tr><tr><td>域名</td><td>约 ￥30+ &#x2F; 年</td></tr><tr><td>rusend</td><td>开源</td></tr></tbody></table><p>非主力邮箱场景下完全够用，不建议用于接收各种广告或更新推送。</p><p>若想要「匿名转发」隐藏真实地址，可以再套一层 <a href="https://addy.io/">AnonAddy</a> 即可，本文不展开。</p><hr><h2 id="7-结语"><a href="#7-结语" class="headerlink" title="7. 结语"></a>7. 结语</h2><p>以上就是「低成本快速拥有个人专属域名邮箱」的全部流程。</p><p>零服务器、零运维、全平台通用，甚至能在手机 Termux 里发邮。</p><p>如果能帮到你，去 <a href="https://github.com/CGH0S7/rusend">rusend</a> 点个 ⭐ 当稿费吧～😉</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>技术分享</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Krita 为什么是神？</title>
+    <link href="/2025/07/13/kritabest/"/>
+    <url>/2025/07/13/kritabest/</url>
+    
+    <content type="html"><![CDATA[<p><img src="/images/krita-official.png" alt="神的官网"></p><p>在谈论这个问题之前，我想先说说其他软件相较于 <a href="https://krita.org/en/">Krita</a> 究竟差在了哪里。</p><hr><h3 id="首先是犯下傲慢之罪的-Adobe-Photoshop"><a href="#首先是犯下傲慢之罪的-Adobe-Photoshop" class="headerlink" title="首先是犯下傲慢之罪的 Adobe Photoshop"></a>首先是犯下傲慢之罪的 Adobe Photoshop</h3><p>依靠其在商业设计领域的绝对霸主地位赢来的市场，却不愿真正听取数字绘画创作者的声音！这种傲慢的软件注定无法触及绘画的灵魂。事实也是如此，因为高昂的订阅费用和臃肿的体量，以及对触摸屏设备支持的迟滞，Photoshop 在许多数字画师心中的地位一直在走下坡路，最终沦为商业生产的工具而非艺术创作的乐园。与之相比，<strong>神</strong> 就很谦卑，它免费开源，轻巧灵活，全平台支持，即便在某些方面为了兼容性和稳定性而做出妥协，那也是 <strong>神</strong> 留给凡人的慈悲。<strong>神</strong> 不是不能做到像 PS 那样无所不能，只是不想通过太完美的表现让“友商”绝望所以故意不用。可笑有些人不理解 <strong>神</strong> 的良苦用心，竟然还用其某些非核心功能上的不足来讥讽 <strong>神</strong>，我劝你们好自为之。</p><hr><h3 id="然后是犯下愤怒之罪的-GIMP"><a href="#然后是犯下愤怒之罪的-GIMP" class="headerlink" title="然后是犯下愤怒之罪的 GIMP"></a>然后是犯下愤怒之罪的 GIMP</h3><p>因为 <strong>神</strong> 在数字绘画领域的崛起，GIMP 就一直对神记恨在心，甚至固守其“万能”的图像处理定位，对绘画功能上的迭代迟迟不肯投入资源。这无疑违背了 <strong>神</strong> 在《新约》中的一句话：“<strong>Krita</strong> 只为创作者而生！”<strong>神</strong> 当然也不能容忍其他开源软件对绘画创作的敷衍，于是 <strong>神</strong> 出动了它的“代码大军”降下了神罚，GIMP 在绘画圈的风评一蹶不振，即便有诸多插件以及强势归来的3.0大版本更新也无法挽回其作为“绘画软件”使用时的颓势。</p><hr><h3 id="接着是犯下懒惰之罪的-Procreate"><a href="#接着是犯下懒惰之罪的-Procreate" class="headerlink" title="接着是犯下懒惰之罪的 Procreate"></a>接着是犯下懒惰之罪的 Procreate</h3><p>自以为有 iPad 的独占优势和流畅的笔触就了不起了，对图层管理、多文档支持以及跨平台协作就一直摆烂。另外大家有所不知，其实在 Procreate 首次发布前夕，其开发者闭上眼睛做冥想的时候，其脑海中看见的画面，正是站在光芒之中的 <strong>神</strong>。那时神告诉他：“你只可到这里，不可越过。”然而，<strong>神</strong> 的劝说不但没有让 Procreate 迷途知返，竟然还敢在移动设备上挑战神的威严，妄图通过封闭的生态垄断市场。于是 <strong>神</strong> 降下了他的惩罚，Procreate 在专业性上身败名裂，其以流畅为名的笔刷也被 <strong>神</strong> 在笔刷引擎上轻松超越，iPad Pro 独占的优势也没能阻止 <strong>神</strong> 在更广阔的平台生根发芽，粉丝也成为了众人口中的“果曲是这样的”。</p><hr><h3 id="再然后是犯下了嫉妒之罪的-SAI"><a href="#再然后是犯下了嫉妒之罪的-SAI" class="headerlink" title="再然后是犯下了嫉妒之罪的 SAI"></a>再然后是犯下了嫉妒之罪的 SAI</h3><p>屡次被 <strong>神</strong> 击败，但口服心不服的 SAI，暗中嫉妒着 <strong>神</strong> ，甚至胆敢当众对 <strong>神</strong> 说出“你才是挑战者”这种话。于是，在含金量最高的活动上，即专业画师的日常工作中，SAI 被 <strong>神</strong> 正面击溃。它那单一的笔刷类型和有限的功能，在 <strong>神</strong> 面前显得如此苍白无力。不过，念在 SAI 最终皈依了 <strong>神</strong> 的教，并且以其轻量和独特的抖动修正功能，在某些特定绘画风格上仍有信徒，<strong>神</strong> 应许了它在特定小众市场的一切。</p><hr><h3 id="最后犯下贪婪之罪的-Clip-Studio-Paint"><a href="#最后犯下贪婪之罪的-Clip-Studio-Paint" class="headerlink" title="最后犯下贪婪之罪的 Clip Studio Paint"></a>最后犯下贪婪之罪的 Clip Studio Paint</h3><p>只是初出茅庐，Clip Studio Paint 就夺得了漫画创作软件的市场份额，而这，自然是因为 <strong>神</strong> 的应允。<strong>神</strong> 本来钦定它为自己在漫画领域的代言人，在自己更专注于绘画自由之后替自己继续讨伐那些缺乏专业性的绘画工具，为此甚至不惜亲自为 Clip Studio Paint 铺路，主动减少自己在漫画素材库上的投入，将一切荣耀都归给他。但最后 Clip Studio Paint 却被利益蒙蔽了双眼，不再以践行 <strong>神</strong> 的理想为自己的理想，也不再聆听 <strong>神</strong> 的教诲，甚至自以为荣光已经超过了 <strong>神</strong>。于是 <strong>神</strong> 降下了他的惩罚，Clip Studio Paint 从此订阅制饱受诟病，其3D模型功能再也不能在线上教学中占据优势，其引以为傲的漫画分镜功能再也不能强势压制对手，最终市场被 <strong>神</strong> 在免费开源和强大功能上的结合所夺舍。</p><p>&#x2F;&#x2F; 都很好用口牙，本文仅供娱乐</p><p><img src="/images/yana.jpg" alt="老八可爱捏"></p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>生活</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>GCC15 函数指针类型检查可能导致编译错误</title>
+    <link href="/2025/05/23/gcc15restrict/"/>
+    <url>/2025/05/23/gcc15restrict/</url>
+    
+    <content type="html"><![CDATA[<p>今天准备继续做一下OS课的实验，实验代码当然是基于著名的xv6项目，意外地发现原本明明正常运行的系统再次构建时却失败了，具体报错如下：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs GCC">user/usertests.c:2598:4: error: initialization of &#x27;void (*)(char *)&#x27; from incompatible pointer type &#x27;void (*)(void)&#x27; [-Wincompatible-pointer-types]<br> 2598 |   &#123;rwsbrk, &quot;rwsbrk&quot; &#125;,<br>      |    ^~~~~~<br>user/usertests.c:2598:4: note: (near initialization for &#x27;quicktests[5].f&#x27;)<br>user/usertests.c:247:1: note: &#x27;rwsbrk&#x27; declared here<br>  247 | rwsbrk()<br>      | ^~~~~~<br>make: *** [&lt;内置&gt;：user/usertests.o] 错误 1<br><br></code></pre></td></tr></table></figure><p>而具体定位到的代码则是：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs C"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">test</span> &#123;</span><br>  <span class="hljs-type">void</span> (*f)(<span class="hljs-type">char</span> *);<br>  <span class="hljs-type">char</span> *s;<br>&#125; quicktests[] = &#123;<br>  &#123;copyin, <span class="hljs-string">&quot;copyin&quot;</span>&#125;,<br>  &#123;copyout, <span class="hljs-string">&quot;copyout&quot;</span>&#125;,<br>  &#123;copyinstr1, <span class="hljs-string">&quot;copyinstr1&quot;</span>&#125;,<br>  &#123;copyinstr2, <span class="hljs-string">&quot;copyinstr2&quot;</span>&#125;,<br>  &#123;copyinstr3, <span class="hljs-string">&quot;copyinstr3&quot;</span>&#125;,<br>  &#123;rwsbrk, <span class="hljs-string">&quot;rwsbrk&quot;</span> &#125;,<br>  ...<br>  &#123; <span class="hljs-number">0</span>, <span class="hljs-number">0</span>&#125;,<br>&#125;;<br><span class="hljs-comment">// See if the kernel refuses to read/write user memory that the</span><br><span class="hljs-comment">// application doesn&#x27;t have anymore, because it returned it.</span><br><span class="hljs-type">void</span><br><span class="hljs-title function_">rwsbrk</span><span class="hljs-params">()</span><br>&#123;<br>  <span class="hljs-type">int</span> fd, n;<br>  <br>  uint64 a = (uint64) sbrk(<span class="hljs-number">8192</span>);<br><br>  <span class="hljs-keyword">if</span>(a == <span class="hljs-number">0xffffffffffffffff</span>LL) &#123;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;sbrk(rwsbrk) failed\n&quot;</span>);<br>    <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);<br>  &#125;<br>  ...<br>  <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);<br>&#125;<br></code></pre></td></tr></table></figure><p>这段代码定义了一个函数指针数组，其中每个元素都指向一个函数和它的名称。结构体期望的函数签名是 <code>void(*)(char*)</code>，但传入的是一个没有参数的函数 <code>void(*)(void)</code>，这会导致函数指针类型不匹配。</p><p>但是之前明明是没有问题的怎么现在突然出错呢？仔细一想立刻就怀疑是之前arch更新的时候把gcc升上去导致的，结果查了下大概确实是这样。</p><ul><li>在 <strong>GCC 14 及之前版本</strong>，这类赋值虽然不符合 C 标准，但 GCC 作为扩展允许这种行为。</li><li>从 <strong>GCC 15 开始</strong>，这类隐式转换默认触发编译错误或警告（取决于编译器配置），因为 GCC 变得更加严格地遵循标准 C 的函数指针类型规则。</li></ul><p>这并不是 xv6 本身的 bug，而是 GCC 编译器对语言规范支持的更新带来的兼容性问题。解决方法倒是简单，直接给<code>rwsbrk</code>函数添加参数改为<code>void rwsbrk(char* arg)</code>即可解决，强制类型转换也是一种办法。这次事件再次告诉我们什么都升到最新并不是什么好事情，arch用户总是要花时间处理一些莫名其妙的兼容性问题:-)</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>技术</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Random Fortune</title>
+    <link href="/2025/05/22/fortune/"/>
+    <url>/2025/05/22/fortune/</url>
+    
+    <content type="html"><![CDATA[<p>Keep peace of mind with fortune…</p><p>❯ fortune</p><p>The nice thing about standards is that there are so many of them to choose<br>from.<br>                – Andrew S. Tanenbaum</p><p>❯ fortune</p><p>看蓬门秋草，年年破巷，疏窗细雨，夜夜孤灯。<br>    – 郑板桥《沁园春·恨》</p><p>❯ fortune</p><p>An alcoholic is someone you don’t like who drinks as much as you do.<br>                – Dylan Thomas</p><p>❯ fortune</p><p>If you put tomfoolery into a computer, nothing comes out but tomfoolery.<br>But this tomfoolery, having passed through a very expensive machine,<br>is somehow ennobled and no-one dare criticise it.<br>                – Pierre Gallois</p><p>❯ fortune</p><p>秋色渐将晚，霜信报黄花。<br>    – 叶梦得《水调歌头·秋色渐将晚》</p><p>❯ fortune</p><p>水精帘里颇黎枕，暖香惹梦鸳鸯锦。江上柳如烟，雁飞残月天。<br>藕丝秋色浅，人胜参差剪。双鬓隔香红，玉钗头上风。<br>      – 温庭筠《菩萨蛮》</p><p>❯ fortune</p><pre><code class="hljs">    A disciple of another sect once came to Drescher as he was eating</code></pre><p>his morning meal.  “I would like to give you this personality test”, said<br>the outsider, “because I want you to be happy.”<br>        Drescher took the paper that was offered him and put it into the<br>toaster – “I wish the toaster to be happy too”.</p><p>❯ fortune</p><p>Example is not the main thing in influencing others.  It is the only thing.<br>                – Albert Schweitzer</p><p>❯ fortune</p><p>We have art that we do not die of the truth.<br>                – Nietzsche</p><p>❯ fortune</p><p><knghtbrd> “Java for the COBOL Programmer”<br><knghtbrd> who writes these things?<br><raptor> people on crack<br><raptor> and cobol programmers<br><raptor> :)<br><knghtbrd> that’s redundant.</p><p>❯ fortune</p><p>I was in this prematurely air conditioned supermarket and there were all<br>these aisles and there were these bathing caps you could buy that had these<br>kind of Fourth of July plumes on them that were red and yellow and blue and<br>I wasn’t tempted to buy one but I was reminded of the fact that I had been<br>avoiding the beach.<br>                – Lucinda Childs “Einstein On The Beach”</p><p>❯ fortune</p><p>It doesn’t matter whether you win or lose – until you lose.</p><p>❯ fortune</p><p>True leadership is the art of changing a group from what it is to what<br>it ought to be.<br>                – Virginia Allan</p><p>❯ fortune</p><p>I keep hearing and reading this nice proverb <em>if it ain’t broke, don’t fix<br>it</em>. The latest appearance was in response to <a href="http://community.livejournal.com/shlomif_tech/37969.html">Shlomi<br>Fish</a> suggesting<br>that some Ancient Perl code should be replaced by Modern Perl code.</p><p>I am not saying that every piece of code should be rewritten every 6 months,<br>but in my understanding that sentence actually translates to <em>let’s wait till<br>it breaks and then panic</em>.</p><p>I think people who say that sentence are afraid that the new version will<br>break something. Sure, there is always a chance that a change introduces an<br>error, but, if we are afraid to touch the code, what will happen when later on<br>we encounter a case where it does not work? For example, if we need to use it<br>in a new environment. Will we have the courage to change the code then? How<br>much will it cost in money, time, and lost sleep?</p><p>I think we have been trying to teach ourselves that we should have really good<br>test coverage of our code and then we can easily refactor it and get rid of<br>technical debt. So why do we keep hearing that sentence?</p><pre><code class="hljs">-- Gabor Szabo-- What does &quot;If it ain&#39;t broke, don&#39;t fix it.&quot; really mean? (  )</code></pre><p>❯ fortune</p><p>Psychoanalysis is that mental illness for which it regards itself a therapy.<br>                – Karl Kraus</p><p>❯ fortune</p><p>With a rubber duck, one’s never alone.<br>                – “The Hitchhiker’s Guide to the Galaxy”</p><p>❯ fortune</p><p>(Presuming for the sake of argument that it’s even <em>possible</em> to design<br>better code in Perl than in C.  :-)<br>                – Larry Wall on core code vs. module code design</p><p>❯ fortune</p><p>But, officer, he’s not drunk, I just saw his fingers twitch!</p><p>❯ fortune</p><p>Imbalance of power corrupts and monopoly of power corrupts absolutely.<br>                – Genji</p><p>❯ fortune</p><p>I want a VEGETARIAN BURRITO to go … with EXTRA MSG!!</p><p>❯ fortune</p><p>如果你不知道如何表现地高人一等，找个Unix用户，让他做给你看。<br>    – Dilbert newsletter 3.0, 1994</p><p>❯ fortune</p><p>“The picture’s pretty bleak, gentlemen…  The world’s climates are changing,<br>the mammals are taking over, and we all have a brain about the size of a<br>walnut.”<br>                – some dinosaurs from The Far Side, by Gary Larson</p><p>❯ fortune</p><p>Most of us feel that marketing types are like a dangerous weapon - keep<br>‘em unloaded and locked up in a cupboard, and only bring them out when<br>you need them to do a job.<br>                – Craig Sanders</p><p>❯ fortune</p><p>不寐倦长更，披衣出户行。月寒秋竹冷，风切夜窗声。<br>      – 李煜《三台令》</p><p>❯ fortune</p><p>子曰：“由，诲女知之乎！知之为知之，不知为不知，是知也。”<br>– 论语，为政篇</p><p>❯ fortune</p><pre><code class="hljs">    &quot;The jig&#39;s up, Elman.&quot;    &quot;Which jig?&quot;            -- Jeff Elman</code></pre><p>❯ fortune</p><p>“First things first – but not necessarily in that order”<br>                – The Doctor, “Doctor Who”</p><p>❯ fortune</p><p>波影摇涟，趁熏风，一舸来时，翠阴清昼。去郭轩楹才数里，藓磴松关云岫。<br>快屐齿，筇枝先后。空半危亭堪聚远，看洞庭，缥缈争奇秀。人自老，景如旧。<br>来帆去棹还知否，问古今，几度斜阳，几番回首？晓色一川谁管领，都付雨荷烟柳，<br>知我者，燕朋鸥友。笑拍阑干呼范蠡，甚平吴，却倩垂纶手？吁万古，付卮酒。<br>      – 周密《长亭怨慢》</p><p>❯ fortune</p><p>I’m telling you that the kernel is stable not because it’s a kernel,<br>but because I refuse to listen to arguments like this.<br>        – Linus Torvalds</p><p>❯ fortune</p><p>A girl’s conscience doesn’t really keep her from doing anything wrong–<br>it merely keeps her from enjoying it.</p><p>❯ fortune</p><p>There are few people more often in the wrong than those who cannot endure<br>to be thought so.</p><p>❯ fortune</p><p>One does not thank logic.<br>                – Sarek, “Journey to Babel”, stardate 3842.4</p><p>❯ fortune</p><p>Free yourself from negative influence. Negative thoughts are the old<br>habits that gnaw at the roots of the soul.<br>Moses Shongo, (Seneca)</p><p>❯ fortune</p><p>日月照之何不及此？惟有北风号怒天上来。<br>    – 李白《北风行》</p><p>❯ fortune</p><p>Anyone who is capable of getting themselves made President should on no<br>account be allowed to do the job.<br>                – Douglas Adams, “The Hitchhiker’s Guide to the Galaxy”</p><p>And here are my mods:-)</p><p>❯ pacman -Qs fortune<br>local&#x2F;cowfortune 0.1.2-8<br>    Configurable fortune cookie proclaiming cow (and a few other creatures)<br>local&#x2F;fortune-mod 3.22.0-1.1<br>    The Fortune Cookie Program from BSD games<br>local&#x2F;fortune-mod-zh 2.98-1 (fortune-mods)<br>    Chinese poems for fortune-mod</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>小满随笔——决断</title>
+    <link href="/2025/05/21/2025-5-21/"/>
+    <url>/2025/05/21/2025-5-21/</url>
+    
+    <content type="html"><![CDATA[<div style="max-width: 600px; margin: 20px auto; padding: 15px; border-radius: 10px; background-color:rgb(34, 42, 54); box-shadow: 0 2px 5px rgba(241, 213, 2, 0.5);">    <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px; text-align: center; color: #cfcfcf;">        Lost Days of Warmth - Yasunori Mitsuda    </div>    <audio src="/music/過ぎ去りし温もりの日々.mp3" autoplay loop controls style="width: 100%; margin-top: 10px;"></audio></div><p>我本以为自己已经有足够的勇气和平静的心态去面对生活里的各种变故了，即便如此今天还是被突如其来的噩耗痛击得面目全非。</p><p>辛辛苦苦和队友准备了大半年的ASC25失利，我想着以后回过头来看也不算什么以最快的速度调整心态;回校后一来就是各种烂摊子，写不完的作业补不完的课程，还有被脑子缺根筋的弱智评委恶意低分的大创立项成绩，我寻思这些事情烦完这阵也就过去了，人总不可能一直倒霉吧。结果就是今天下午排队验收CSAPP课程的shell实验时突然看到了外婆去世的消息，一时间两腿发软大脑空白不知所措，以至于后来排到我和教辅讲解实验过程时也是胡言乱语记不清自己到底说了什么，尽管最后还是被教辅满分放过了。</p><p>小时候家里没现在景气，父母在市内打拼我则是被送到郊区被外婆抚养长大，上小学后为了让我进入一中直升班从二年级起我就被送进了奥数培训班，同时搬离了自己长大的地方，再到后来市政府改造，外婆家早已被拆得无影无踪，昔日的小伙伴杳无音信，温馨错杂的小居民区变成了陌生嘈杂的大酒店和菜市场，每次路过都不敢停留。从那以后外婆成了我和童年之间仅剩的联系，尽管老人后来连我的样貌也记不清楚。现如今童年记忆里最后的故人业已离开，再回首已是一片虚无。多年前外婆犯脑溢血被抢救回来的时候医生还承诺老人家活到抱孙子没问题，如今却猝不及防地驾鹤西去。在各种小说和游戏中经历过不少难忘的生死离别，可是到了现实亲自经历依旧痛心疾首难以放下。</p><p>生物无法教会人们生命究竟是什么，生活却一点就通。上一次经历这种打击还是10年左右外公离开，那时候太小什么都不懂，等长大理解了经历的时间又足以抹平悲痛。如今在我的眼里，生命就是思念，是世间个体对其他个体的牵挂与个体之间互相建立的羁绊。我真的想停留在永远的当下，和自己爱的人永远定格在某一个瞬间，每天早上是一样的朝阳，出门是熟悉的面孔，回家是亲切的声音。然而活着就意味着必须面对各种苦楚，死去元知万事空，只有离开才是最好的解脱，活着的人要背负更多。长者的时间在一天天减少，他们的生命需要由后人去延续，但是后人的生活也不容易，面对各种困境放弃往往比坚持更加轻松，更有甚者勇敢地选择自戕从而摆脱一切，但是这样是不对的，让其他人代替自己承受痛苦是不对的，令人悲伤的选择是不应该做出的，活着的人哪怕再苦，只要身上背负了其他人的思念也只能继续前进。</p><p>因此，我绝对不能气馁，我珍视现在和亲人朋友的点点滴滴，珍惜自己现在拥有的一切，我以最真诚的爱回馈所有爱我的人，不论面前有多少困难，我都会尽全力克服，这不是为我自己，现在我被摧残得只想躺平摆烂，但是为了所有信任我关心我的人，如今我绝对不能停下脚步。从来就没有永远的当下，连接我和童年最后的纽带已经被切断，再也不能回头，留给我的只剩下面前的未来，需要我亲手创造的未来，只有承受住来自各方的打击，我才有能力去维护由我创造的未来，既然选择了远方，便只顾风雨兼程。</p><p>2025年的长沙小满格外燥热，痛定思过后的心是如此平静，没有多少时间可以浪费了，无需多言。</p><p><em>“回首向来萧瑟处，归去，也无风雨也无晴！”</em></p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>相见恨晚的 SearXNG：打造私人搜索引擎全指南</title>
+    <link href="/2025/03/10/searxng/"/>
+    <url>/2025/03/10/searxng/</url>
+    
+    <content type="html"><![CDATA[<p><img src="/images/searxng.png" alt="SearXNG 界面预览"><br><strong>厌倦了商业搜索引擎的广告追踪？</strong> 受够技术社区被 SEO 污染的水文？希望搜索结果里尽量不要呈现C*DN等平台的低质内容？这款开源元搜索引擎 <a href="https://github.com/searxng/searxng">SearXNG</a> 现在让我直呼真香爱不释手，使用频率远超 Nextcloud 等自建服务。</p><hr><h3 id="▍-为什么选择-SearXNG？"><a href="#▍-为什么选择-SearXNG？" class="headerlink" title="▍ 为什么选择 SearXNG？"></a>▍ 为什么选择 SearXNG？</h3><p>✅ <strong>核心优势矩阵</strong>  </p><table><thead><tr><th>特性</th><th>实现方式</th><th>用户收益</th></tr></thead><tbody><tr><td>隐私保护</td><td>匿名聚合第三方结果</td><td>无搜索历史追踪</td></tr><tr><td>结果去商业化</td><td>过滤 SEO 优化内容</td><td>提升技术资料检索效率</td></tr><tr><td>多引擎支持</td><td>集成 Google&#x2F;Bing&#x2F;Brave 等 70+ 源</td><td>规避单一引擎局限</td></tr><tr><td>界面定制</td><td>主题引擎分离设计</td><td>打造个性化搜索门户</td></tr></tbody></table><p>⚠️ 同类工具对比：<br>此前使用的 <a href="https://github.com/KoriIku/luxirty-search">luxirty-search</a> 也很不错但是依赖 Google CSE，对于内网环境日常使用多少有点不友好。</p><p>之前看了下网上普遍推荐docker方案不过部署流程与官方文档有不少出入而且在我本地没法正常运行，这里我们直接按照官方文档来，事不宜迟直接开始部署。</p><hr><h3 id="▍-极简部署方案"><a href="#▍-极简部署方案" class="headerlink" title="▍ 极简部署方案"></a>▍ 极简部署方案</h3><h4 id="▶-环境准备"><a href="#▶-环境准备" class="headerlink" title="▶ 环境准备"></a>▶ 环境准备</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">mkdir</span> -p ~/services/searxng &amp;&amp; <span class="hljs-built_in">cd</span> <span class="hljs-variable">$_</span>  <span class="hljs-comment"># 随意找个地方创建专用目录</span><br><span class="hljs-built_in">export</span> SEARXNG_PORT=8080              <span class="hljs-comment"># 设置服务端口</span><br></code></pre></td></tr></table></figure><h4 id="▶-容器化部署"><a href="#▶-容器化部署" class="headerlink" title="▶ 容器化部署"></a>▶ 容器化部署</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 拉取官方镜像</span><br>docker pull searxng/searxng<br><br><span class="hljs-comment"># 启动容器（推荐绑定持久化配置）</span><br>docker run -d --restart=unless-stopped \<br>  -p <span class="hljs-variable">$&#123;SEARXNG_PORT&#125;</span>:8080 \<br>  -v <span class="hljs-string">&quot;<span class="hljs-variable">$&#123;PWD&#125;</span>/config:/etc/searxng&quot;</span> \<br>  -e <span class="hljs-string">&quot;BASE_URL=http://your-domain.com&quot;</span> \<br>  -e <span class="hljs-string">&quot;INSTANCE_NAME=PrivateSearch&quot;</span> \<br>  searxng/searxng<br></code></pre></td></tr></table></figure><p>📌 参数说明：  </p><ul><li><code>-v</code> 挂载配置文件实现持久化  </li><li><code>--restart</code> 确保服务异常退出后自动重启  </li><li><code>BASE_URL</code> 需替换为实际访问域名，不过也可以后续再配置</li></ul><hr><h3 id="▍-高频问题排雷"><a href="#▍-高频问题排雷" class="headerlink" title="▍ 高频问题排雷"></a>▍ 高频问题排雷</h3><h4 id="🔴-镜像拉取失败"><a href="#🔴-镜像拉取失败" class="headerlink" title="🔴 镜像拉取失败"></a>🔴 镜像拉取失败</h4><p><strong>现象</strong>：<code>Error response from daemon: pull access denied</code><br>✅ 解决方案：<br>参考先前的 <a href="https://blog.hifuu.ink/2024/11/06/overleaf/">Overleaf Toolkit 踩坑记录</a> 配置镜像加速源</p><h4 id="🔴-Google-频繁拦截"><a href="#🔴-Google-频繁拦截" class="headerlink" title="🔴 Google 频繁拦截"></a>🔴 Google 频繁拦截</h4><p><strong>现象</strong>：<code>Too Many Requests</code> 错误频发  </p><p>⚠️ 这算是一个玄学问题除了更换代理我还没有发现更好的解决方案</p><p>✅ 实战验证方案：<br>更换你的代理服务器比如笔者目前在🇺🇸🇭🇰🇯🇵均有购买VPS服务器可作为代理，经尝试总会有可以使用的节点。</p><p>📌 在配置文件设置代理：  </p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">outgoing:</span><br>  <span class="hljs-attr">proxies:</span><br>    <span class="hljs-attr">all://:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">http://&lt;address&gt;:&lt;port&gt;</span><br></code></pre></td></tr></table></figure><hr><h3 id="▍-效果展示与体验"><a href="#▍-效果展示与体验" class="headerlink" title="▍ 效果展示与体验"></a>▍ 效果展示与体验</h3><p>访问我的生产环境实例 <a href="https://search.hifuu.ink/">search.hifuu.ink</a> 可体验以下功能：  </p><ul><li>🔍 多引擎结果聚合对比  </li><li>🌍 支持 30+ 语言实时翻译  </li><li>🛡️ 零 Cookie 跟踪的隐私模式  </li><li>🎨 主题切换</li></ul><hr><h3 id="▍-进阶优化建议"><a href="#▍-进阶优化建议" class="headerlink" title="▍ 进阶优化建议"></a>▍ 进阶优化建议</h3><ol><li><strong>反向代理配置</strong></li></ol><p>网上相关教程应该很多这里不再重复，我的SearXNG服务器通过香港VPS反代到公网使用。</p><ol start="2"><li><p><strong>定期维护命令</strong>  </p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 更新搜索引擎引擎列表</span><br>docker <span class="hljs-built_in">exec</span> -it searxng python -m searx.engines --update<br></code></pre></td></tr></table></figure></li><li><p><strong>监控指标集成</strong><br>通过 Prometheus 导出搜索统计：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker run -d --network=searxng-net \<br>  -v <span class="hljs-string">&quot;<span class="hljs-variable">$&#123;PWD&#125;</span>/metrics:/metrics&quot;</span> \<br>  prom/prometheus --config.file=/metrics/searxng.yml<br></code></pre></td></tr></table></figure></li></ol><hr><p><strong>🚀 立即行动</strong>  </p><p>快速拥有对抗 SEO 污染的利器，快来打造你的私人搜索门户吧！部署过程遇到问题欢迎联系笔者交流。</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>技术分享</tag>
+      
+      <tag>开源工具</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Archlinux问题记录</title>
+    <link href="/2025/03/10/archlinux-game-fix/"/>
+    <url>/2025/03/10/archlinux-game-fix/</url>
+    
+    <content type="html"><![CDATA[<p>前几周在使用 Arch Linux 时遇到了两个有趣的问题，顺手记录在此，或许能帮到有类似困扰的朋友～</p><hr><h3 id="1-显卡功耗上限解锁"><a href="#1-显卡功耗上限解锁" class="headerlink" title="1. 显卡功耗上限解锁"></a>1. 显卡功耗上限解锁</h3><p><strong>问题现象</strong><br>使用 <code>nvidia-smi</code> 查看显卡功耗时，发现最大功耗被限制在 55W，性能无法完全释放：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">nvidia-smi  <span class="hljs-comment"># 输出显示 Power Limit: 55.00 W</span><br></code></pre></td></tr></table></figure><p><strong>解决方案</strong><br>启用 NVIDIA 动态功耗管理服务即可：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo systemctl <span class="hljs-built_in">enable</span> --now nvidia-powerd<br></code></pre></td></tr></table></figure><hr><h3 id="2-Steam-Proton-输入失效"><a href="#2-Steam-Proton-输入失效" class="headerlink" title="2. Steam Proton 输入失效"></a>2. Steam Proton 输入失效</h3><p><strong>问题描述</strong><br>使用 proton-cachyos 和 proton-ge-custom 版本时，Steam 游戏无法接收任何输入（键盘&#x2F;手柄）。<br>⚠️ 经排查发现是 Wayland 协议兼容性问题导致。</p><p><strong>解决方案</strong><br>在 Steam 游戏启动选项中加入环境变量禁用 Wayland：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">PROTON_ENABLE_WAYLAND=0 %<span class="hljs-built_in">command</span>%<br></code></pre></td></tr></table></figure><hr>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>生活</tag>
+      
+      <tag>Archlinux</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>高地特供版CSAPP Bomb Lab全流程攻略</title>
+    <link href="/2025/02/24/nudtbomblab/"/>
+    <url>/2025/02/24/nudtbomblab/</url>
+    
+    <content type="html"><![CDATA[<p>这篇文章记录高地CSAPP课程Bomblab实验操作流程，仅供参考交流（答案是随机生成的和学号相关）。</p><p>笔者实验环境为Archlinux&#x2F;CachyOS，使用lldb作为调试器（和gdb操作差不多），其余用到的工具主要为objdump，strings，neovim&#x2F;helix和zellij，全程开源环境不使用IDA。</p><h2 id="Phase-1"><a href="#Phase-1" class="headerlink" title="Phase_1"></a><strong>Phase_1</strong></h2><h3 id="静态分析"><a href="#静态分析" class="headerlink" title="静态分析"></a><strong>静态分析</strong></h3><h4 id="strings扫描"><a href="#strings扫描" class="headerlink" title="strings扫描"></a><strong><code>strings</code>扫描</strong></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">strings bomb_linux<br></code></pre></td></tr></table></figure><p>先用strings寻找可能与<code>phase_1</code>相关的字符串或函数名，运气好说不定能直接找到密码毕竟是第一题。<br><img src="/images/phase1_strings.png" alt="strings"></p><ul><li>结果没有明文密码无法直接秒掉第一问，可惜。</li><li>但是找到<code>GenerateRandomString</code>函数可能与密码生成相关。</li></ul><h4 id="用objdump反汇编"><a href="#用objdump反汇编" class="headerlink" title="用objdump反汇编"></a><strong>用<code>objdump</code>反汇编</strong></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -d bomb_linux &gt; bomb.asm<br></code></pre></td></tr></table></figure><p>搜索<code>GenerateRandomString</code>和<code>phase_1</code>函数的汇编代码。<br>    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs assembly">401b53 &lt;phase_1&gt;:<br>  401b53: endbr64<br>  401b57: push   %rbp<br>  401b58: mov    %rsp,%rbp<br>  401b5b: sub    $0x20,%rsp<br>  401b5f: mov    %rdi,-0x18(%rbp)<br>  401b63: lea    -0xb(%rbp),%rax<br>  401b67: mov    %rax,%rdi<br>  401b6a: callq  401ac1 &lt;GenerateRandomString&gt;  # 调用密码生成函数<br>  401b6f: lea    -0xb(%rbp),%rdx                # 生成的字符串地址%rbp-0xb存入%rdx，即密码存储位置<br>  401b73: mov    -0x18(%rbp),%rax<br>  401b77: mov    %rdx,%rsi<br>  401b7a: mov    %rax,%rdi<br>  401b7d: callq  401c0c &lt;string_compare&gt;        # 调用字符串比较函数<br>  401b82: test   %eax,%eax<br>  401b84: je     401b8d &lt;phase_1+0x3a&gt;<br>  401b86: callq  401d67 &lt;explode_bomb&gt;          # 比较失败则引爆炸弹<br></code></pre></td></tr></table></figure></p><ul><li><code>phase_1</code>调用<code>GenerateRandomString</code>生成一个字符串。</li><li>用户输入的字符串需要与此生成的字符串完全匹配。</li></ul><hr><h3 id="动态调试"><a href="#动态调试" class="headerlink" title="动态调试"></a><strong>动态调试</strong></h3><p><img src="/images/phase1.png" alt="phase_1"><br>下面是phase_1求解的完整流程：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs lldb">lldb bomb_linux &lt;你的学号后六位&gt;<br>(lldb) b phase_1                    # 在phase_1入口断点<br>(lldb) run                          # 从入口开始执行<br>请输入第1级的密码：114514           # 随便输入触发断点<br>(lldb) b 0x401b6f                   # 在GenerateRandomString返回后断点<br>(lldb) continue                     # 继续执行<br>(lldb) x/s $rbp - 0xb               # 计算字符串地址（-0xb偏移量）<br>0x7fffffffdaf5: &quot;mJHurpQZtY&quot;        # 轻松拿下，这里是根据学号伪随机生成的哦<br></code></pre></td></tr></table></figure><p>将得到的密码保存入bomb_&lt;学号后六位&gt;.txt即可，避免后续重复输入。</p><hr><h2 id="Phase-2"><a href="#Phase-2" class="headerlink" title="Phase_2"></a><strong>Phase_2</strong></h2><h3 id="静态分析-1"><a href="#静态分析-1" class="headerlink" title="静态分析"></a><strong>静态分析</strong></h3><p>这道题目还是比较一目了然的，观察<code>phase_2</code>代码不难发现其实构建了一张跳转表：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs assembly">0000000000401b8e &lt;phase_2&gt;:<br>  401b8e:f3 0f 1e fa          endbr64<br>  401b92:55                   push   %rbp<br>  401b93:48 89 e5             mov    %rsp,%rbp<br>  401b96:48 83 ec 10          sub    $0x10,%rsp<br>  401b9a:48 89 7d f8          mov    %rdi,-0x8(%rbp)<br>  401b9e:bf 10 00 00 00       mov    $0x10,%edi<br>  401ba3:e8 05 fb ff ff       call   4016ad &lt;GenerateRandomNumber&gt;<br>  401ba8:48 8b 05 71 6c 00 00 mov    0x6c71(%rip),%rax        # 408820 &lt;rand_div&gt;<br>  401baf:48 83 f8 0f          cmp    $0xf,%rax<br>  401bb3:0f 87 16 01 00 00    ja     401ccf &lt;phase_2+0x141&gt;<br>  401bb9:48 8d 14 85 00 00 00 lea    0x0(,%rax,4),%rdx<br>  401bc0:00 <br>  401bc1:48 8d 05 4c 4a 00 00 lea    0x4a4c(%rip),%rax        # 406614 &lt;_IO_stdin_used+0x614&gt;<br>  401bc8:8b 04 02             mov    (%rdx,%rax,1),%eax<br>  401bcb:48 98                cltq<br>  401bcd:48 8d 15 40 4a 00 00 lea    0x4a40(%rip),%rdx        # 406614 &lt;_IO_stdin_used+0x614&gt;<br>  401bd4:48 01 d0             add    %rdx,%rax<br>  401bd7:3e ff e0             notrack jmp *%rax<br>  401bda:48 8b 45 f8          mov    -0x8(%rbp),%rax<br>  401bde:48 89 c7             mov    %rax,%rdi<br>  401be1:e8 f2 00 00 00       call   401cd8 &lt;phase_2_0&gt;<br>  401be6:e9 ea 00 00 00       jmp    401cd5 &lt;phase_2+0x147&gt;<br>  401beb:48 8b 45 f8          mov    -0x8(%rbp),%rax<br>  401bef:48 89 c7             mov    %rax,%rdi<br>  401bf2:e8 8b 01 00 00       call   401d82 &lt;phase_2_1&gt;<br>  401bf7:e9 d9 00 00 00       jmp    401cd5 &lt;phase_2+0x147&gt;<br>  401bfc:48 8b 45 f8          mov    -0x8(%rbp),%rax<br>  401c00:48 89 c7             mov    %rax,%rdi<br>  ...<br></code></pre></td></tr></table></figure><p>这里面需要注意的关键点是rand_div，它会决定你的跳转方向，而你的学号又决定了它的取值。然后是<code>GenerateRandomNumber</code>这个函数的原理需要了解一下，而这个函数将在跳转前后分别调用一次，第一次决定你的跳转方向，第二次则决定了你的密码线索。</p><hr><h3 id="动态调试-1"><a href="#动态调试-1" class="headerlink" title="动态调试"></a><strong>动态调试</strong></h3><p>理解原理就没什么难度了，自己找几个断点打好然后关注一下<code>rand_div</code>的值就好，观察自己的学号向哪个函数跳转并理解相应函数计算即可，比如我这里向<code>phase_2_14</code>跳转：<br><img src="/images/phase_2_14.png" alt="phase_2_14"></p><p>而除了<code>phase_2_14</code>还有其他函数也是非常好理解的，第二题依旧可以轻松拿下。</p><hr><h2 id="Phase-3"><a href="#Phase-3" class="headerlink" title="Phase_3"></a><strong>Phase_3</strong></h2><h3 id="静态分析-2"><a href="#静态分析-2" class="headerlink" title="静态分析"></a><strong>静态分析</strong></h3><p>和Phase_2一样开局先跳转尽可能防止同学们答案雷同互相帮助（bushi</p><p>本体其实没有什么好说的，这里我跳转的方向是<code>Phase_3_5</code>简要解释一下可供参考：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><code class="hljs assembly">0000000000403001 &lt;phase_3_5&gt;:<br>  403001:f3 0f 1e fa          endbr64<br>  403005:55                   push   %rbp<br>  403006:48 89 e5             mov    %rsp,%rbp<br>  403009:48 83 ec 20          sub    $0x20,%rsp<br>  40300d:48 89 7d e8          mov    %rdi,-0x18(%rbp)<br>  403011:c7 45 fc 00 00 00 00 movl   $0x0,-0x4(%rbp)<br>  403018:c7 45 f8 00 00 00 00 movl   $0x0,-0x8(%rbp)<br>  40301f:48 8d 4d f0          lea    -0x10(%rbp),%rcx<br>  403023:48 8d 55 f4          lea    -0xc(%rbp),%rdx<br>  403027:48 8b 45 e8          mov    -0x18(%rbp),%rax<br>  40302b:48 8d 35 5a 36 00 00 lea    0x365a(%rip),%rsi        # 40668c &lt;_IO_stdin_used+0x68c&gt;<br>  403032:48 89 c7             mov    %rax,%rdi<br>  403035:b8 00 00 00 00       mov    $0x0,%eax<br>  40303a:e8 51 e1 ff ff       call   401190 &lt;__isoc99_sscanf@plt&gt;<br>  40303f:89 45 f8             mov    %eax,-0x8(%rbp)<br>  403042:83 7d f8 01          cmpl   $0x1,-0x8(%rbp)<br>  403046:7f 05                jg     40304d &lt;phase_3_5+0x4c&gt;<br>  403048:e8 a9 2b 00 00       call   405bf6 &lt;explode_bomb&gt;<br>  40304d:bf 08 00 00 00       mov    $0x8,%edi<br>  403052:e8 56 e6 ff ff       call   4016ad &lt;GenerateRandomNumber&gt;<br>  403057:8b 45 f4             mov    -0xc(%rbp),%eax<br>  40305a:48 63 d0             movslq %eax,%rdx<br>  40305d:48 8b 05 bc 57 00 00 mov    0x57bc(%rip),%rax        # 408820 &lt;rand_div&gt;<br>  403064:48 39 c2             cmp    %rax,%rdx<br>  403067:74 05                je     40306e &lt;phase_3_5+0x6d&gt;<br>  403069:e8 88 2b 00 00       call   405bf6 &lt;explode_bomb&gt;<br>  40306e:bf c8 00 00 00       mov    $0xc8,%edi<br>  403073:e8 35 e6 ff ff       call   4016ad &lt;GenerateRandomNumber&gt;<br>  403078:8b 45 f4             mov    -0xc(%rbp),%eax<br>  40307b:83 f8 07             cmp    $0x7,%eax<br>  40307e:0f 87 eb 00 00 00    ja     40316f &lt;phase_3_5+0x16e&gt;<br>  403084:89 c0                mov    %eax,%eax<br>  403086:48 8d 14 85 00 00 00 lea    0x0(,%rax,4),%rdx<br>  40308d:00 <br>  40308e:48 8d 05 9f 36 00 00 lea    0x369f(%rip),%rax        # 406734 &lt;_IO_stdin_used+0x734&gt;<br>  403095:8b 04 02             mov    (%rdx,%rax,1),%eax<br>  403098:48 98                cltq<br>  40309a:48 8d 15 93 36 00 00 lea    0x3693(%rip),%rdx        # 406734 &lt;_IO_stdin_used+0x734&gt;<br>  4030a1:48 01 d0             add    %rdx,%rax<br>  4030a4:3e ff e0             notrack jmp *%rax<br>  4030a7:48 8b 05 72 57 00 00 mov    0x5772(%rip),%rax        # 408820 &lt;rand_div&gt;<br>  4030ae:89 c2                mov    %eax,%edx<br>  4030b0:8b 45 fc             mov    -0x4(%rbp),%eax<br>  4030b3:01 d0                add    %edx,%eax<br>  4030b5:89 45 fc             mov    %eax,-0x4(%rbp)<br>  4030b8:bf c8 00 00 00       mov    $0xc8,%edi<br>  4030bd:e8 eb e5 ff ff       call   4016ad &lt;GenerateRandomNumber&gt;<br>  ...<br>  403174:8b 45 f0             mov    -0x10(%rbp),%eax<br>  403177:39 45 fc             cmp    %eax,-0x4(%rbp)          # 注意这里<br>  40317a:74 05                je     403181 &lt;phase_3_5+0x180&gt;<br>  40317c:e8 75 2a 00 00       call   405bf6 &lt;explode_bomb&gt;<br>  403181:90                   nop<br>  403182:c9                   leave<br>  403183:c3                   ret<br><br></code></pre></td></tr></table></figure><p>看起来一大堆很吓人对不对？实际上确实很吓人。</p><p>但是发现其中玄机后其实简单的没边，最终答案就藏在<code>0x403177</code>里面，前提是确保这一步前炸弹不爆炸（意识到要爆炸了直接<code>run</code>一下重开qwq）。</p><hr><h3 id="动态调试-2"><a href="#动态调试-2" class="headerlink" title="动态调试"></a><strong>动态调试</strong></h3><p>阅读<code>Phase_3_5</code>发现这一关其实需要两个输入，并且第一个输入必须是<code>rand_div</code>，这里建议通过<code>si</code>单步执行监控好<code>rand_div</code>值变化，确定正确结果后使用<code>run</code>重开正确输入第一个密码后才能进行下一步求解：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs lldb">(lldb) si<br>Process 13376 stopped<br>* thread #1, name = &#x27;bomb_linux&#x27;, stop reason = instruction step into<br>    frame #0: 0x000000000040317a bomb_linux`phase_3_5 + 377<br>bomb_linux`phase_3_5:<br>-&gt;  0x40317a &lt;+377&gt;: je     0x403181       ; &lt;+384&gt;<br>    0x40317c &lt;+379&gt;: callq  0x405bf6       ; explode_bomb<br>    0x403181 &lt;+384&gt;: nop<br>    0x403182 &lt;+385&gt;: leave<br>(lldb) x/wx $rbp-0x4<br>0x7fffffffdb0c: 0xffffffd7<br></code></pre></td></tr></table></figure><p>例如这里我可以打印出第二个值结合第一个值得到第三关正确结果。</p><hr><h2 id="Phase-4"><a href="#Phase-4" class="headerlink" title="Phase_4"></a><strong>Phase_4</strong></h2><h3 id="静态分析-3"><a href="#静态分析-3" class="headerlink" title="静态分析"></a><strong>静态分析</strong></h3><p>本题依旧开局跳转，笔者的跳转方向是<code>phase_4_01</code>，如何跳转不再强调关注<code>rand_div</code>的值即可，下面请D指导解读一下<code>phase_4_01</code>的内容：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><code class="hljs assembly">0000000000404895 &lt;phase_4_01&gt;:<br>  ; 函数入口，初始化栈帧<br>  404895:f3 0f 1e fa          endbr64 <br>  404899:55                   push   %rbp<br>  40489a:48 89 e5             mov    %rsp,%rbp<br>  40489d:48 83 ec 70          sub    $0x70,%rsp    ; 分配栈空间<br><br>  ; 初始化斐波那契数组（F(10)~F(24)的十六进制值）<br>  4048a1:48 89 7d 98          mov    %rdi,-0x68(%rbp) ; 保存输入字符串指针<br>  4048a5:c7 45 b0 37 00 00 00 movl   $0x37,-0x50(%rbp)   ; F(10)=55<br>  4048ac:c7 45 b4 59 00 00 00 movl   $0x59,-0x4c(%rbp)   ; F(11)=89<br>  4048b3:c7 45 b8 90 00 00 00 movl   $0x90,-0x48(%rbp)   ; F(12)=144<br>  4048ba:c7 45 bc e9 00 00 00 movl   $0xe9,-0x44(%rbp)   ; F(13)=233<br>  4048c1:c7 45 c0 79 01 00 00 movl   $0x179,-0x40(%rbp)  ; F(14)=377<br>  4048c8:c7 45 c4 62 02 00 00 movl   $0x262,-0x3c(%rbp)  ; F(15)=610<br>  4048cf:c7 45 c8 db 03 00 00 movl   $0x3db,-0x38(%rbp)  ; F(16)=987<br>  4048d6:c7 45 cc 3d 06 00 00 movl   $0x63d,-0x34(%rbp)  ; F(17)=1597<br>  4048dd:c7 45 d0 18 0a 00 00 movl   $0xa18,-0x30(%rbp)  ; F(18)=2584<br>  4048e4:c7 45 d4 55 10 00 00 movl   $0x1055,-0x2c(%rbp) ; F(19)=4181<br>  4048eb:c7 45 d8 6d 1a 00 00 movl   $0x1a6d,-0x28(%rbp) ; F(20)=6765<br>  4048f2:c7 45 dc c2 2a 00 00 movl   $0x2ac2,-0x24(%rbp) ; F(21)=10946<br>  4048f9:c7 45 e0 2f 45 00 00 movl   $0x452f,-0x20(%rbp) ; F(22)=17711<br>  404900:c7 45 e4 f1 6f 00 00 movl   $0x6ff1,-0x1c(%rbp) ; F(23)=28657<br>  404907:c7 45 e8 20 b5 00 00 movl   $0xb520,-0x18(%rbp) ; F(24)=46368<br><br>  ; 读取输入到局部变量（格式为&quot;%d&quot;）<br>  40490e:48 8d 55 ac          lea    -0x54(%rbp),%rdx    ; 输入存储地址<br>  404912:48 8b 45 98          mov    -0x68(%rbp),%rax   ; 输入字符串<br>  404916:48 8d 0d 93 1f 00 00 lea    0x1f93(%rip),%rcx   ; 格式字符串&quot;%d&quot;<br>  40491d:48 89 ce             mov    %rcx,%rsi<br>  404920:48 89 c7             mov    %rax,%rdi<br>  404923:b8 00 00 00 00       mov    $0x0,%eax<br>  404928:e8 63 c8 ff ff       call   401190 &lt;__isoc99_sscanf@plt&gt;<br><br>  ; 验证输入有效性（必须为1个正数）<br>  40492d:89 45 fc             mov    %eax,-0x4(%rbp)    ; sscanf返回值<br>  404930:83 7d fc 01          cmpl   $0x1,-0x4(%rbp)   ; 检查是否读取1个参数<br>  404934:75 07                jne    40493d &lt;phase_4_01+0xa8&gt; ; 失败则爆炸<br>  404936:8b 45 ac             mov    -0x54(%rbp),%eax ; 获取输入值N<br>  404939:85 c0                test   %eax,%eax         ; 检查N &gt; 0<br>  40493b:7f 05                jg     404942 &lt;phase_4_01+0xad&gt;<br>  40493d:e8 b4 12 00 00       call   405bf6 &lt;explode_bomb&gt;<br><br>  ; 检查输入值上限（必须 &gt; 1999）<br>  404942:8b 45 ac             mov    -0x54(%rbp),%eax <br>  404945:3d cf 07 00 00       cmp    $0x7cf,%eax       ; 1999的十六进制<br>  40494a:7f 05                jg     404951 &lt;phase_4_01+0xbc&gt; ; N &gt; 1999?<br>  40494c:e8 a5 12 00 00       call   405bf6 &lt;explode_bomb&gt;<br><br>  ; 计算 N/2000（通过定点数乘法优化）<br>  404951:8b 45 ac             mov    -0x54(%rbp),%eax  ; 输入值N<br>  404954:48 63 d0             movslq %eax,%rdx        ; 符号扩展<br>  404957:48 69 d2 d3 4d 62 10 imul   $0x10624dd3,%rdx,%rdx ; 乘以274877907(≈2^32/2000)<br>  40495e:48 c1 ea 20          shr    $0x20,%rdx       ; 取高32位<br>  404962:c1 fa 07             sar    $0x7,%edx        ; 算术右移7位 → N/2000<br>  404965:c1 f8 1f             sar    $0x1f,%eax       ; 符号位扩展<br>  404968:89 c1                mov    %eax,%ecx        <br>  40496a:89 d0                mov    %edx,%eax        <br>  40496c:29 c8                sub    %ecx,%eax        ; 处理负数情况<br>  40496e:89 45 ac             mov    %eax,-0x54(%rbp) ; 保存k = N/2000<br><br>  ; 调用递归函数func4_0(k), 这个函数用于计算斐波那契数列<br>  404971:8b 45 ac             mov    -0x54(%rbp),%eax <br>  404974:89 c7                mov    %eax,%edi        ; 参数k<br>  404976:e8 ce fd ff ff       call   404749 &lt;func4_0&gt;  ; 返回值eax=F(k+1)<br>  40497b:89 45 f8             mov    %eax,-0x8(%rbp)  ; 保存结果<br><br>  ; 生成随机索引并验证结果<br>  40497e:bf 0f 00 00 00       mov    $0xf,%edi        ; 参数15<br>  404983:e8 25 cd ff ff       call   4016ad &lt;GenerateRandomNumber&gt; ; 生成0~14随机数<br>  404988:48 8b 05 91 3e 00 00 mov    0x3e91(%rip),%rax        # 408820 &lt;rand_div&gt; ; 获取随机索引<br>  40498f:8b 44 85 b0          mov    -0x50(%rbp,%rax,4),%eax ; 取数组[rand_div]的值<br>  404993:39 45 f8             cmp    %eax,-0x8(%rbp)  ; 比较func4_0(k) == 数组值？<br>  404996:74 05                je     40499d &lt;phase_4_01+0x108&gt;<br>  404998:e8 59 12 00 00       call   405bf6 &lt;explode_bomb&gt;<br></code></pre></td></tr></table></figure><p>所以相对还是很明了的，依旧是关注<code>rand_div</code>。</p><h3 id="动态调试-3"><a href="#动态调试-3" class="headerlink" title="动态调试"></a><strong>动态调试</strong></h3><p>先找出<code>rand_div</code>在最后判断前的取值，比如我下面的0xa：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs lldb">(lldb) si<br>Process 27027 stopped<br>* thread #1, name = &#x27;bomb_linux&#x27;, stop reason = instruction step into<br>    frame #0: 0x0000000000401719 bomb_linux`GenerateRandomNumber + 108<br>bomb_linux`GenerateRandomNumber:<br>-&gt;  0x401719 &lt;+108&gt;: movq   %rax, 0x7100(%rip) ; rand_div<br>    0x401720 &lt;+115&gt;: jmp    0x401723       ; &lt;+118&gt;<br>    0x401722 &lt;+117&gt;: nop<br>    0x401723 &lt;+118&gt;: popq   %rbp<br>(lldb) si<br>Process 27027 stopped<br>* thread #1, name = &#x27;bomb_linux&#x27;, stop reason = instruction step into<br>    frame #0: 0x0000000000401720 bomb_linux`GenerateRandomNumber + 115<br>bomb_linux`GenerateRandomNumber:<br>-&gt;  0x401720 &lt;+115&gt;: jmp    0x401723       ; &lt;+118&gt;<br>    0x401722 &lt;+117&gt;: nop<br>    0x401723 &lt;+118&gt;: popq   %rbp<br>    0x401724 &lt;+119&gt;: retq<br>(lldb) x/gx &amp;rand_div<br>0x00408820: 0x000000000000000a<br></code></pre></td></tr></table></figure><p>而当 <code>rand_div = 0xa</code>（即十进制 <strong>10</strong>）时，输入值 <code>N</code> 的计算步骤如下：</p><ul><li><p>数组索引 <strong>10</strong> 的值是 <strong>斐波那契数列第 20 项</strong>（<code>F(20) = 6765</code>）。</p></li><li><p><code>func4_0(k)</code> 实际计算的是 <strong>标准斐波那契数列的第 <code>k+1</code> 项</strong>（例如，<code>func4_0(0) = 1 = F(2)</code>） 需要满足：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">func4_0(k) = F(k+<span class="hljs-number">1</span>) = F(<span class="hljs-number">20</span>)<br></code></pre></td></tr></table></figure><p>解得：<br>k + 1 &#x3D; 20 → k &#x3D; 19</p></li><li><p><code>k = N / 2000</code> → <code>N = 2000 * k = 2000 * 19 = 38000</code>.<br>从而得解。<br><img src="/images/phase_4.png" alt="phase_4"></p></li></ul><hr><h2 id="Phase-Impossible"><a href="#Phase-Impossible" class="headerlink" title="Phase_Impossible"></a><strong>Phase_Impossible</strong></h2><p>Impossible？</p><p>从这道题开始偷懒了，掏出ghidra直接看c代码了解一下大概流程再去objdump看汇编：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">phase_impossible</span><span class="hljs-params">(<span class="hljs-type">char</span> *param_1)</span><br><br>&#123;<br>  <span class="hljs-type">int</span> iVar1;<br>  <span class="hljs-type">size_t</span> sVar2;<br>  undefined local_118 [<span class="hljs-number">256</span>];<br>  <span class="hljs-type">long</span> local_18;<br>  <span class="hljs-type">long</span> local_10;<br>  <br>  local_10 = GetTickCount();<br>  sVar2 = <span class="hljs-built_in">strlen</span>(param_1);<br>  <span class="hljs-keyword">if</span> ((sVar2 &lt; <span class="hljs-number">10</span>) || (sVar2 = <span class="hljs-built_in">strlen</span>(param_1), <span class="hljs-number">0x300</span> &lt; sVar2)) &#123;<br>    explode_bomb();<br>  &#125;<br>  <span class="hljs-built_in">memset</span>(local_118,<span class="hljs-number">0</span>,<span class="hljs-number">0x100</span>);<br>  tohex(local_118,param_1);<br>  GenerateRandomNumber(<span class="hljs-number">0x400</span>);<br>  iVar1 = check_buf_valid(local_118,rand_div &amp; <span class="hljs-number">0xffffffff</span>);<br>  <span class="hljs-keyword">if</span> (iVar1 == <span class="hljs-number">0</span>) &#123;<br>    <span class="hljs-built_in">puts</span>(&amp;DAT_00406518);<br>    explode_bomb();<br>  &#125;<br>  GenerateRandomNumber(<span class="hljs-number">3</span>);<br>  <span class="hljs-keyword">if</span> (rand_div != <span class="hljs-number">2</span>) &#123;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-number">2</span> &lt; rand_div) <span class="hljs-keyword">goto</span> LAB_00401891;<br>    <span class="hljs-keyword">if</span> (rand_div == <span class="hljs-number">0</span>) &#123;<br>      goto_buf_0(local_118);<br>    &#125;<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (rand_div != <span class="hljs-number">1</span>) <span class="hljs-keyword">goto</span> LAB_00401891;<br>    goto_buf_1(local_118);<br>  &#125;<br>  goto_buf_2(local_118);<br>LAB_00401891:<br>  explode_bomb();<br>  GenerateRandomNumber(<span class="hljs-number">0x400</span>);<br>  <span class="hljs-keyword">if</span> ((<span class="hljs-type">long</span>)(<span class="hljs-type">int</span>)result != rand_div) &#123;<br>    <span class="hljs-built_in">printf</span>(&amp;DAT_00406560,rand_div,(ulong)result);<br>    explode_bomb();<br>  &#125;<br>  local_18 = GetTickCount();<br>  <span class="hljs-keyword">if</span> (<span class="hljs-number">1000</span> &lt; (ulong)(local_18 - local_10)) &#123;<br>    <span class="hljs-built_in">puts</span>(&amp;DAT_004065a8);<br>    explode_bomb();<br>  &#125;<br>  <span class="hljs-keyword">return</span>;<br>&#125;<br></code></pre></td></tr></table></figure><p>最终任务还是很明确的，需要写一段机器码修改<code>result</code>的数值，但是注意要能通过<code>check_buf_valid</code>检测，并且最后指令必须是跳转到<code>0x401896</code>不然就会触发<code>phase_impossible</code>中<code>0x401891</code>处的<code>explode_bomb</code>函数，唯一的难点是跟踪<code>rand_div</code>的数值变化，建议使用<code>register write</code>来修改<code>check_buf_valid</code>的返回值使其强制通过然后监控<code>rand_div</code>每一次的数值变化（<code>x/gx &amp;rand_div</code>），记录好<code>rand_div</code>的结果后开始指令设计，需要满足：</p><ul><li>指令的异或和为<code>rand_div</code>第一次的数值末尾八位以通过检查;</li><li>修改<code>result</code>使其数值等于<code>rand_div</code>第三次数值;</li><li>跳转到<code>0x401896</code>避免炸弹;</li></ul><p> 如果前几问都完成了到这里应该是没有问题的。</p><hr><h2 id="Phase-Secret"><a href="#Phase-Secret" class="headerlink" title="Phase_Secret"></a><strong>Phase_Secret</strong></h2><p>隐藏彩蛋，并非隐藏。汇编里写的非常清楚：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs assembly">0000000000401a8b &lt;phase_secret&gt;:<br>  401a8b:f3 0f 1e fa          endbr64<br>  401a8f:55                   push   %rbp<br>  401a90:48 89 e5             mov    %rsp,%rbp<br>  401a93:48 83 ec 10          sub    $0x10,%rsp<br>  401a97:48 89 7d f8          mov    %rdi,-0x8(%rbp)<br>  401a9b:48 8d 05 26 4b 00 00 lea    0x4b26(%rip),%rax        # 4065c8 &lt;_IO_stdin_used+0x5c8&gt;<br>  401aa2:48 89 c7             mov    %rax,%rdi<br>  401aa5:e8 76 f6 ff ff       call   401120 &lt;puts@plt&gt;<br>  401aaa:90                   nop<br>  401aab:c9                   leave<br>  401aac:c3                   ret<br></code></pre></td></tr></table></figure><p>注意到这段指令在原程序中完全没有执行说明是需要用户自己跳转的，也非常简单只需要在<code>phase_5</code>中设计指令时加一个要求跳转到<code>0x401a8b</code>即可。</p><p>完结<br><img src="/images/caseclosed.png" alt="Case Closed"></p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>技术</tag>
+      
+      <tag>生活</tag>
+      
+      <tag>学习</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>使用Clonezilla备份和克隆系统</title>
+    <link href="/2025/02/23/clonezilla/"/>
+    <url>/2025/02/23/clonezilla/</url>
+    
+    <content type="html"><![CDATA[<p><img src="/images/clonezilla.png" alt="Clonezilla官网"><br><a href="https://clonezilla.org/">Clonezilla</a>是一款非常好用的系统迁移工具，本文将介绍其基本用法（不包含网络迁移及Clonezilla服务器等进阶内容）以及在克隆Btrfs磁盘时遇到的问题解法。</p><hr><h3 id="零-事前准备："><a href="#零-事前准备：" class="headerlink" title="零.事前准备："></a><strong>零.事前准备</strong>：</h3><ul><li>下载Clonezilla Live镜像（ISO），制作启动U盘（有手就行）。</li><li>准备目标存储设备（如U盘，需要迁移的新硬盘等），确保有足够空间（建议大于源硬盘已用空间的1.2倍）。</li></ul><h3 id="一-备份镜像到硬盘（Device-to-Image）"><a href="#一-备份镜像到硬盘（Device-to-Image）" class="headerlink" title="一.备份镜像到硬盘（Device-to-Image）"></a><strong>一.备份镜像到硬盘（Device-to-Image）</strong></h3><p>这个模式可以将硬盘完整备份为一个镜像文件（可保存到本地硬盘、外置硬盘或网络存储）方便多机部署。注意如果只是将一个硬盘的系统完全克隆到新盘可以跳过此部分。</p><h4 id="步骤说明："><a href="#步骤说明：" class="headerlink" title="步骤说明："></a><strong>步骤说明</strong>：</h4><ol start="2"><li><p><strong>启动Clonezilla</strong>：</p><ul><li>插入U盘，重启电脑并从U盘启动。</li><li>选择默认选项（语言，键盘布局，Beginner模式）进入Clonezilla的TUI界面。</li></ul></li><li><p><strong>选择备份模式</strong>：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Choose mode:         选择 &quot;device-image&quot;（设备到镜像）<br>Mount storage media: 选择 &quot;local_dev&quot;（本地存储设备）<br></code></pre></td></tr></table></figure><ul><li>按提示挂载目标存储设备（注意这里选择的是你要存储镜像的设备且文件系统一般不限，如外置硬盘），确认路径（如 <code>/dev/sdb1</code>）。</li></ul></li><li><p><strong>配置备份参数</strong>：</p><ul><li><strong>源硬盘</strong>：选择需要备份的硬盘（如 <code>/dev/sda</code>）。</li><li><strong>镜像存储路径</strong>：指定目标位置（如外置硬盘的挂载目录）。</li><li><strong>镜像名称</strong>：自定义名称（如 <code>2025-img-rockylinux-2-21</code>）。</li><li><strong>压缩选项</strong>：默认即可，支持并行压缩加速。</li><li><strong>镜像分割</strong>：若目标存储设备为FAT32格式（单文件最大4GB），选择自动分割。</li></ul></li><li><p><strong>确认操作</strong>：</p><ul><li>检查提示信息，输入 <code>y</code> 开始备份。</li><li>完成后关机或重启。</li></ul></li><li><p><strong>镜像还原</strong>：和备份非常相似，只是选项换成restore to disk，顺着指引操作即可。</p></li></ol><hr><h3 id="二、直接克隆硬盘（Device-to-Device）"><a href="#二、直接克隆硬盘（Device-to-Device）" class="headerlink" title="二、直接克隆硬盘（Device-to-Device）"></a><strong>二、直接克隆硬盘（Device-to-Device）</strong></h3><p>将源硬盘完整克隆到目标硬盘（适合硬盘升级或快速迁移），比如笔者最近白嫖了一个三星的2T硬盘直接把原来512G硬盘里的CachyOS无损迁移了进去。</p><h4 id="步骤说明：-1"><a href="#步骤说明：-1" class="headerlink" title="步骤说明："></a><strong>步骤说明</strong>：</h4><ol><li><p><strong>准备工作</strong>：</p><ul><li>连接目标硬盘（需容量≥源硬盘已用空间，还原镜像操作也是如此，注意Clonezilla支持小分区到大分区迁移不支持大分区到小分区，后者出门右转Rsync）</li><li><strong>警告</strong>：目标硬盘数据将被覆盖，操作前如有需要务必备份重要数据！</li></ul></li><li><p><strong>启动Clonezilla</strong>：</p><ul><li>同上，从U盘启动进入Clonezilla界面。</li></ul></li><li><p><strong>选择克隆模式</strong>：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Choose mode:         选择 &quot;device-device&quot;（设备到设备）<br></code></pre></td></tr></table></figure></li><li><p><strong>选择硬盘</strong>：</p><ul><li><strong>母碟硬盘</strong>：选择原始硬盘（如 <code>/dev/sda</code>）。</li><li><strong>目标硬盘</strong>：选择新硬盘（如 <code>/dev/sdb</code>）。</li></ul></li><li><p><strong>克隆选项</strong>：<br> 需要进入专家模式才能看到，一般直接新手模式默认即可。</p></li><li><p><strong>执行克隆</strong>：</p><ul><li>确认提示信息后输入 <code>y</code>，等待完成。</li><li>克隆结束后关机，移除旧硬盘并测试新硬盘（主要是查看能不能启动进入系统，若能进入一般不会有问题，而且一般都能进入因为Clonezilla是高精确的块对块克隆）。</li></ul></li></ol><hr><h3 id="两种模式对比："><a href="#两种模式对比：" class="headerlink" title="两种模式对比："></a><strong>两种模式对比</strong>：</h3><table><thead><tr><th><strong>模式</strong></th><th>特点</th></tr></thead><tbody><tr><td>备份镜像</td><td>方便多机部署也可以用于留档</td></tr><tr><td>直接克隆</td><td>换硬盘快速迁移无需恢复过程</td></tr></tbody></table><hr><h3 id="Btrfs务必注意："><a href="#Btrfs务必注意：" class="headerlink" title="Btrfs务必注意："></a><strong>Btrfs务必注意</strong>：</h3><p>对Btrfs直接进行Clonezilla克隆大概率会碰到一个边界错误，这是由于Btrfs本身使用一段时间后碎片化存储导致的，你需要执行<code>sudo btrfs balance start --full-balance /</code>来进行整理，但是这也算是一个风险操作要确保完整执行不能在执行时意外中断导致文件系统出错，并且在后续克隆时不能使用新手模式要进入专家模式勾选-p1支持所有文件系统但是效率降低的选项来确保顺利克隆（未勾选此选项可能导致文件系统无法识别的错误），其他步骤参照前文即可。</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>技术分享</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Archlinux KDE体验优化总结</title>
+    <link href="/2025/02/02/archlinux-optimization/"/>
+    <url>/2025/02/02/archlinux-optimization/</url>
+    
+    <content type="html"><![CDATA[<p>打算开一个坑记录这么久以来的Archlinux系统性能和操作体验优化经验</p><p>本文章长期更新</p><hr><h2 id="更换CachyOS优化仓库"><a href="#更换CachyOS优化仓库" class="headerlink" title="更换CachyOS优化仓库"></a>更换CachyOS优化仓库</h2><p><img src="https://wiki.cachyos.org/_astro/logo.DVTdAJi6.svg" alt="CachyOS Logo"><br>通过 CachyOS 优化仓库获取 CPU 指令集级优化（x86-64-v3&#x2F;v4&#x2F;zen4）的软件包，提升 Arch Linux 系统性能。该仓库提供 PGO&#x2F;LTO&#x2F;BOLT 编译优化及持续维护的定制软件包。</p><hr><h3 id="▎前置准备"><a href="#▎前置准备" class="headerlink" title="▎前置准备"></a>▎前置准备</h3><p><strong>⚠️ 兼容性警告</strong>  </p><ol><li>可以先通过命令<code>/usr/lib64/ld-linux-x86-64.so.2 --help | grep -i x86-64-</code>来查看你的处理器支持等级。</li><li>注意添加 <code>cachyos</code> 主仓库会替换官方 pacman 仓库（含 INSTALLED_FROM 等特性）  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">cachyos-v3    <span class="hljs-comment"># AVX2 优化</span><br>cachyos-v4    <span class="hljs-comment"># AVX512 优化</span><br>cachyos-extra <span class="hljs-comment"># 扩展软件包</span><br></code></pre></td></tr></table></figure></li><li>CachyOS官方在前段时间专门推出了针对 AMD 的Zen4和Zen5架构优化仓库，如有需要可以<a href="https://discuss.cachyos.org/t/zen-4-5-optimized-repository-testing/713/7">点击这里</a>查看如何部署。</li></ol><hr><h3 id="▎仓库配置流程"><a href="#▎仓库配置流程" class="headerlink" title="▎仓库配置流程"></a>▎仓库配置流程</h3><h4 id="▶-自动配置脚本"><a href="#▶-自动配置脚本" class="headerlink" title="▶ 自动配置脚本"></a>▶ 自动配置脚本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 下载配置工具</span><br>curl -LO https://mirror.cachyos.org/cachyos-repo.tar.xz<br>tar xvf cachyos-repo.tar.xz &amp;&amp; <span class="hljs-built_in">cd</span> cachyos-repo<br><br><span class="hljs-comment"># 执行自动配置（自动检测 CPU 指令集）</span><br>sudo ./cachyos-repo.sh<br></code></pre></td></tr></table></figure><p>📌 脚本特性：  </p><ul><li>自动备份 <code>/etc/pacman.conf</code>  </li><li>智能匹配最优指令集版本 (v3&#x2F;v4)  </li><li>支持 x86_64 和 aarch64 架构</li></ul><h4 id="▶-手动配置方式"><a href="#▶-手动配置方式" class="headerlink" title="▶ 手动配置方式"></a>▶ 手动配置方式</h4><ol><li><p>编辑 pacman.conf</p><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-comment"># 在 /etc/pacman.conf 末尾添加（示例为 AVX2 优化）</span><br><span class="hljs-section">[cachyos-v3]</span><br><span class="hljs-attr">SigLevel</span> = Optional TrustAll<br><span class="hljs-attr">Include</span> = /etc/pacman.d/cachyos-v3<br></code></pre></td></tr></table></figure></li><li><p>✅同步仓库数据库</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -Syu<br></code></pre></td></tr></table></figure></li></ol><hr><h3 id="▎仓库卸载方法"><a href="#▎仓库卸载方法" class="headerlink" title="▎仓库卸载方法"></a>▎仓库卸载方法</h3><h4 id="▶-自动卸载"><a href="#▶-自动卸载" class="headerlink" title="▶ 自动卸载"></a>▶ 自动卸载</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> cachyos-repo<br>sudo ./cachyos-repo.sh --remove<br></code></pre></td></tr></table></figure><h4 id="▶-手动卸载"><a href="#▶-手动卸载" class="headerlink" title="▶ 手动卸载"></a>▶ 手动卸载</h4><ol><li>删除 pacman.conf 中的 cachyos 仓库段</li><li>移除配置文件<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo <span class="hljs-built_in">rm</span> -rf /etc/pacman.d/cachyos*<br></code></pre></td></tr></table></figure></li></ol><hr><h2 id="内核更换"><a href="#内核更换" class="headerlink" title="内核更换"></a>内核更换</h2><h2 id="KDE-配置"><a href="#KDE-配置" class="headerlink" title="KDE 配置"></a>KDE 配置</h2>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>技术分享</tag>
+      
+      <tag>Archlinux</tag>
+      
+      <tag>系统优化</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>命令行编辑器的优雅新选择</title>
+    <link href="/2024/12/13/zellij-helix/"/>
+    <url>/2024/12/13/zellij-helix/</url>
+    
+    <content type="html"><![CDATA[<p>意外发现Zellij+Helix还挺好用的</p><p>避免了vim&#x2F;neovim的配置流程直接就能上手的轻量命令行开发环境</p><p>稍微了解一下二者的快捷键就能舒适码字了</p><p>甚至还都是rust出品</p><p>即刻尝试一下<a href="https://zellij.dev/">Zellij</a>和<a href="https://helix-editor.com/">Helix</a>吧!</p><p>&#x2F;&#x2F; 至于Helix没有文件树显示的方案，反正Helix选择文件挺方便的要文件树无非是希望编辑窗口居于窗口中央，倒是可以用watch和tree命令来代替还能手动设置哪些文件不用显示hhh</p><p><img src="/images/zellij-helix.jpg" alt="实际效果"></p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>技术分享</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>愿指引明路的苍蓝星永远为你闪耀</title>
+    <link href="/2024/11/11/mhwi/"/>
+    <url>/2024/11/11/mhwi/</url>
+    
+    <content type="html"><![CDATA[<p>使用东方Project软音源THFont简单重置的MHWI主题曲</p><p>雄关漫道真如铁，而今迈步从头越</p><iframe src="//player.bilibili.com/player.html?bvid=BV1WymmYNEAk&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" width="100%" height="500"></iframe>]]></content>
+    
+    
+    <categories>
+      
+      <category>Rearrangement</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>音乐</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Archlinux的KDE Plasma优先启用Nvidia独立显卡和混合显卡配置指北</title>
+    <link href="/2024/11/06/arch-nvidia/"/>
+    <url>/2024/11/06/arch-nvidia/</url>
+    
+    <content type="html"><![CDATA[<p>本文将介绍在 <strong>X11</strong> 和 <strong>Wayland</strong> 两种会话下，如何在 KDE Plasma 中优先启用 Nvidia 独立显卡，并提供 I+N 混合显卡的配置方案。<strong>首先，请确保您已经正确安装了 Nvidia 驱动</strong>（如果非 Mainline 内核，请使用 <code>nvidia-dkms</code> 或 <code>nvidia-open-dkms</code> 版本）。</p><p><img src="/images/5364bba6d035326e82c53504dd53e7c2454454985.png" alt="Nvidia设置示意图"></p><h3 id="适用系统"><a href="#适用系统" class="headerlink" title="适用系统"></a>适用系统</h3><p>对于 <strong>CachyOS</strong> 或 <strong>EndeavourOS</strong> 等 Arch Linux 衍生版，这些配置大多开箱即用，但对于刚刚入坑 Arch Linux 且使用 KDE 的新手可能会遇到这样的问题：</p><ul><li>Nvidia 驱动已安装，<code>nvidia-smi</code> 输出正常</li><li>KDE 系统信息显示仍在使用核显，程序运行时也优先使用核显</li><li>导致某些应用（如浏览器、Blender）可能出现卡顿或掉帧现象</li></ul><p>这是因为 Arch Linux 的高自定义性，许多功能需要用户手动配置。以下是详细的解决方案。</p><hr><h2 id="配置-X11-下的-Nvidia-显卡优先"><a href="#配置-X11-下的-Nvidia-显卡优先" class="headerlink" title="配置 X11 下的 Nvidia 显卡优先"></a>配置 X11 下的 Nvidia 显卡优先</h2><p>可以通过配置 <code>/etc/X11/xorg.conf</code> 实现 Nvidia 独显输出。幸运的是，Nvidia 提供了自动生成配置文件的工具，用户无需手动编写：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo nvidia-xconfig --prime<br></code></pre></td></tr></table></figure><p>该命令会根据硬件情况自动生成配置文件。执行后 <strong>重新登录会话</strong> 即可生效（即使是 Wayland 用户也可以执行一次此命令）。</p><p><img src="/images/1613f5602b203b38230f19699deb0219454454985.png" alt="X11 Nvidia配置"></p><hr><h2 id="配置-Wayland-下的-Nvidia-显卡优先"><a href="#配置-Wayland-下的-Nvidia-显卡优先" class="headerlink" title="配置 Wayland 下的 Nvidia 显卡优先"></a>配置 Wayland 下的 Nvidia 显卡优先</h2><p>在 Wayland 下优先启用 Nvidia 显卡的步骤如下：</p><ol><li><p>编辑 <strong>GRUB 配置</strong>文件：</p><p>打开 <code>/etc/default/grub</code> 文件，在 <code>GRUB_CMDLINE_LINUX_DEFAULT=&quot;&quot;</code> 中添加 <code>nvidia_drm.modeset=1</code>：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">GRUB_CMDLINE_LINUX_DEFAULT=<span class="hljs-string">&quot;nvidia_drm.modeset=1&quot;</span><br></code></pre></td></tr></table></figure></li><li><p>重新生成 grub 配置：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo grub-mkconfig -o /boot/grub/grub.cfg<br></code></pre></td></tr></table></figure></li><li><p>配置 <strong>Plasma 环境</strong>文件：</p><p>在 <code>~/.config/plasma-workspace/env/nvidia.sh</code> 中写入以下内容：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#!/bin/bash </span><br><span class="hljs-built_in">export</span> __NV_PRIME_RENDER_OFFLOAD=1 <br><span class="hljs-built_in">export</span> __GLX_VENDOR_LIBRARY_NAME=nvidia<br></code></pre></td></tr></table></figure></li><li><p>保存并重启电脑，即可生效。</p></li></ol><p><img src="/images/b2054bbaf6197624d38cc2007d885fd1454454985.png" alt="Wayland Nvidia配置"></p><hr><h2 id="I-N-混合显卡方案"><a href="#I-N-混合显卡方案" class="headerlink" title="I+N 混合显卡方案"></a>I+N 混合显卡方案</h2><p>如果不希望全局启用独显，可以选择让大部分程序默认使用核显，而少数高性能需求的程序使用独显。这种方法能有效节省功耗，同时将独显资源集中分配给需要的程序（如 Steam 游戏、Blender 等）。缺点是每个程序需要手动配置启动项。</p><h3 id="配置步骤"><a href="#配置步骤" class="headerlink" title="配置步骤"></a>配置步骤</h3><ol><li><p>打开程序的 <code>.desktop</code> 启动文件：</p><p>位置可能在 <code>/usr/share/applications</code> 或 <code>~/.local/share/applications</code> 中。</p></li><li><p>在 <code>Exec=</code> 后添加 <code>prime-run</code> 参数。例如：</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Exec=prime-run &lt;程序启动命令&gt;<br></code></pre></td></tr></table></figure><p><img src="/images/71a5357ef4bd808b10429bc2ea46cb6f454454985.png" alt="混合显卡配置示意图"></p></li></ol><h3 id="Vim-快捷配置"><a href="#Vim-快捷配置" class="headerlink" title="Vim 快捷配置"></a>Vim 快捷配置</h3><p>如果使用 Vim，可以使用以下快捷键快速批量替换 <code>Exec=</code> 为 <code>Exec=prime-run</code>：</p><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim">v -&gt; G -&gt; :s/Exec=/Exec=prime-run /g Enter -&gt; :<span class="hljs-keyword">wq</span> Enter<br></code></pre></td></tr></table></figure><hr><h2 id="让-Plasma-桌面也使用独显"><a href="#让-Plasma-桌面也使用独显" class="headerlink" title="让 Plasma 桌面也使用独显"></a>让 Plasma 桌面也使用独显</h2><p>如果希望 Plasma 桌面也通过独显运行，可以修改 Wayland 配置文件并删除第二行：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#!/bin/bash </span><br><span class="hljs-built_in">export</span> __GLX_VENDOR_LIBRARY_NAME=nvidia<br></code></pre></td></tr></table></figure><p>这样 Plasma 桌面会通过独显启动，其他程序则默认使用核显。</p><hr><p>希望以上经验能为有此需求的用户提供参考帮助。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术分享</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>技术</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Overleaf Toolkit踩坑记录</title>
+    <link href="/2024/11/06/overleaf/"/>
+    <url>/2024/11/06/overleaf/</url>
+    
+    <content type="html"><![CDATA[<p>在安装 Overleaf Toolkit 时，表面上看起来很简单只要执行一些脚本就行，但是在某地区网络环境下还是遇到了一些问题和困难，这里记录安装过程中的问题和解决方案，方便以后参考。</p><p>具体流程就不赘述了，先将访问<a href="https://github.com/overleaf/toolkit">Overleaf Toolkit官方仓库</a>将代码clone下来并按照手册执行即可。</p><h2 id="问题一：无法-Pull-Mongo、Redis-和-Sharelatex-镜像"><a href="#问题一：无法-Pull-Mongo、Redis-和-Sharelatex-镜像" class="headerlink" title="问题一：无法 Pull Mongo、Redis 和 Sharelatex 镜像"></a>问题一：无法 Pull Mongo、Redis 和 Sharelatex 镜像</h2><p>在执行 <code>bin/up</code> 脚本启动服务时，发现 Mongo、Redis 和 Sharelatex 镜像无法拉取。主要原因是 Docker 在国内网络环境中，直接访问 Docker Hub 可能会被限制，导致拉取镜像失败。</p><p>截至这篇博客编写时网上提供的镜像均无法解决只能使用代理。</p><h3 id="解决方案：为-Docker-设置代理"><a href="#解决方案：为-Docker-设置代理" class="headerlink" title="解决方案：为 Docker 设置代理"></a>解决方案：为 Docker 设置代理</h3><p>通过配置 Docker 的代理，可以解决拉取镜像受限的问题。步骤如下：</p><ol><li><p>创建一个 <code>systemd</code> 服务文件，为 Docker 设置代理。</p></li><li><p>编辑 <code>/etc/systemd/system/docker.service.d/proxy.conf</code> 文件，添加以下内容（确保已经设置了代理服务器）：</p> <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[Service]</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;HTTP_PROXY=http://&lt;your-proxy-server&gt;:&lt;port&gt;&quot;</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;HTTPS_PROXY=http://&lt;your-proxy-server&gt;:&lt;port&gt;&quot;</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;NO_PROXY=localhost,127.0.0.1&quot;</span><br></code></pre></td></tr></table></figure></li><li><p>重新加载 <code>systemd</code> 配置并重启 Docker：</p> <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo systemctl daemon-reload<br>sudo systemctl restart docker<br></code></pre></td></tr></table></figure></li><li><p>重启 Docker 后再次执行 <code>sudo ./up</code>，此时应该可以正常拉取 Mongo、Redis 和 Sharelatex 的镜像。等待执行完成即可。</p></li></ol><hr><h2 id="问题二：外部机器无法访问-Overleaf-Web-服务"><a href="#问题二：外部机器无法访问-Overleaf-Web-服务" class="headerlink" title="问题二：外部机器无法访问 Overleaf Web 服务"></a>问题二：外部机器无法访问 Overleaf Web 服务</h2><p>先确认ipv4和ipv6转发功能没有问题，但是依旧出现只能本机访问127.0.0.1，其他方式均无法访问，甚至nmap扫描端口也发现并未开放sharelatex端口，可以通过修改docker-compose配置文件解决。</p><p>注意到在默认的 <code>lib/docker-compose.base.yml</code> 配置中，Overleaf Web 服务的端口映射方式为 <code>&quot;$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;:$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</code>。</p><h3 id="解决方案：修改端口映射"><a href="#解决方案：修改端口映射" class="headerlink" title="解决方案：修改端口映射"></a>解决方案：修改端口映射</h3><p>在 <code>docker-compose.base.yml</code> 文件中，删除 <code>$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;</code> 前缀，将 <code>&quot;$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;:$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</code> 修改为 <code>&quot;$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</code>。这样可以使 Docker 将 Overleaf 的 Web 服务端口暴露给所有网络接口，从而允许外部机器访问。</p><p>修改后的 <code>docker-compose.base.yml</code> 端口映射配置如下：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-meta">---</span><br><span class="hljs-attr">services:</span><br><br>    <span class="hljs-attr">sharelatex:</span><br>        <span class="hljs-attr">restart:</span> <span class="hljs-string">always</span><br>        <span class="hljs-attr">image:</span> <span class="hljs-string">&quot;$&#123;IMAGE&#125;&quot;</span><br>        <span class="hljs-attr">container_name:</span> <span class="hljs-string">sharelatex</span><br>        <span class="hljs-attr">volumes:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;$&#123;OVERLEAF_DATA_PATH&#125;:$&#123;OVERLEAF_IN_CONTAINER_DATA_PATH&#125;&quot;</span><br>        <span class="hljs-attr">ports:</span><br>            <span class="hljs-comment">#- &quot;$&#123;OVERLEAF_LISTEN_IP:-127.0.0.1&#125;:$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;$&#123;OVERLEAF_PORT:-80&#125;:80&quot;</span><br>        <span class="hljs-attr">environment:</span><br>          <span class="hljs-attr">GIT_BRIDGE_ENABLED:</span> <span class="hljs-string">&quot;$&#123;GIT_BRIDGE_ENABLED&#125;&quot;</span><br>          <span class="hljs-attr">GIT_BRIDGE_HOST:</span> <span class="hljs-string">&quot;git-bridge&quot;</span><br>          <span class="hljs-attr">GIT_BRIDGE_PORT:</span> <span class="hljs-string">&quot;8000&quot;</span><br>          <span class="hljs-attr">REDIS_HOST:</span> <span class="hljs-string">&quot;$&#123;REDIS_HOST&#125;&quot;</span><br>          <span class="hljs-attr">REDIS_PORT:</span> <span class="hljs-string">&quot;$&#123;REDIS_PORT&#125;&quot;</span><br>          <span class="hljs-attr">V1_HISTORY_URL:</span> <span class="hljs-string">&quot;http://sharelatex:3100/api&quot;</span><br>        <span class="hljs-attr">env_file:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">../config/variables.env</span><br>        <span class="hljs-attr">stop_grace_period:</span> <span class="hljs-string">60s</span><br></code></pre></td></tr></table></figure><p>完成修改后，重新启动 Docker 服务：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo ./start<br></code></pre></td></tr></table></figure><p>现在，外部机器可以通过服务器的 IP 地址加端口 <code>&#123;Overleaf_Port&#125;</code> 访问 Overleaf Web 服务。</p><hr><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这次安装 Overleaf Toolkit 时，主要遇到的两个问题分别是镜像拉取失败和端口映射受限。通过为 Docker 设置代理解决了拉取镜像的问题，而通过修改 <code>docker-compose.base.yml</code> 中的端口映射使外部设备可以访问 Overleaf 服务。</p><p>可以在这里参考我的本地<a href="https://overleaf.hifuu.ink/">Overleaf</a>效果，注意安装完后还需要配置latex包和中文字体。</p><p>这篇记录希望能为遇到类似问题的朋友提供帮助。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术分享</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>技术</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>时隔一年再次拿起数位板能画出什么东西</title>
+    <link href="/2024/11/04/loopers/"/>
+    <url>/2024/11/04/loopers/</url>
+    
+    <content type="html"><![CDATA[<p>如题，前段时间推完LOOPERS的时候有感而发对着画了张海报</p><p>时隔一年，终于又拿起了数位板</p><p><img src="/images/20241027_222225.png" alt="LOOPERS" title="LOOPERS"></p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>生活</tag>
+      
+      <tag>板绘</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>博客更新记录</title>
+    <link href="/2024/11/04/BlogUpdate/"/>
+    <url>/2024/11/04/BlogUpdate/</url>
+    
+    <content type="html"><![CDATA[<ul><li>博客主题更新为 <code>Fluid</code> 主题，原主题为 <code>Next</code></li><li>更新了访问地址为 <code>https://blog.hifuu.ink</code></li><li>新增了 <code>About</code> 页面</li><li>新增了 <code>友链</code> 页面</li><li>完善页面布局</li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>更新</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Vocaloid调教-晴天(洛天依V4)</title>
+    <link href="/2024/11/04/Vocaloid%E8%B0%83%E6%95%99-%E6%99%B4%E5%A4%A9/"/>
+    <url>/2024/11/04/Vocaloid%E8%B0%83%E6%95%99-%E6%99%B4%E5%A4%A9/</url>
+    
+    <content type="html"><![CDATA[<p>其实是今年年初的作品想起来可以搬上来，这是我调教的第一首v曲。</p><p>“故事的小黄花，从出生那年就飘着…”</p><iframe src="//player.bilibili.com/player.html?bvid=BV1xzPteRErF&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" width="100%" height="500"></iframe>]]></content>
+    
+    
+    <categories>
+      
+      <category>Vocaloid</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>音乐</tag>
+      
+      <tag>Vocaloid</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Gentle Jena</title>
+    <link href="/2024/10/30/GentleJena/"/>
+    <url>/2024/10/30/GentleJena/</url>
+    
+    <content type="html"><![CDATA[<p>很喜欢的一首曲子<br>顺便测试一下视频上传<br>以后随缘更新各种乱七八糟的东西。。</p><video controls width="600" height="400">  <source src="https://ik.imagekit.io/7grujzz8i/2024-09-22%2014-05-02.mp4?updatedAt=1738496025016" type="video/mp4" width="50%"></video>]]></content>
+    
+    
+    <categories>
+      
+      <category>Rearrangement</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>音乐</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>原来我还有个博客</title>
+    <link href="/2024/06/03/%E5%8E%9F%E6%9D%A5%E6%88%91%E8%BF%98%E6%9C%89%E4%B8%AA%E5%8D%9A%E5%AE%A2/"/>
+    <url>/2024/06/03/%E5%8E%9F%E6%9D%A5%E6%88%91%E8%BF%98%E6%9C%89%E4%B8%AA%E5%8D%9A%E5%AE%A2/</url>
+    
+    <content type="html"><![CDATA[<p>2025-02-25</p><p>最近整理了一下缓存部署起来方便多了，有空就写点东西记录一下吧~</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>12月30-31日进度报告</title>
+    <link href="/2023/12/31/12%E6%9C%8831%E6%97%A5%E8%BF%9B%E5%BA%A6%E6%8A%A5%E5%91%8A/"/>
+    <url>/2023/12/31/12%E6%9C%8831%E6%97%A5%E8%BF%9B%E5%BA%A6%E6%8A%A5%E5%91%8A/</url>
+    
+    <content type="html"><![CDATA[<h2 id="12月30-31日"><a href="#12月30-31日" class="headerlink" title="12月30-31日"></a>12月30-31日</h2><p>OpenCAEPoro 小组（黄<strong>，梁</strong>，程<strong>，刘</strong>）</p><ol><li>服务器上的Opencaeporo改用nvhpc编译器编译以支持cuda;</li><li>收集运行数据用于proposal绘制图表;</li><li>继续尝试优化，同时已经查阅收集了一些相关资料以尽量理解相关含义便于工作开展.</li></ol>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>12月28日进度报告</title>
+    <link href="/2023/12/28/12%E6%9C%8828%E6%97%A5%E8%BF%9B%E5%BA%A6%E6%8A%A5%E5%91%8A/"/>
+    <url>/2023/12/28/12%E6%9C%8828%E6%97%A5%E8%BF%9B%E5%BA%A6%E6%8A%A5%E5%91%8A/</url>
+    
+    <content type="html"><![CDATA[<h2 id="12月28日"><a href="#12月28日" class="headerlink" title="12月28日"></a>12月28日</h2><p>OpenCAEPoro 小组（黄<strong>，梁</strong>，程<strong>，刘</strong>）</p><ol><li>各组员继续进行优化工作,部分函数完成cuda移植，取得一定优化效果</li><li>继续学习openacc及cuda相关知识</li><li>搜集多孔介质流动模拟与opencaeporo相关论文资料为proposal做准备</li></ol>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>12月20日工作记录</title>
+    <link href="/2023/12/20/12%E6%9C%8820%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/"/>
+    <url>/2023/12/20/12%E6%9C%8820%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/</url>
+    
+    <content type="html"><![CDATA[<h2 id="12月20日"><a href="#12月20日" class="headerlink" title="12月20日"></a>12月20日</h2><p>OpenCAEPoro 小组（黄<strong>，梁</strong>，程**）</p><ol><li>阅读代码，开展优化工作,初步使用openacc完成petsc_solver的优化，取得一定优化效果</li></ol><blockquote><p>优化方向基本确定为OpenMP&#x2F;OpenACC并行化+cuda移植</p></blockquote><ol start="2"><li>赛题环境汇总，目前各组工作有序开展，CentOS 7符合要求暂未发现更换系统需求</li></ol>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>12月19日工作记录</title>
+    <link href="/2023/12/19/12%E6%9C%8819%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/"/>
+    <url>/2023/12/19/12%E6%9C%8819%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/</url>
+    
+    <content type="html"><![CDATA[<h2 id="12月18日"><a href="#12月18日" class="headerlink" title="12月18日"></a>12月18日</h2><ol><li>彻底完成opencaeporo安装部署，本地和服务器均已安装，明天正式开始调优工作;</li><li>学习cuda编程.</li></ol>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>12月18日工作记录</title>
+    <link href="/2023/12/18/12%E6%9C%8818%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/"/>
+    <url>/2023/12/18/12%E6%9C%8818%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/</url>
+    
+    <content type="html"><![CDATA[<h2 id="12月18日"><a href="#12月18日" class="headerlink" title="12月18日"></a>12月18日</h2><ol><li>初步了解opencaeporo，尝试在本地docker环境使用gcc完成编译安装，目前完成各项依赖安装，由于晚上停电计划明天开始编译安装opencaeporo本体并在本地调优;</li><li>协助Neko组完成任务;</li><li>找出spack存在网络原因无法下载时的手动解决方案.</li></ol>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>12月16-17日工作记录</title>
+    <link href="/2023/12/17/12%E6%9C%8816-17%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/"/>
+    <url>/2023/12/17/12%E6%9C%8816-17%E6%97%A5%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/</url>
+    
+    <content type="html"><![CDATA[<h2 id="12月16-17日"><a href="#12月16-17日" class="headerlink" title="12月16-17日"></a>12月16-17日</h2><ol><li>四级考试</li><li>自学cuda，openacc，了解GPU架构知识</li><li>参加超算队启动会</li><li>大计和高数期中考试</li><li>研究spack使用</li><li>学习cuda编程</li><li>补作业</li></ol>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>梦开始的地方</title>
+    <link href="/2023/12/06/%E6%A2%A6%E5%BC%80%E5%A7%8B%E7%9A%84%E5%9C%B0%E6%96%B9/"/>
+    <url>/2023/12/06/%E6%A2%A6%E5%BC%80%E5%A7%8B%E7%9A%84%E5%9C%B0%E6%96%B9/</url>
+    
+    <content type="html"><![CDATA[<p>不知不觉已经高中毕业快半年了，现在在NUDT的生活还算适应吧，交到了一些很有趣的朋友并且在技术方面取得了一定突破（很期待明年的asc2024呢），今天看到华科一位学长的博客突然想起我还没好好搭建过自己的Blog，于是心血来潮搞了下我的Github Pages。</p><p>今后会在这里更新记录自己的生活，学习，工作，以及一些想法，希望能坚持下来吧。</p><blockquote><p>P.S.最近我都经历了些什么:</p><ol><li>时长21天军训，认识了一群很可爱的班长（尤其是负责我们5班6班的英子），初步和队里的同学了解;</li><li>学习了一些C++基础，在洛谷上刷了不少算法题;</li><li>ACM招新赛被薄纱，差一题进入校队;</li><li>对算法竞赛感到疑惑，尝试学习Flutter和操作系统开阔视野;</li><li>入坑战地，爽爽爽;</li><li>被一位巨强的学长发掘，加入NUDT超算队;</li><li>面临三个考试周，熬过去就是胜利;</li></ol></blockquote><p>虽然天天早八满课很不爽，但是平时还是可以学习自己想学的技术周末也可以打游戏感觉还行吧，我还是相信NUDT，既来之则安之。</p><p>这里，毕竟是我梦开始的地方。</p><blockquote><p>胸怀祖国，团结协作，志在高峰，奋勇拼搏!</p></blockquote><p>今天是2023年12月6日，加油！</p><hr><p>修改一下，有的话还是不适合明说哦</p><p>5YK75a2p5a2Q5Lus77yM5b+r6YCD5ZWK77yB77yB77yBCg&#x3D;&#x3D;</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日志</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Welcome to CGH0S7&#39;s Blog</title>
+    <link href="/2023/12/06/CGH0S7-s-Blog/"/>
+    <url>/2023/12/06/CGH0S7-s-Blog/</url>
+    
+    <content type="html"><![CDATA[<p>Hello World !</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>TEST</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  
+</search>
