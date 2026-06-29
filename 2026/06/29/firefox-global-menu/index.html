@@ -21,22 +21,27 @@
   <meta name="author" content="CGH0S7">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Lost Days of Warmth - Yasunori Mitsuda             我本以为自己已经有足够的勇气和平静的心态去面对生活里的各种变故了，即便如此今天还是被突如其来的噩耗痛击得面目全非。 辛辛苦苦和队友准备了大半年的ASC25失利，我想着以后回过头来看也不算什么以最快的速度调整心态;回校后一来就是各种烂摊子，写不完的作业补不完的课程，还有被">
+    <meta name="description" content="众所不周知， Chrome 菜单可以自动集成到 KDE Plasma 任务栏全局菜单组件，不管你喜不喜欢浏览器菜单至少看着很顺眼。然而，默认情况下，Firefox 并没有自动启用这个功能，需要进行一些配置。&#x2F;&#x2F;本来我还以为是 Firefox 没有支持这个功能 TT 本文将详细探讨 Linux 全局菜单的 D-Bus 工作原理，对比 Chrome 与 Firefox 的实现差异，">
 <meta property="og:type" content="article">
-<meta property="og:title" content="小满随笔——决断">
-<meta property="og:url" content="http://blog.hifuu.ink/2025/05/21/2025-5-21/index.html">
+<meta property="og:title" content="为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏">
+<meta property="og:url" content="http://blog.hifuu.ink/2026/06/29/firefox-global-menu/index.html">
 <meta property="og:site_name" content="CGH0S7&#39;s Blog">
-<meta property="og:description" content="Lost Days of Warmth - Yasunori Mitsuda             我本以为自己已经有足够的勇气和平静的心态去面对生活里的各种变故了，即便如此今天还是被突如其来的噩耗痛击得面目全非。 辛辛苦苦和队友准备了大半年的ASC25失利，我想着以后回过头来看也不算什么以最快的速度调整心态;回校后一来就是各种烂摊子，写不完的作业补不完的课程，还有被">
+<meta property="og:description" content="众所不周知， Chrome 菜单可以自动集成到 KDE Plasma 任务栏全局菜单组件，不管你喜不喜欢浏览器菜单至少看着很顺眼。然而，默认情况下，Firefox 并没有自动启用这个功能，需要进行一些配置。&#x2F;&#x2F;本来我还以为是 Firefox 没有支持这个功能 TT 本文将详细探讨 Linux 全局菜单的 D-Bus 工作原理，对比 Chrome 与 Firefox 的实现差异，">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-05-21T11:59:21.000Z">
-<meta property="article:modified_time" content="2026-05-29T16:03:35.032Z">
+<meta property="og:image" content="http://blog.hifuu.ink/images/chrome-global-menu.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/firefox-global-menu-solve.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/firefox-global-menu.png">
+<meta property="article:published_time" content="2026-06-29T03:32:26.000Z">
+<meta property="article:modified_time" content="2026-06-29T06:22:27.518Z">
 <meta property="article:author" content="CGH0S7">
-<meta property="article:tag" content="日志">
+<meta property="article:tag" content="技术分享">
+<meta property="article:tag" content="Firefox">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://blog.hifuu.ink/images/chrome-global-menu.png">
   
   
   
-  <title>小满随笔——决断 - CGH0S7&#39;s Blog</title>
+  <title>为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏 - CGH0S7&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -214,7 +219,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="小满随笔——决断"></span>
+            <span id="subtitle" data-typed-text="为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏"></span>
           
         </div>
 
@@ -225,8 +230,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-05-21 19:59" pubdate>
-          2025年5月21日 晚上
+        <time datetime="2026-06-29 11:32" pubdate>
+          2026年6月29日 中午
         </time>
       </span>
     
@@ -237,7 +242,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.2k 字
+          1.3k 字
         
       </span>
     
@@ -248,7 +253,7 @@
         
         
         
-          10 分钟
+          11 分钟
         
       </span>
     
@@ -285,25 +290,75 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">小满随笔——决断</h1>
+            <h1 id="seo-header">为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏</h1>
             
             
               <div class="markdown-body">
                 
-                <div style="max-width: 600px; margin: 20px auto; padding: 15px; border-radius: 10px; background-color:rgb(34, 42, 54); box-shadow: 0 2px 5px rgba(241, 213, 2, 0.5);">
-    <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px; text-align: center; color: #cfcfcf;">
-        Lost Days of Warmth - Yasunori Mitsuda
-    </div>
-    <audio src="/music/過ぎ去りし温もりの日々.mp3" autoplay loop controls style="width: 100%; margin-top: 10px;"></audio>
-</div>
-
-<p>我本以为自己已经有足够的勇气和平静的心态去面对生活里的各种变故了，即便如此今天还是被突如其来的噩耗痛击得面目全非。</p>
-<p>辛辛苦苦和队友准备了大半年的ASC25失利，我想着以后回过头来看也不算什么以最快的速度调整心态;回校后一来就是各种烂摊子，写不完的作业补不完的课程，还有被脑子缺根筋的弱智评委恶意低分的大创立项成绩，我寻思这些事情烦完这阵也就过去了，人总不可能一直倒霉吧。结果就是今天下午排队验收CSAPP课程的shell实验时突然看到了外婆去世的消息，一时间两腿发软大脑空白不知所措，以至于后来排到我和教辅讲解实验过程时也是胡言乱语记不清自己到底说了什么，尽管最后还是被教辅满分放过了。</p>
-<p>小时候家里没现在景气，父母在市内打拼我则是被送到郊区被外婆抚养长大，上小学后为了让我进入一中直升班从二年级起我就被送进了奥数培训班，同时搬离了自己长大的地方，再到后来市政府改造，外婆家早已被拆得无影无踪，昔日的小伙伴杳无音信，温馨错杂的小居民区变成了陌生嘈杂的大酒店和菜市场，每次路过都不敢停留。从那以后外婆成了我和童年之间仅剩的联系，尽管老人后来连我的样貌也记不清楚。现如今童年记忆里最后的故人业已离开，再回首已是一片虚无。多年前外婆犯脑溢血被抢救回来的时候医生还承诺老人家活到抱孙子没问题，如今却猝不及防地驾鹤西去。在各种小说和游戏中经历过不少难忘的生死离别，可是到了现实亲自经历依旧痛心疾首难以放下。</p>
-<p>生物无法教会人们生命究竟是什么，生活却一点就通。上一次经历这种打击还是10年左右外公离开，那时候太小什么都不懂，等长大理解了经历的时间又足以抹平悲痛。如今在我的眼里，生命就是思念，是世间个体对其他个体的牵挂与个体之间互相建立的羁绊。我真的想停留在永远的当下，和自己爱的人永远定格在某一个瞬间，每天早上是一样的朝阳，出门是熟悉的面孔，回家是亲切的声音。然而活着就意味着必须面对各种苦楚，死去元知万事空，只有离开才是最好的解脱，活着的人要背负更多。长者的时间在一天天减少，他们的生命需要由后人去延续，但是后人的生活也不容易，面对各种困境放弃往往比坚持更加轻松，更有甚者勇敢地选择自戕从而摆脱一切，但是这样是不对的，让其他人代替自己承受痛苦是不对的，令人悲伤的选择是不应该做出的，活着的人哪怕再苦，只要身上背负了其他人的思念也只能继续前进。</p>
-<p>因此，我绝对不能气馁，我珍视现在和亲人朋友的点点滴滴，珍惜自己现在拥有的一切，我以最真诚的爱回馈所有爱我的人，不论面前有多少困难，我都会尽全力克服，这不是为我自己，现在我被摧残得只想躺平摆烂，但是为了所有信任我关心我的人，如今我绝对不能停下脚步。从来就没有永远的当下，连接我和童年最后的纽带已经被切断，再也不能回头，留给我的只剩下面前的未来，需要我亲手创造的未来，只有承受住来自各方的打击，我才有能力去维护由我创造的未来，既然选择了远方，便只顾风雨兼程。</p>
-<p>2025年的长沙小满格外燥热，痛定思过后的心是如此平静，没有多少时间可以浪费了，无需多言。</p>
-<p><em>“回首向来萧瑟处，归去，也无风雨也无晴！”</em></p>
+                <p>众所不周知， Chrome 菜单可以自动集成到 KDE Plasma 任务栏全局菜单组件，不管你喜不喜欢浏览器菜单至少看着很顺眼。然而，默认情况下，Firefox 并没有自动启用这个功能，需要进行一些配置。&#x2F;&#x2F;本来我还以为是 Firefox 没有支持这个功能 TT</p>
+<p>本文将详细探讨 Linux 全局菜单的 D-Bus 工作原理，对比 Chrome 与 Firefox 的实现差异，并给出在 KDE Plasma 下完美启用 Firefox 全局菜单的配置方案（以下与 D-Bus 相关知识分享由 <a target="_blank" rel="noopener" href="https://chat.qwen.ai/">Qwen 3.7</a>提供并由本人验证整理）。</p>
+<h2 id="什么是全局菜单？其背后的-D-Bus-工作原理"><a href="#什么是全局菜单？其背后的-D-Bus-工作原理" class="headerlink" title="什么是全局菜单？其背后的 D-Bus 工作原理"></a>什么是全局菜单？其背后的 D-Bus 工作原理</h2><p>KDE Plasma 桌面的全局菜单（Global Menu）小组件可以把应用程序内部的菜单栏（如“文件”、“编辑”、“视图”等）提取出来，统一放置在桌面顶部的面板（Panel）中。这种机制实际上采用的是<strong>“客户端-服务端”</strong>的架构，其核心是基于 <strong>D-Bus 消息总线系统</strong> 与 <strong><code>dbusmenu</code> 协议</strong>：</p>
+<ol>
+<li><strong><code>dbusmenu</code> 协议</strong>：最初由 Canonical 为 Ubuntu Unity 桌面环境设计，定义了一套标准的 D-Bus 接口，用来描述菜单的层次结构（菜单项、图标、快捷键、分隔符、启用状态等）以及用户交互事件。</li>
+<li><strong>应用端（D-Bus 导出者）</strong>：支持全局菜单的应用启动时，会在 D-Bus 会话总线（Session Bus）上注册一个服务，把本应用的菜单树作为 D-Bus 对象暴露出来。此时，菜单的数据实质上依然保存在应用的内存中，只是通过 D-Bus 接口暴露给外部读取。</li>
+<li><strong>全局菜单小组件（D-Bus 消费者）</strong>：<ul>
+<li><strong>焦点追踪</strong>：小组件通过窗口管理器（KWin）实时监听当前获得焦点的活动窗口。</li>
+<li><strong>数据拉取</strong>：当用户切换窗口时，小组件定位到该窗口对应的 D-Bus 服务地址，通过 <code>dbusmenu</code> 协议拉取菜单树，并在顶栏上进行渲染。</li>
+<li><strong>事件回传</strong>：用户在顶栏点击菜单项时，小组件通过 D-Bus 向目标应用发送“激活”（Activate）信号，应用接收后执行具体的操作。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="为什么不同应用的支持情况不同？"><a href="#为什么不同应用的支持情况不同？" class="headerlink" title="为什么不同应用的支持情况不同？"></a>为什么不同应用的支持情况不同？</h2><p>在 Linux 桌面中，不同工具包（Toolkit）的底层架构差异，导致了全局菜单集成度的不同：</p>
+<ul>
+<li><strong>Qt 程序</strong>：由于 KDE 深度基于 Qt 构建，Qt 5&#x2F;6 已经原生内置了对 <code>dbusmenu</code> 的支持（通过 <code>libdbusmenu-qt</code> 等）。Qt 应用的 <code>QMenuBar</code> 会自动被全局菜单组件无缝接管，体验最完美。</li>
+<li><strong>Electron &#x2F; Chromium 应用</strong>：Chromium 内核在 Linux 下原生集成了对 <code>libdbusmenu</code> 库的调用，只要没有使用 HTML 自绘标题栏，就会自动在 D-Bus 上注册原生菜单。</li>
+</ul>
+<h3 id="Chrome-与-Firefox-的差异对比"><a href="#Chrome-与-Firefox-的差异对比" class="headerlink" title="Chrome 与 Firefox 的差异对比"></a>Chrome 与 Firefox 的差异对比</h3><ul>
+<li><p><strong>Chrome&#x2F;Chromium</strong>：作为“优等生”，它直接在底层自带了 <code>dbusmenu</code> 支持，能自动检测 KDE 环境并向 D-Bus 注册菜单。</p>
+<p><img src="/images/chrome-global-menu.png" srcset="/img/loading.gif" lazyload alt="Chrome 全局菜单"></p>
+</li>
+<li><p><strong>Firefox</strong>：</p>
+<ol>
+<li>Firefox 在 Linux 下主要基于 GTK3 构建，并不像 Chrome 那样天然“自带干粮”支持 D-Bus 菜单，需要依赖系统的 <code>appmenu-gtk-module</code> 翻译器。</li>
+<li>默认情况下，Firefox 倾向于“自己画界面”（使用 XUL&#x2F;HTML 自绘机制）。当我们按下 <code>Alt</code> 键调出菜单栏时，它弹出的其实是<strong>自绘的虚拟菜单</strong>，而非标准的原生 <code>GtkMenuBar</code>。这就导致 <code>appmenu-gtk-module</code> 无法拦截到任何菜单数据。</li>
+<li>此外，如果启用了“自定义标题栏”（CSD，客户端装饰），Firefox 会完全接管窗口装饰，导致系统模块彻底与菜单脱钩。</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h2 id="完美解决：Firefox-启用全局菜单的完整步骤"><a href="#完美解决：Firefox-启用全局菜单的完整步骤" class="headerlink" title="完美解决：Firefox 启用全局菜单的完整步骤"></a>完美解决：Firefox 启用全局菜单的完整步骤</h2><p>要让 Firefox 的菜单能够正常进入全局菜单，我们需要：</p>
+<ol>
+<li>让 Firefox 放弃自绘菜单，改用原生 GTK 菜单栏；</li>
+<li>开启 Firefox 内部的强制 D-Bus 导出开关；</li>
+<li>确保系统具备 GTK 菜单桥接模块。</li>
+</ol>
+<p>具体步骤如下：</p>
+<h3 id="步骤-1：确保安装并加载了-appmenu-gtk-module"><a href="#步骤-1：确保安装并加载了-appmenu-gtk-module" class="headerlink" title="步骤 1：确保安装并加载了 appmenu-gtk-module"></a>步骤 1：确保安装并加载了 <code>appmenu-gtk-module</code></h3><p>确保系统里存在 GTK 桥接模块：</p>
+<ol>
+<li>根据发行版安装对应的模块：<ul>
+<li><strong>Arch Linux</strong>：<code>sudo pacman -S appmenu-gtk-module</code></li>
+<li><strong>Ubuntu &#x2F; Debian &#x2F; KDE Neon</strong>：<code>sudo apt install appmenu-gtk3-module</code></li>
+<li><strong>Fedora</strong>：<code>sudo dnf install gtk3-appmenu-gtk-module</code></li>
+</ul>
+</li>
+<li>重启你的桌面会话（或注销重新登录），以保证 <code>GTK_MODULES=appmenu-gtk-module</code> 环境变量在全局生效。</li>
+</ol>
+<h3 id="步骤-2：在-about-config-中强制开启全局菜单输出"><a href="#步骤-2：在-about-config-中强制开启全局菜单输出" class="headerlink" title="步骤 2：在 about:config 中强制开启全局菜单输出"></a>步骤 2：在 <code>about:config</code> 中强制开启全局菜单输出</h3><p>由于 Firefox 默认隐藏菜单需要按 alt 键显示，我们需要手动强制其导出：</p>
+<ol>
+<li>在 Firefox 地址栏输入 <code>about:config</code> 并回车，接受风险提示。</li>
+<li>搜索并修改&#x2F;新建以下两个键值：<ul>
+<li><strong><code>widget.gtk.global-menu.force</code></strong> 设置为 <strong><code>true</code></strong> （强制启用全局菜单）</li>
+<li><strong><code>widget.gtk.global-menu.force-wayland</code></strong> 设置为 <strong><code>true</code></strong> （如果在 Wayland 会话下，强制通过 D-Bus 导出菜单，非常关键）</li>
+</ul>
+</li>
+<li>重启 Firefox。</li>
+</ol>
+<p><img src="/images/firefox-global-menu-solve.png" srcset="/img/loading.gif" lazyload alt="Firefox 全局菜单配置"></p>
+<hr>
+<h2 id="最终效果"><a href="#最终效果" class="headerlink" title="最终效果"></a>最终效果</h2><p>经过以上配置，Firefox 的菜单成功脱离了浏览器窗口，并无缝集成到了 KDE Plasma 的全局菜单面板中，整体桌面体验更加干净统一：</p>
+<p><img src="/images/firefox-global-menu.png" srcset="/img/loading.gif" lazyload alt="Firefox 默认菜单显示在标题栏下方"></p>
+<p>如此一来，无论是在 X11 还是 Wayland 会话下，我们都能在 Firefox 中享受到类似 macOS 的全局菜单体验了。</p>
 
                 
               </div>
@@ -316,7 +371,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="../../../../tags/%E6%97%A5%E5%BF%97/" class="print-no-link">#日志</a>
+        <a href="../../../../tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" class="print-no-link">#技术分享</a>
+      
+        <a href="../../../../tags/Firefox/" class="print-no-link">#Firefox</a>
       
     </div>
   
@@ -328,8 +385,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>小满随笔——决断</div>
-      <div>http://blog.hifuu.ink/2025/05/21/2025-5-21/</div>
+      <div>为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏</div>
+      <div>http://blog.hifuu.ink/2026/06/29/firefox-global-menu/</div>
     </div>
     <div class="license-meta">
       
@@ -341,7 +398,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年5月21日</div>
+          <div>2026年6月29日</div>
         </div>
       
       
@@ -373,18 +430,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="../../22/fortune/" title="Random Fortune">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Random Fortune</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="../../../03/10/searxng/" title="相见恨晚的 SearXNG：打造私人搜索引擎全指南">
-                        <span class="hidden-mobile">相见恨晚的 SearXNG：打造私人搜索引擎全指南</span>
+                      <a href="../../14/scx-auto/" title="如何在笔记本电脑插拔电源时自动切换 SCX 调度模式">
+                        <span class="hidden-mobile">如何在笔记本电脑插拔电源时自动切换 SCX 调度模式</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
