@@ -1,0 +1,721 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="../../../../img/hifuu.png">
+  <link rel="icon" href="../../../../img/hifuu.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="CGH0S7">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="一直觉得scx_lavd和scx_flow支持自动判断负载来选择合适的调度模式很不错，但是我还是更信赖Nvidia工程师出品的scx_bpfland，尤其是CachyOS定义的scx_bpfland低延迟模式和省电模式在我笔记本上的表现都非常好。但有一个痛点——笔记本插电和用电池的场景对调度器的需求完全不同：  插电时：希望低延迟、高性能，用得爽，程序编译快游戏帧数高 电池时：希望尽可能省电，续航">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何在笔记本电脑插拔电源时自动切换 SCX 调度模式">
+<meta property="og:url" content="http://blog.hifuu.ink/2026/06/14/scx-auto/index.html">
+<meta property="og:site_name" content="CGH0S7&#39;s Blog">
+<meta property="og:description" content="一直觉得scx_lavd和scx_flow支持自动判断负载来选择合适的调度模式很不错，但是我还是更信赖Nvidia工程师出品的scx_bpfland，尤其是CachyOS定义的scx_bpfland低延迟模式和省电模式在我笔记本上的表现都非常好。但有一个痛点——笔记本插电和用电池的场景对调度器的需求完全不同：  插电时：希望低延迟、高性能，用得爽，程序编译快游戏帧数高 电池时：希望尽可能省电，续航">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-06-14T11:24:35.000Z">
+<meta property="article:modified_time" content="2026-06-15T04:36:56.802Z">
+<meta property="article:author" content="CGH0S7">
+<meta property="article:tag" content="技术分享">
+<meta property="article:tag" content="Archlinux">
+<meta property="article:tag" content="系统优化">
+<meta property="article:tag" content="SCX调度器">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>如何在笔记本电脑插拔电源时自动切换 SCX 调度模式 - CGH0S7&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="../../../../css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="../../../../css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="../../../../css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.hifuu.ink","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="../../../../js/utils.js" ></script>
+  <script  src="../../../../js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="../../../../index.html">
+      <strong>CGH0S7&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../index.html" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('../../../../img/gensokyo.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="如何在笔记本电脑插拔电源时自动切换 SCX 调度模式"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-06-14 19:24" pubdate>
+          2026年6月14日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          10 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">如何在笔记本电脑插拔电源时自动切换 SCX 调度模式</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>一直觉得scx_lavd和scx_flow支持自动判断负载来选择合适的调度模式很不错，但是我还是更信赖Nvidia工程师出品的scx_bpfland，尤其是CachyOS定义的scx_bpfland低延迟模式和省电模式在我笔记本上的表现都非常好。但有一个痛点——笔记本插电和用电池的场景对调度器的需求完全不同：</p>
+<ul>
+<li><strong>插电时</strong>：希望低延迟、高性能，用得爽，程序编译快游戏帧数高</li>
+<li><strong>电池时</strong>：希望尽可能省电，续航优先尽量用久一点，不在乎性能牺牲</li>
+</ul>
+<p>每次手动敲命令切换实在太蠢了使用CachyOS的scx-manager也不太方便。研究了一下后发现可以借助 Linux 的 <code>udev</code> 规则来监听电源事件，实现全自动切换。记录一下折腾过程。</p>
+<hr>
+<h2 id="现状：scx-loader-配置文件"><a href="#现状：scx-loader-配置文件" class="headerlink" title="现状：scx_loader 配置文件"></a>现状：scx_loader 配置文件</h2><p>这是我的 <code>/etc/scx_loader.toml</code>（CachyOS已提前为各个调度器配好了 mode）：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs toml"><span class="hljs-attr">default_sched</span> = <span class="hljs-string">&quot;scx_bpfland&quot;</span><br><span class="hljs-attr">default_mode</span> = <span class="hljs-string">&quot;LowLatency&quot;</span><br><br><span class="hljs-section">[scheds.scx_rusty]</span><br><span class="hljs-attr">auto_mode</span> = []<br><span class="hljs-attr">gaming_mode</span> = []<br><span class="hljs-attr">lowlatency_mode</span> = []<br><span class="hljs-attr">powersave_mode</span> = []<br><span class="hljs-attr">server_mode</span> = []<br><br><span class="hljs-section">[scheds.scx_p2dq]</span><br><span class="hljs-attr">auto_mode</span> = []<br><span class="hljs-attr">gaming_mode</span> = []<br><span class="hljs-attr">lowlatency_mode</span> = [<span class="hljs-string">&quot;-y&quot;</span>]<br><span class="hljs-attr">powersave_mode</span> = []<br><span class="hljs-attr">server_mode</span> = [<span class="hljs-string">&quot;--keep-running&quot;</span>]<br><br><span class="hljs-section">[scheds.scx_bpfland]</span><br><span class="hljs-attr">auto_mode</span> = []<br><span class="hljs-attr">gaming_mode</span> = [<span class="hljs-string">&quot;-m&quot;</span>, <span class="hljs-string">&quot;performance&quot;</span>]<br><span class="hljs-attr">lowlatency_mode</span> = [<span class="hljs-string">&quot;-s&quot;</span>, <span class="hljs-string">&quot;5000&quot;</span>, <span class="hljs-string">&quot;-S&quot;</span>, <span class="hljs-string">&quot;500&quot;</span>, <span class="hljs-string">&quot;-l&quot;</span>, <span class="hljs-string">&quot;5000&quot;</span>, <span class="hljs-string">&quot;-m&quot;</span>, <span class="hljs-string">&quot;performance&quot;</span>]<br><span class="hljs-attr">powersave_mode</span> = [<span class="hljs-string">&quot;-m&quot;</span>, <span class="hljs-string">&quot;powersave&quot;</span>]<br><span class="hljs-attr">server_mode</span> = [<span class="hljs-string">&quot;-p&quot;</span>]<br><br><span class="hljs-section">[scheds.scx_lavd]</span><br><span class="hljs-attr">auto_mode</span> = [<span class="hljs-string">&quot;--autopower&quot;</span>]<br><span class="hljs-attr">gaming_mode</span> = [<span class="hljs-string">&quot;--performance&quot;</span>]<br><span class="hljs-attr">lowlatency_mode</span> = [<span class="hljs-string">&quot;--performance&quot;</span>]<br><span class="hljs-attr">powersave_mode</span> = [<span class="hljs-string">&quot;--powersave&quot;</span>]<br><span class="hljs-attr">server_mode</span> = []<br><br><span class="hljs-section">[scheds.scx_tickless]</span><br><span class="hljs-attr">auto_mode</span> = []<br><span class="hljs-attr">gaming_mode</span> = [<span class="hljs-string">&quot;-f&quot;</span>, <span class="hljs-string">&quot;5000&quot;</span>, <span class="hljs-string">&quot;-s&quot;</span>, <span class="hljs-string">&quot;5000&quot;</span>]<br><span class="hljs-attr">lowlatency_mode</span> = [<span class="hljs-string">&quot;-f&quot;</span>, <span class="hljs-string">&quot;5000&quot;</span>, <span class="hljs-string">&quot;-s&quot;</span>, <span class="hljs-string">&quot;1000&quot;</span>]<br><span class="hljs-attr">powersave_mode</span> = [<span class="hljs-string">&quot;-f&quot;</span>, <span class="hljs-string">&quot;50&quot;</span>, <span class="hljs-string">&quot;-p&quot;</span>]<br><span class="hljs-attr">server_mode</span> = [<span class="hljs-string">&quot;-f&quot;</span>, <span class="hljs-string">&quot;100&quot;</span>]<br><br><span class="hljs-section">[scheds.scx_flash]</span><br><span class="hljs-attr">auto_mode</span> = []<br><span class="hljs-attr">gaming_mode</span> = []<br><span class="hljs-attr">lowlatency_mode</span> = []<br><span class="hljs-attr">powersave_mode</span> = []<br><span class="hljs-attr">server_mode</span> = []<br></code></pre></td></tr></table></figure>
+
+<p>仔细观察 <code>[scheds.scx_bpfland]</code> 这一块：</p>
+<ul>
+<li><code>lowlatency_mode</code> 正好对应插电状态想要的参数：<code>-s 5000 -S 500 -l 5000 -m performance</code></li>
+<li><code>powersave_mode</code> 正好对应电池状态想要的参数：<code>-m powersave</code></li>
+</ul>
+<p>不用自己写额外参数配置，直接复用已有的 mode 定义就好。</p>
+<hr>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p><code>scx_loader</code> 提供了配套的命令行工具 <code>scxctl</code>，可以用来切换调度器和模式。剩下的就是找一个能在电源事件发生时自动执行命令的机制——Linux 内核的 <code>udev</code> 子系统天生就是干这个的。</p>
+<p>整体流程很简单：<strong>插拔电源 → 内核发出 uevent → udev 匹配规则 → systemd-run 异步执行 → scxctl switch 切换模式</strong>。</p>
+<hr>
+<h2 id="步骤一：测试手动切换命令"><a href="#步骤一：测试手动切换命令" class="headerlink" title="步骤一：测试手动切换命令"></a>步骤一：测试手动切换命令</h2><p>先确认 <code>scxctl</code> 能正常工作（需要 root 权限）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 模拟插电 → 低延迟/高性能模式</span><br>sudo scxctl switch -s bpfland -m lowlatency<br><br><span class="hljs-comment"># 模拟拔电 → 省电模式</span><br>sudo scxctl switch -s bpfland -m powersave<br></code></pre></td></tr></table></figure>
+
+<p>如果这两条命令都能成功切换，就可以继续下一步。</p>
+<hr>
+<h2 id="步骤二：编写-udev-规则"><a href="#步骤二：编写-udev-规则" class="headerlink" title="步骤二：编写 udev 规则"></a>步骤二：编写 udev 规则</h2><p>创建规则文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo nano /etc/udev/rules.d/99-scx-power.rules<br></code></pre></td></tr></table></figure>
+
+<p>写入以下内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs udev"># 插入电源 (AC) → 切换为 bpfland 的 lowlatency 模式<br>SUBSYSTEM==&quot;power_supply&quot;, ATTR&#123;type&#125;==&quot;Mains&quot;, ATTR&#123;online&#125;==&quot;1&quot;, RUN+=&quot;/usr/bin/systemd-run --no-block /usr/bin/scxctl switch -s bpfland -m lowlatency&quot;<br><br># 拔出电源 (Battery) → 切换为 bpfland 的 powersave 模式<br>SUBSYSTEM==&quot;power_supply&quot;, ATTR&#123;type&#125;==&quot;Mains&quot;, ATTR&#123;online&#125;==&quot;0&quot;, RUN+=&quot;/usr/bin/systemd-run --no-block /usr/bin/scxctl switch -s bpfland -m powersave&quot;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>为什么用 <code>systemd-run --no-block</code> 包裹？</strong></p>
+<p><code>scxctl</code> 底层通过 D-Bus 与 <code>scx_loader</code> 守护进程通信。如果让 <code>udev</code> 直接执行，可能会因为 udev 的受限执行环境（缺少 D-Bus session、环境变量缺失）或者命令执行时间过长阻塞 udev 进程导致失败。交给 systemd 后台异步执行是最稳妥的做法。</p>
+</blockquote>
+<hr>
+<h2 id="步骤三：重载规则使其生效"><a href="#步骤三：重载规则使其生效" class="headerlink" title="步骤三：重载规则使其生效"></a>步骤三：重载规则使其生效</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo udevadm control --reload-rules<br>sudo udevadm trigger<br></code></pre></td></tr></table></figure>
+
+<p><code>udevadm trigger</code> 会立即重放一次当前设备状态，所以如果此时已经插着电源，规则会立刻触发一次，可以顺便验证是否生效。</p>
+<hr>
+<h2 id="步骤四（可选）：验证电源类型"><a href="#步骤四（可选）：验证电源类型" class="headerlink" title="步骤四（可选）：验证电源类型"></a>步骤四（可选）：验证电源类型</h2><p>绝大多数笔记本的外部电源在内核中的设备类型都是 <code>Mains</code>，上面规则直接就能用。如果插拔电源发现没反应，检查一下你的电源设备类型：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cat</span> /sys/class/power_supply/*/type<br></code></pre></td></tr></table></figure>
+
+<p>如果输出的不是 <code>Mains</code>（比如是 <code>AC</code> 或其他名字），把 udev 规则里的 <code>ATTR&#123;type&#125;==&quot;Mains&quot;</code> 换成实际类型即可。</p>
+<hr>
+<h2 id="验证效果"><a href="#验证效果" class="headerlink" title="验证效果"></a>验证效果</h2><p>插拔电源后，可以用以下命令确认模式是否已经切换：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">scxctl get<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>整个过程其实非常简单——核心思路就是「udev 监听电源事件 → systemd-run 异步调用 scxctl 切换 mode」。全程没有写一个新参数，完全复用 <code>scx_loader.toml</code> 里已有的 mode 定义。</p>
+<p>这个方案同样适用于其他调度器：只要在 <code>scx_loader.toml</code> 里给对应调度器配好 <code>lowlatency_mode</code> 和 <code>powersave_mode</code>，然后把 udev 规则里的 <code>-s bpfland</code> 换成其他调度器名字就行。</p>
+<p>这下笔记本插拔电源再也不用惦记着手动切调度器了:D</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="../../../../tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" class="print-no-link">#技术分享</a>
+      
+        <a href="../../../../tags/Archlinux/" class="print-no-link">#Archlinux</a>
+      
+        <a href="../../../../tags/%E7%B3%BB%E7%BB%9F%E4%BC%98%E5%8C%96/" class="print-no-link">#系统优化</a>
+      
+        <a href="../../../../tags/SCX%E8%B0%83%E5%BA%A6%E5%99%A8/" class="print-no-link">#SCX调度器</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>如何在笔记本电脑插拔电源时自动切换 SCX 调度模式</div>
+      <div>http://blog.hifuu.ink/2026/06/14/scx-auto/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>CGH0S7</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年6月14日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="../../29/firefox-global-menu/" title="为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="../../../05/30/One-Last-ASC/" title="其作始也简，其将毕也必巨 - 回顾64-Bit Brainstorm三年ASC征程">
+                        <span class="hidden-mobile">其作始也简，其将毕也必巨 - 回顾64-Bit Brainstorm三年ASC征程</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/CGH0S7" target="_blank" rel="nofollow noopener"><span>CGH0S7</span></a> 
+    </div>
+  
+
+  <!-- 添加 logo 贴纸 -->
+  <div class="footer-logos">
+  <a href="https://archlinux.org" target="_blank">
+    <img src="/images/archlinux-logo.png" srcset="/img/loading.gif" lazyload alt="Arch Linux Logo" width="80">
+  </a>
+  <a href="https://kde.org" target="_blank">
+    <img src="/images/built_on_the_kde_platform.png" srcset="/img/loading.gif" lazyload alt="Built on the KDE Platform" width="80">
+  </a>
+  <a href="https://amd.com" target="_blank">
+    <img src="/images/amd.png" srcset="/img/loading.gif" lazyload alt="AMD Logo" width="80">
+  </a>
+  <a href="https://www.asc-events.net/" target="_blank">
+    <img src="/images/asc-events.png" srcset="/img/loading.gif" lazyload alt="ASC-Events" width="80">
+  </a>
+  <a href="https://notbyai.fyi/" target="_blank">
+    <img src="/images/Written-By-Human-Not-By-AI-Badge-white@2x.png" srcset="/img/loading.gif" lazyload alt="Written By Human Not By AI Badge" width="80">
+  </a>
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="../../../../js/events.js" ></script>
+<script  src="../../../../js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="../../../../js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="../../../../js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="../../../../js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

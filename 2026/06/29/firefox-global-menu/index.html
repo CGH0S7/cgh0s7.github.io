@@ -1,0 +1,725 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="../../../../img/hifuu.png">
+  <link rel="icon" href="../../../../img/hifuu.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="CGH0S7">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="众所不周知， Chrome 菜单可以自动集成到 KDE Plasma 任务栏全局菜单组件，不管你喜不喜欢浏览器菜单至少看着很顺眼。然而，默认情况下，Firefox 并没有自动启用这个功能，需要进行一些配置。&#x2F;&#x2F;本来我还以为是 Firefox 没有支持这个功能 TT 本文将详细探讨 Linux 全局菜单的 D-Bus 工作原理，对比 Chrome 与 Firefox 的实现差异，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏">
+<meta property="og:url" content="http://blog.hifuu.ink/2026/06/29/firefox-global-menu/index.html">
+<meta property="og:site_name" content="CGH0S7&#39;s Blog">
+<meta property="og:description" content="众所不周知， Chrome 菜单可以自动集成到 KDE Plasma 任务栏全局菜单组件，不管你喜不喜欢浏览器菜单至少看着很顺眼。然而，默认情况下，Firefox 并没有自动启用这个功能，需要进行一些配置。&#x2F;&#x2F;本来我还以为是 Firefox 没有支持这个功能 TT 本文将详细探讨 Linux 全局菜单的 D-Bus 工作原理，对比 Chrome 与 Firefox 的实现差异，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://blog.hifuu.ink/images/chrome-global-menu.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/firefox-global-menu-solve.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/firefox-global-menu.png">
+<meta property="article:published_time" content="2026-06-29T03:32:26.000Z">
+<meta property="article:modified_time" content="2026-06-29T11:00:39.716Z">
+<meta property="article:author" content="CGH0S7">
+<meta property="article:tag" content="技术分享">
+<meta property="article:tag" content="Firefox">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://blog.hifuu.ink/images/chrome-global-menu.png">
+  
+  
+  
+  <title>为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏 - CGH0S7&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="../../../../css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="../../../../css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="../../../../css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.hifuu.ink","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="../../../../js/utils.js" ></script>
+  <script  src="../../../../js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="../../../../index.html">
+      <strong>CGH0S7&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../index.html" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('../../../../img/gensokyo.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-06-29 11:32" pubdate>
+          2026年6月29日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          11 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>众所不周知， Chrome 菜单可以自动集成到 KDE Plasma 任务栏全局菜单组件，不管你喜不喜欢浏览器菜单至少看着很顺眼。然而，默认情况下，Firefox 并没有自动启用这个功能，需要进行一些配置。&#x2F;&#x2F;本来我还以为是 Firefox 没有支持这个功能 TT</p>
+<p>本文将详细探讨 Linux 全局菜单的 D-Bus 工作原理，对比 Chrome 与 Firefox 的实现差异，并给出在 KDE Plasma 下完美启用 Firefox 全局菜单的配置方案（以下与 D-Bus 相关知识分享由 <a target="_blank" rel="noopener" href="https://chat.qwen.ai/">Qwen 3.7</a>提供并由本人验证整理）。</p>
+<h2 id="什么是全局菜单？其背后的-D-Bus-工作原理"><a href="#什么是全局菜单？其背后的-D-Bus-工作原理" class="headerlink" title="什么是全局菜单？其背后的 D-Bus 工作原理"></a>什么是全局菜单？其背后的 D-Bus 工作原理</h2><p>KDE Plasma 桌面的全局菜单（Global Menu）小组件可以把应用程序内部的菜单栏（如“文件”、“编辑”、“视图”等）提取出来，统一放置在桌面顶部的面板（Panel）中。这种机制实际上采用的是<strong>“客户端-服务端”</strong>的架构，其核心是基于 <strong>D-Bus 消息总线系统</strong> 与 <strong><code>dbusmenu</code> 协议</strong>：</p>
+<ol>
+<li><strong><code>dbusmenu</code> 协议</strong>：最初由 Canonical 为 Ubuntu Unity 桌面环境设计，定义了一套标准的 D-Bus 接口，用来描述菜单的层次结构（菜单项、图标、快捷键、分隔符、启用状态等）以及用户交互事件。</li>
+<li><strong>应用端（D-Bus 导出者）</strong>：支持全局菜单的应用启动时，会在 D-Bus 会话总线（Session Bus）上注册一个服务，把本应用的菜单树作为 D-Bus 对象暴露出来。此时，菜单的数据实质上依然保存在应用的内存中，只是通过 D-Bus 接口暴露给外部读取。</li>
+<li><strong>全局菜单小组件（D-Bus 消费者）</strong>：<ul>
+<li><strong>焦点追踪</strong>：小组件通过窗口管理器（KWin）实时监听当前获得焦点的活动窗口。</li>
+<li><strong>数据拉取</strong>：当用户切换窗口时，小组件定位到该窗口对应的 D-Bus 服务地址，通过 <code>dbusmenu</code> 协议拉取菜单树，并在顶栏上进行渲染。</li>
+<li><strong>事件回传</strong>：用户在顶栏点击菜单项时，小组件通过 D-Bus 向目标应用发送“激活”（Activate）信号，应用接收后执行具体的操作。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="为什么不同应用的支持情况不同？"><a href="#为什么不同应用的支持情况不同？" class="headerlink" title="为什么不同应用的支持情况不同？"></a>为什么不同应用的支持情况不同？</h2><p>在 Linux 桌面中，不同工具包（Toolkit）的底层架构差异，导致了全局菜单集成度的不同：</p>
+<ul>
+<li><strong>Qt 程序</strong>：由于 KDE 深度基于 Qt 构建，Qt 5&#x2F;6 已经原生内置了对 <code>dbusmenu</code> 的支持（通过 <code>libdbusmenu-qt</code> 等）。Qt 应用的 <code>QMenuBar</code> 会自动被全局菜单组件无缝接管，体验最完美。</li>
+<li><strong>Electron &#x2F; Chromium 应用</strong>：Chromium 内核在 Linux 下原生集成了对 <code>libdbusmenu</code> 库的调用，只要没有使用 HTML 自绘标题栏，就会自动在 D-Bus 上注册原生菜单。</li>
+</ul>
+<h3 id="Chrome-与-Firefox-的差异对比"><a href="#Chrome-与-Firefox-的差异对比" class="headerlink" title="Chrome 与 Firefox 的差异对比"></a>Chrome 与 Firefox 的差异对比</h3><ul>
+<li><p><strong>Chrome&#x2F;Chromium</strong>：作为“优等生”，它直接在底层自带了 <code>dbusmenu</code> 支持，能自动检测 KDE 环境并向 D-Bus 注册菜单。</p>
+<p><img src="/images/chrome-global-menu.png" srcset="/img/loading.gif" lazyload alt="Chrome 全局菜单"></p>
+</li>
+<li><p><strong>Firefox</strong>：</p>
+<ol>
+<li>Firefox 在 Linux 下主要基于 GTK3 构建，并不像 Chrome 那样天然“自带干粮”支持 D-Bus 菜单，需要依赖系统的 <code>appmenu-gtk-module</code> 翻译器。</li>
+<li>默认情况下，Firefox 倾向于“自己画界面”（使用 XUL&#x2F;HTML 自绘机制）。当我们按下 <code>Alt</code> 键调出菜单栏时，它弹出的其实是<strong>自绘的虚拟菜单</strong>，而非标准的原生 <code>GtkMenuBar</code>。这就导致 <code>appmenu-gtk-module</code> 无法拦截到任何菜单数据。</li>
+<li>此外，如果启用了“自定义标题栏”（CSD，客户端装饰），Firefox 会完全接管窗口装饰，导致系统模块彻底与菜单脱钩。</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h2 id="完美解决：Firefox-启用全局菜单的完整步骤"><a href="#完美解决：Firefox-启用全局菜单的完整步骤" class="headerlink" title="完美解决：Firefox 启用全局菜单的完整步骤"></a>完美解决：Firefox 启用全局菜单的完整步骤</h2><p>要让 Firefox 的菜单能够正常进入全局菜单，我们需要：</p>
+<ol>
+<li>让 Firefox 放弃自绘菜单，改用原生 GTK 菜单栏；</li>
+<li>开启 Firefox 内部的强制 D-Bus 导出开关；</li>
+<li>确保系统具备 GTK 菜单桥接模块。</li>
+</ol>
+<p>具体步骤如下：</p>
+<h3 id="步骤-1：确保安装并加载了-appmenu-gtk-module"><a href="#步骤-1：确保安装并加载了-appmenu-gtk-module" class="headerlink" title="步骤 1：确保安装并加载了 appmenu-gtk-module"></a>步骤 1：确保安装并加载了 <code>appmenu-gtk-module</code></h3><p>确保系统里存在 GTK 桥接模块：</p>
+<ol>
+<li>根据发行版安装对应的模块：<ul>
+<li><strong>Arch Linux</strong>：<code>sudo pacman -S appmenu-gtk-module</code></li>
+<li><strong>Ubuntu &#x2F; Debian &#x2F; KDE Neon</strong>：<code>sudo apt install appmenu-gtk3-module</code></li>
+<li><strong>Fedora</strong>：<code>sudo dnf install gtk3-appmenu-gtk-module</code></li>
+</ul>
+</li>
+<li>重启你的桌面会话（或注销重新登录），以保证 <code>GTK_MODULES=appmenu-gtk-module</code> 环境变量在全局生效。</li>
+</ol>
+<h3 id="步骤-2：在-about-config-中强制开启全局菜单输出"><a href="#步骤-2：在-about-config-中强制开启全局菜单输出" class="headerlink" title="步骤 2：在 about:config 中强制开启全局菜单输出"></a>步骤 2：在 <code>about:config</code> 中强制开启全局菜单输出</h3><p>由于 Firefox 默认隐藏菜单需要按 alt 键显示，我们需要手动强制其导出：</p>
+<ol>
+<li>在 Firefox 地址栏输入 <code>about:config</code> 并回车，接受风险提示。</li>
+<li>搜索并修改&#x2F;新建以下两个键值：<ul>
+<li><strong><code>widget.gtk.global-menu.force</code></strong> 设置为 <strong><code>true</code></strong> （强制启用全局菜单）</li>
+<li><strong><code>widget.gtk.global-menu.force-wayland</code></strong> 设置为 <strong><code>true</code></strong> （如果在 Wayland 会话下，强制通过 D-Bus 导出菜单，非常关键）</li>
+</ul>
+</li>
+<li>重启 Firefox。</li>
+</ol>
+<p><img src="/images/firefox-global-menu-solve.png" srcset="/img/loading.gif" lazyload alt="Firefox 全局菜单配置"></p>
+<hr>
+<h2 id="最终效果"><a href="#最终效果" class="headerlink" title="最终效果"></a>最终效果</h2><p>经过以上配置，Firefox 的菜单成功脱离了浏览器窗口，并无缝集成到了 KDE Plasma 的全局菜单面板中，整体桌面体验更加干净统一：</p>
+<p><img src="/images/firefox-global-menu.png" srcset="/img/loading.gif" lazyload alt="Firefox 菜单成功集成在 Plasma 任务栏"></p>
+<p>如此一来，无论是在 X11 还是 Wayland 会话下，我们都能在 Firefox 中享受到类似 macOS 的全局菜单体验了。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="../../../../tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" class="print-no-link">#技术分享</a>
+      
+        <a href="../../../../tags/Firefox/" class="print-no-link">#Firefox</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏</div>
+      <div>http://blog.hifuu.ink/2026/06/29/firefox-global-menu/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>CGH0S7</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年6月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="../../14/scx-auto/" title="如何在笔记本电脑插拔电源时自动切换 SCX 调度模式">
+                        <span class="hidden-mobile">如何在笔记本电脑插拔电源时自动切换 SCX 调度模式</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/CGH0S7" target="_blank" rel="nofollow noopener"><span>CGH0S7</span></a> 
+    </div>
+  
+
+  <!-- 添加 logo 贴纸 -->
+  <div class="footer-logos">
+  <a href="https://archlinux.org" target="_blank">
+    <img src="/images/archlinux-logo.png" srcset="/img/loading.gif" lazyload alt="Arch Linux Logo" width="80">
+  </a>
+  <a href="https://kde.org" target="_blank">
+    <img src="/images/built_on_the_kde_platform.png" srcset="/img/loading.gif" lazyload alt="Built on the KDE Platform" width="80">
+  </a>
+  <a href="https://amd.com" target="_blank">
+    <img src="/images/amd.png" srcset="/img/loading.gif" lazyload alt="AMD Logo" width="80">
+  </a>
+  <a href="https://www.asc-events.net/" target="_blank">
+    <img src="/images/asc-events.png" srcset="/img/loading.gif" lazyload alt="ASC-Events" width="80">
+  </a>
+  <a href="https://notbyai.fyi/" target="_blank">
+    <img src="/images/Written-By-Human-Not-By-AI-Badge-white@2x.png" srcset="/img/loading.gif" lazyload alt="Written By Human Not By AI Badge" width="80">
+  </a>
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="../../../../js/events.js" ></script>
+<script  src="../../../../js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="../../../../js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="../../../../js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="../../../../js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
