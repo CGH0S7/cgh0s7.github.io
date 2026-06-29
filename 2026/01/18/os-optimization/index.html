@@ -21,27 +21,25 @@
   <meta name="author" content="CGH0S7">
   <meta name="keywords" content="">
   
-    <meta name="description" content="失踪人口回归 👋如果你只想「有个能用的 @自己域名 邮箱」，却懒得租服务器、折腾 Postfix、跟 25 端口斗智斗勇、花费你宝贵的💰，那这篇 15 分钟速通教程就是写给你的（当然，一点💰都不花是不可能的，你至少需要买一个域名&#x3D;)   1. 最终效果 任何前缀都能即时生成： helloworld@your.com &#x2F; fknudt@your.com &#x2F; il">
+    <meta name="description" content="最初，我的想法是现在大伙都有AI工具了码力差距将不再像过去那么明显，这种情况下系统调优一定是有实战价值的。尤其是在面对极端计算任务时，操作系统内核的调度策略和中断处理方式对性能必然有着直接且显著的影响。为了在计算密集型任务（如本次天体物理模拟）中获得极致的性能与确定性，我作为运维必须尝试对Linux内核进行深度定制与隔离。 本文将详细记录我在Intel Sapphire Rapids平台（Dual">
 <meta property="og:type" content="article">
-<meta property="og:title" content="低成本快速搞定专属域名邮箱：从 0 到 CLI 收发只要 15 分钟">
-<meta property="og:url" content="http://blog.hifuu.ink/2025/11/15/Your-exclusive-email-address/index.html">
+<meta property="og:title" content="面向竞赛环境的Linux系统性能调优实践">
+<meta property="og:url" content="http://blog.hifuu.ink/2026/01/18/os-optimization/index.html">
 <meta property="og:site_name" content="CGH0S7&#39;s Blog">
-<meta property="og:description" content="失踪人口回归 👋如果你只想「有个能用的 @自己域名 邮箱」，却懒得租服务器、折腾 Postfix、跟 25 端口斗智斗勇、花费你宝贵的💰，那这篇 15 分钟速通教程就是写给你的（当然，一点💰都不花是不可能的，你至少需要买一个域名&#x3D;)   1. 最终效果 任何前缀都能即时生成： helloworld@your.com &#x2F; fknudt@your.com &#x2F; il">
+<meta property="og:description" content="最初，我的想法是现在大伙都有AI工具了码力差距将不再像过去那么明显，这种情况下系统调优一定是有实战价值的。尤其是在面对极端计算任务时，操作系统内核的调度策略和中断处理方式对性能必然有着直接且显著的影响。为了在计算密集型任务（如本次天体物理模拟）中获得极致的性能与确定性，我作为运维必须尝试对Linux内核进行深度定制与隔离。 本文将详细记录我在Intel Sapphire Rapids平台（Dual">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://blog.hifuu.ink/images/resendofficial.png">
-<meta property="og:image" content="http://blog.hifuu.ink/images/rusendhelp1.png">
-<meta property="og:image" content="http://blog.hifuu.ink/images/rusendhelp2.png">
-<meta property="og:image" content="http://blog.hifuu.ink/images/rusendhelp3.png">
-<meta property="article:published_time" content="2025-11-15T15:36:22.000Z">
-<meta property="article:modified_time" content="2025-11-15T16:42:50.086Z">
+<meta property="article:published_time" content="2026-01-18T04:14:04.000Z">
+<meta property="article:modified_time" content="2026-01-18T07:12:27.346Z">
 <meta property="article:author" content="CGH0S7">
-<meta property="article:tag" content="技术分享">
+<meta property="article:tag" content="技术">
+<meta property="article:tag" content="系统优化">
+<meta property="article:tag" content="HPC">
+<meta property="article:tag" content="Linux内核">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://blog.hifuu.ink/images/resendofficial.png">
   
   
   
-  <title>低成本快速搞定专属域名邮箱：从 0 到 CLI 收发只要 15 分钟 - CGH0S7&#39;s Blog</title>
+  <title>面向竞赛环境的Linux系统性能调优实践 - CGH0S7&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -219,7 +217,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="低成本快速搞定专属域名邮箱：从 0 到 CLI 收发只要 15 分钟"></span>
+            <span id="subtitle" data-typed-text="面向竞赛环境的Linux系统性能调优实践"></span>
           
         </div>
 
@@ -230,8 +228,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-11-15 23:36" pubdate>
-          2025年11月15日 晚上
+        <time datetime="2026-01-18 12:14" pubdate>
+          2026年1月18日 中午
         </time>
       </span>
     
@@ -242,7 +240,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          907 字
+          2.2k 字
         
       </span>
     
@@ -253,7 +251,7 @@
         
         
         
-          8 分钟
+          19 分钟
         
       </span>
     
@@ -290,105 +288,75 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">低成本快速搞定专属域名邮箱：从 0 到 CLI 收发只要 15 分钟</h1>
+            <h1 id="seo-header">面向竞赛环境的Linux系统性能调优实践</h1>
             
             
               <div class="markdown-body">
                 
-                <blockquote>
-<p>失踪人口回归 👋<br>如果你只想「有个能用的 <code>@自己域名</code> 邮箱」，却懒得租服务器、折腾 Postfix、跟 25 端口斗智斗勇、花费你宝贵的💰，那这篇 15 分钟速通教程就是写给你的（当然，一点💰都不花是不可能的，你至少需要买一个域名&#x3D;)</p>
-</blockquote>
-<hr>
-<h2 id="1-最终效果"><a href="#1-最终效果" class="headerlink" title="1. 最终效果"></a>1. 最终效果</h2><ul>
-<li>任何前缀都能即时生成： <code>helloworld@your.com</code> &#x2F; <code>fknudt@your.com</code> &#x2F; <code>ilovethu@your.com</code>  </li>
-<li>在终端里使用命令收发邮件，无需专门打开各种邮件客户端。</li>
-</ul>
-<p>整套方案 <strong>只花域名注册费用</strong>，<strong>0 服务器 0 运维</strong>，完全白嫖 Resend 免费额度。</p>
-<hr>
-<h2 id="2-准备工作（2-min）"><a href="#2-准备工作（2-min）" class="headerlink" title="2. 准备工作（2 min）"></a>2. 准备工作（2 min）</h2><table>
-<thead>
-<tr>
-<th>资源</th>
-<th>用途</th>
-<th>费用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>一枚域名</td>
-<td>做邮箱后缀</td>
-<td>约 ￥30+ &#x2F; 年（阿里云 Namecheap Cloudflare 均可）</td>
-</tr>
-<tr>
-<td>Resend 账号</td>
-<td>托管邮服</td>
-<td>免费 100 封 &#x2F; 天</td>
-</tr>
-</tbody></table>
-<p><img src="/images/resendofficial.png" srcset="/img/loading.gif" lazyload alt="Resend文档"></p>
-<hr>
-<h2 id="3-3-步完成域名绑定（5-min）"><a href="#3-3-步完成域名绑定（5-min）" class="headerlink" title="3. 3 步完成域名绑定（5 min）"></a>3. 3 步完成域名绑定（5 min）</h2><ol>
-<li><p>登录 <a target="_blank" rel="noopener" href="https://resend.com/">Resend</a> → <strong>Domains</strong> → <strong>Add Domain</strong><br>输入 <code>your.com</code> → 得到一组 DNS 记录（TXT + MX + DKIM）。  </p>
-</li>
-<li><p>去域名注册商把记录全部照抄粘贴，保存。(由于笔者为免费用户并且已经配置域名无法再次配置，因此未能提供截图但是步骤非常简单）。</p>
+                <p>最初，我的想法是现在大伙都有AI工具了码力差距将不再像过去那么明显，这种情况下系统调优一定是有实战价值的。尤其是在面对极端计算任务时，操作系统内核的调度策略和中断处理方式对性能必然有着直接且显著的影响。为了在计算密集型任务（如本次天体物理模拟）中获得极致的性能与确定性，我作为运维必须尝试对Linux内核进行深度定制与隔离。</p>
+<p>本文将详细记录我在Intel Sapphire Rapids平台（Dual Xeon 8480P+）上进行的系统调优探索。通过内核参数隔离、用户态调度器（sched_ext）以及IRQ亲和性管理，我成功在AMSS_NCKU双黑洞模拟算例中取得了肉眼可见的性能收益。</p>
+<h2 id="1-测试环境与硬件拓扑"><a href="#1-测试环境与硬件拓扑" class="headerlink" title="1. 测试环境与硬件拓扑"></a>1. 测试环境与硬件拓扑</h2><p>本次调优的硬件平台具备极高的并行计算能力，但NUMA架构带来的延迟敏感性也对系统配置提出了挑战：</p>
 <ul>
-<li>登录你的域名注册商账号，找到DNS管理页面。</li>
-<li>添加Resend提供的TXT记录，用于验证域名所有权。</li>
-<li>添加Resend提供的MX记录，用于接收邮件。</li>
-<li>根据Resend的要求，配置完整所有必要的DNS记录。</li>
-<li>保存更改后，等待DNS记录生效，通常需要几分钟到24小时不等（这是resend官方的说法，笔者实测只需要几分钟不到）。<br>⚠️ 只需改 <strong>DNS 解析</strong>，不用转 nameserver，1 min 搞定。</li>
+<li><strong>CPU</strong>: 2x Intel Xeon Platinum 8480+ (Sapphire Rapids)</li>
+<li><strong>核心配置</strong>: 单路56核心，双路共112物理核心。</li>
+<li><strong>超线程 (Hyper-Threading)</strong>: <strong>Disabled</strong>（为了避免逻辑核争抢浮点单元及缓存资源，确保计算流水线的独占性）。</li>
+<li><strong>GPU</strong>: 无（纯CPU计算任务）。</li>
 </ul>
-</li>
-<li><p>回到 Resend 点 <strong>Verify</strong>，状态变绿 ✅ 即生效（实测 30s-3min，并不会像官方说的有可能要24小时）。</p>
-</li>
+<p>针对该拓扑，我制定了<strong>“核心隔离（Core Isolation）”</strong>策略：将系统中断、管理进程及内核Housekeeping任务通过<code>cpuset</code>和内核参数限制在特定的少数核心上（Housekeeping Cores），将绝大多数核心完全腾空，仅运行计算任务（Isolation Cores）。</p>
+<ul>
+<li><strong>Housekeeping Cores</strong>: 0-3 (Socket 0), 56-59 (Socket 1) — 共8核。</li>
+<li><strong>Isolation Cores</strong>: 4-55 (Socket 0), 60-111 (Socket 1) — 共104核，用于纯计算。</li>
+</ul>
+<h2 id="2-内核启动参数（Kernel-Command-Line）深度解析"><a href="#2-内核启动参数（Kernel-Command-Line）深度解析" class="headerlink" title="2. 内核启动参数（Kernel Command Line）深度解析"></a>2. 内核启动参数（Kernel Command Line）深度解析</h2><p>首先需要确定的是这次我将选择Rockylinux 10作为操作系统基础，内核版本为6.12是首个支持sched_ext调度器的稳定版本，并且Rockylinux 10首次完全基于x86-64-v3构建，相比其他发行版有着必然的性能优势，而少数比它性能更好的发行版（CachyOS和已经逝世的Clearlinux）又没它稳定还不受nvidia ofed驱动支持，考虑到这些因素我不会多看其他任何发行版一秒。（现在都是2026年了坚决抵制CentOS 7&#x2F;8或Rockylinux 8信徒遗老，这么老的内核挂个exFAT硬盘传东西都费劲）。</p>
+<p>为了实现我预期的隔离策略，我使用grubby在GRUB配置中启用了以下内核参数。这些参数共同构成了一个低延迟、低抖动的运行环境。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">transparent_hugepage=never iommu=pt mitigations=off \<br>nohz_full=4-55,60-111 rcu_nocbs=4-55,60-111 \<br>isolcpus=managed_irq,4-55,60-111<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="2-1-内存与IO子系统优化"><a href="#2-1-内存与IO子系统优化" class="headerlink" title="2.1 内存与IO子系统优化"></a>2.1 内存与IO子系统优化</h3><ul>
+<li><strong><code>transparent_hugepage=never</code></strong>: 禁用透明大页（THP）。虽然THP能减少TLB Miss，但在高强度的随机内存访问或频繁申请释放场景下，THP的后台合并线程（khugepaged）会引入不可预测的延迟抖动（Jitter）。</li>
+<li><strong><code>iommu=pt</code></strong>: 将IOMMU设置为Pass-Through模式。这允许设备在DMA传输时直接使用物理地址，绕过IOMMU的地址转换层，显著降低了IO密集型操作的CPU开销，同时保留了IOMMU的基本功能。</li>
+</ul>
+<h3 id="2-2-安全缓解措施禁用"><a href="#2-2-安全缓解措施禁用" class="headerlink" title="2.2 安全缓解措施禁用"></a>2.2 安全缓解措施禁用</h3><ul>
+<li><strong><code>mitigations=off</code></strong>: **(让CPU回归其原本的样子)**。该参数关闭了针对Spectre、Meltdown等侧信道攻击的所有CPU漏洞缓解措施。这些缓解措施通常涉及频繁的页表隔离（PTI）和间接分支预测限制，在旧时代这会带来非常明显的性能损耗（通常在15%-25%之间），但是在今天能够提供的性能提升根据之前不知道在哪里看到的Intel测评已经不到5%了。在追求极致速度的物理隔离环境中，我还是要物尽其用，认为关闭它们是提升IPC（Instructions Per Cycle）的必要手段。</li>
+</ul>
+<h3 id="2-3-核心隔离与时钟中断消除-核心措施"><a href="#2-3-核心隔离与时钟中断消除-核心措施" class="headerlink" title="2.3 核心隔离与时钟中断消除 (核心措施)"></a>2.3 核心隔离与时钟中断消除 (核心措施)</h3><ul>
+<li><strong><code>nohz_full=4-55,60-111</code></strong>: 启用Full Dynticks模式。在指定的核心上，如果运行队列中只有一个任务（即我们的计算进程），内核将停止发送调度时钟中断（Tick）。这消除了周期性的上下文切换干扰，实现了“无干扰（Tickless）”执行。</li>
+<li><strong><code>rcu_nocbs=4-55,60-111</code></strong>: 将指定核心上的RCU（Read-Copy-Update）回调函数卸载到非隔离核心（Housekeeping cores）的线程中执行。这防止了RCU软中断打断关键计算路径。</li>
+<li><strong><code>isolcpus=managed_irq,4-55,60-111</code></strong>:</li>
+<li>将指定核心从内核的通用SMP均衡调度器中移除，确保普通进程不会被随机调度到这些核心上。</li>
+<li><code>managed_irq</code> 标志进一步指示内核尽量避免将受管中断（Managed Interrupts）分配给这些核心，为后续的用户态中断控制打下基础。</li>
+</ul>
+<h2 id="3-用户态环境与调度优化"><a href="#3-用户态环境与调度优化" class="headerlink" title="3. 用户态环境与调度优化"></a>3. 用户态环境与调度优化</h2><p>除了内核层面的静态配置，运行时的动态调优同样关键。</p>
+<h3 id="3-1-基础系统调优-tuned"><a href="#3-1-基础系统调优-tuned" class="headerlink" title="3.1 基础系统调优 (tuned)"></a>3.1 基础系统调优 (<code>tuned</code>)</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">tuned-adm profile hpc-compute<br><br></code></pre></td></tr></table></figure>
+
+<p>启用RedHat系的<code>hpc-compute</code>配置文件。该Profile会自动调整虚拟内存参数（如<code>vm.dirty_ratio</code>）、网络栈缓冲区大小以及CPU的电源管理策略（强制最大C-State为C1或C0），确保CPU始终处于高性能状态，避免频率升降带来的延迟。</p>
+<h3 id="3-2-scx调度器：sched-ext-scx-tickless"><a href="#3-2-scx调度器：sched-ext-scx-tickless" class="headerlink" title="3.2 scx调度器：sched_ext (scx_tickless)"></a>3.2 scx调度器：sched_ext (<code>scx_tickless</code>)</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">/usr/local/bin/scx_tickless -m 0x0F0000000000000F<br><br></code></pre></td></tr></table></figure>
+
+<p>利用较新的Linux内核特性（BPF-based extensible scheduler class），我引入了<code>scx_tickless</code>调度器。</p>
+<ul>
+<li>该调度器由英伟达工程师设计，通过eBPF程序接管调度决策，相比完全公平调度器（CFS），它能更激进地维持计算核心的Tickless状态。</li>
+<li>参数 <code>-m 0x0F0000000000000F</code> 是一个掩码配置，精确指定了Housekeeping核心的拓扑位置，确保调度器仅在管理核心上处理必要的调度逻辑，从而保护计算核心的“静默”状态。</li>
+</ul>
+<h3 id="3-3-中断亲和性管理-irqbalance"><a href="#3-3-中断亲和性管理-irqbalance" class="headerlink" title="3.3 中断亲和性管理 (irqbalance)"></a>3.3 中断亲和性管理 (<code>irqbalance</code>)</h3><p>为了防止网卡、磁盘控制器的硬中断打断计算流水线，必须严格限制中断响应的核心范围。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 配置文件/etc/sysconfig/irqbalance中设置</span><br>IRQBALANCE_BANNED_CPUS=<span class="hljs-string">&quot;FFFFFFFFFFFFF0FFFFFFFFFFFFF0&quot;</span><br><br></code></pre></td></tr></table></figure>
+
+<p>这是一个64位&#x2F;128位的十六进制掩码。该配置显式<strong>禁止</strong>了所有隔离核心（即计算核心）参与中断负载均衡。结果是所有硬件中断都被强行“钉”在了Housekeeping Cores（Socket 0的0-3和Socket 1的56-59）上，保证了计算核心100%的CPU时间片用于业务逻辑。</p>
+<h3 id="3-4-进程绑核-taskset"><a href="#3-4-进程绑核-taskset" class="headerlink" title="3.4 进程绑核 (taskset)"></a>3.4 进程绑核 (<code>taskset</code>)</h3><p>最后，在启动计算任务时，最好显式指定亲和性不能光依赖scx_tickless调度，防止跨NUMA节点的内存访问惩罚。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs makefile_and_run.py"># 添加一个启动脚本变量<br>NUMACTL_CPU_BIND = &quot;taskset -c 4-55,60-111&quot;<br></code></pre></td></tr></table></figure>
+
+<p>结合<code>isolcpus</code>，这确保了计算线程被牢牢锁定在无干扰的核心上，且每个线程独占物理核L1&#x2F;L2缓存。</p>
+<h2 id="4-性能验证与结论"><a href="#4-性能验证与结论" class="headerlink" title="4. 性能验证与结论"></a>4. 性能验证与结论</h2><p><strong>测试用例</strong>: AMSS_NCKU 双黑洞模拟（基于广义相对论数值解法）。<br><strong>评估指标</strong>: 单个时间步（Time Step）的计算耗时。</p>
+<p>在应用上述全套优化措施后，系统表现出极高的确定性。对比默认配置（Default CFS + On-Demand Power + Default IRQ Balance）：</p>
+<ol>
+<li><strong>稳定性提升</strong>: 计算过程中的抖动（Jitter）几乎消失，btop监控可以看到各核心负载曲线呈现完美的平直线。</li>
+<li><strong>性能收益</strong>:</li>
 </ol>
-<hr>
-<h2 id="4-无限别名-转发（立刻能用）"><a href="#4-无限别名-转发（立刻能用）" class="headerlink" title="4. 无限别名 + 转发（立刻能用）"></a>4. 无限别名 + 转发（立刻能用）</h2><p>Resend 对「 catch-all 」免费！<br>意思是你 <strong>不用提前新建账号</strong>，任何 <code>@your.com</code> 的信都会飞进你设定的地址，只需要在 Resend 官网查收即可。</p>
-<hr>
-<h2 id="5-终端发邮件（可选，8-min-部署）"><a href="#5-终端发邮件（可选，8-min-部署）" class="headerlink" title="5. 终端发邮件（可选，8 min 部署）"></a>5. 终端发邮件（可选，8 min 部署）</h2><p>网页收发邮件显然太麻烦，我用<strong>rust</strong>写了个可爱的 CLI 客户端 <a target="_blank" rel="noopener" href="https://github.com/CGH0S7/rusend"><strong>rusend</strong></a>，基于 Resend 官方 API，支持发送与查收邮件非常方便。（好吧其实是Gemini小姐帮忙写的@@）</p>
-<h3 id="①-1-下载预构建可执行文件"><a href="#①-1-下载预构建可执行文件" class="headerlink" title="①-1 下载预构建可执行文件"></a>①-1 下载预构建可执行文件</h3><p>在<a target="_blank" rel="noopener" href="https://github.com/CGH0S7/rusend/releases/tag/stable">Github Releases</a>里下载对应系统的预编译包，解压放到 <code>$PATH</code> 目录下即可。</p>
-<h3 id="①-2-源码构建"><a href="#①-2-源码构建" class="headerlink" title="①-2 源码构建"></a>①-2 源码构建</h3><p>下载并编译rusend，准备好rust工具链，具体编译命令如下：</p>
-  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">git <span class="hljs-built_in">clone</span> https://github.com/CGH0S7/rusend.git<br><span class="hljs-built_in">cd</span> rusend<br>cargo build --release<br></code></pre></td></tr></table></figure>
-
-<p>将<code>rusend</code>二进制文件移动到系统的<code>$PATH</code>目录下，例如<code>/usr/local/bin</code>。</p>
-<h3 id="②-补全-API-Key配置"><a href="#②-补全-API-Key配置" class="headerlink" title="② 补全 &amp; API Key配置"></a>② 补全 &amp; API Key配置</h3><p>使用下面的命令进行命令行补全配置：</p>
-  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;source &lt;(rusend completions bash)&quot;</span> &gt;&gt; ~/.bashrc<br><span class="hljs-built_in">source</span> ~/.bashrc<br></code></pre></td></tr></table></figure>
-
-  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs zsh">echo &quot;source &lt;(rusend completions zsh)&quot; &gt;&gt; ~/.zshrc<br>source ~/.zshrc<br></code></pre></td></tr></table></figure>
-
-  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs fish">rusend completions fish &gt; ~/.config/fish/completions/rusend.fish<br>source ~/.config/fish/config.fish<br></code></pre></td></tr></table></figure>
-
-<p>在Resend控制面板中，找到<code>API Keys</code>选项，为你配置的域名生成一个新的API Key。然后在终端中运行以下命令进行配置：</p>
-  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">rusend config --key re_xxxxxxxxx<br></code></pre></td></tr></table></figure>
-
-<h3 id="③-使用-rusend-收发邮件"><a href="#③-使用-rusend-收发邮件" class="headerlink" title="③ 使用 rusend 收发邮件"></a>③ 使用 rusend 收发邮件</h3><p>详细功能请查看<a target="_blank" rel="noopener" href="https://github.com/CGH0S7/rusend">Readme</a>文档：</p>
-<p>  <img src="/images/rusendhelp1.png" srcset="/img/loading.gif" lazyload alt="rusend文档"><br>  <img src="/images/rusendhelp2.png" srcset="/img/loading.gif" lazyload alt="rusend文档"><br>  <img src="/images/rusendhelp3.png" srcset="/img/loading.gif" lazyload alt="rusend软件帮助"></p>
-<hr>
-<h2 id="6-成本-限额总结"><a href="#6-成本-限额总结" class="headerlink" title="6. 成本 &amp; 限额总结"></a>6. 成本 &amp; 限额总结</h2><table>
-<thead>
-<tr>
-<th>项目</th>
-<th>免费额度</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Resend</td>
-<td>100 封 &#x2F; 天</td>
-</tr>
-<tr>
-<td>域名</td>
-<td>约 ￥30+ &#x2F; 年</td>
-</tr>
-<tr>
-<td>rusend</td>
-<td>开源</td>
-</tr>
-</tbody></table>
-<p>非主力邮箱场景下完全够用，不建议用于接收各种广告或更新推送。</p>
-<p>若想要「匿名转发」隐藏真实地址，可以再套一层 <a target="_blank" rel="noopener" href="https://addy.io/">AnonAddy</a> 即可，本文不展开。</p>
-<hr>
-<h2 id="7-结语"><a href="#7-结语" class="headerlink" title="7. 结语"></a>7. 结语</h2><p>以上就是「低成本快速拥有个人专属域名邮箱」的全部流程。</p>
-<p>零服务器、零运维、全平台通用，甚至能在手机 Termux 里发邮。</p>
-<p>如果能帮到你，去 <a target="_blank" rel="noopener" href="https://github.com/CGH0S7/rusend">rusend</a> 点个 ⭐ 当稿费吧～😉</p>
+<ul>
+<li>在计算前期，单步时间步稳定降低 <strong>0.1 - 0.2秒</strong>。</li>
+<li>随着模拟进入后期（网格加密或相互作用增强），计算密度增加，该优化带来的累计收益更为显著。</li>
+<li>48核心运行总时间预计缩短约 <strong>800秒</strong>。</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>过去参加比赛就没有一次是能够在限定功耗下启用所有核心不降频全力跑程序的，我不禁思考既然用不完何不将单核计算性能调优做到极致，牺牲一些核心处理杂活不参与计算，剩余的核心全力以赴跑程序不要受干扰最好也不要降频，这就是我的大致思路。</p>
+<p>通过<code>nohz_full</code>与<code>isolcpus</code>实现核心隔离，配合<code>mitigations=off</code>释放硬件潜能，并利用<code>scx_tickless</code>进行用户态调度增强，我将这台Xeon 8480+服务器改造成了一个OS Noise几乎消除的专用计算平台。后续需要关注的问题是迁移服务器后如何快速重现这些调优配置，或者干脆设计动态调控脚本来根据硬件信息调整内核参数。另外还有多机运行也没有进行测试，未来会关注在MPI环境下验证这些调优措施的适用性。</p>
 
                 
               </div>
@@ -397,11 +365,38 @@
             <div>
               <div class="post-metas my-3">
   
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="../../../../categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB%EF%BC%8CHPC/" class="category-chain-item">技术分享，HPC</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
   
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="../../../../tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" class="print-no-link">#技术分享</a>
+        <a href="../../../../tags/%E6%8A%80%E6%9C%AF/" class="print-no-link">#技术</a>
+      
+        <a href="../../../../tags/%E7%B3%BB%E7%BB%9F%E4%BC%98%E5%8C%96/" class="print-no-link">#系统优化</a>
+      
+        <a href="../../../../tags/HPC/" class="print-no-link">#HPC</a>
+      
+        <a href="../../../../tags/Linux%E5%86%85%E6%A0%B8/" class="print-no-link">#Linux内核</a>
       
     </div>
   
@@ -413,8 +408,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>低成本快速搞定专属域名邮箱：从 0 到 CLI 收发只要 15 分钟</div>
-      <div>http://blog.hifuu.ink/2025/11/15/Your-exclusive-email-address/</div>
+      <div>面向竞赛环境的Linux系统性能调优实践</div>
+      <div>http://blog.hifuu.ink/2026/01/18/os-optimization/</div>
     </div>
     <div class="license-meta">
       
@@ -426,7 +421,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年11月15日</div>
+          <div>2026年1月18日</div>
         </div>
       
       
@@ -458,18 +453,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="../../../../2026/01/18/os-optimization/" title="面向竞赛环境的Linux系统性能调优实践">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">面向竞赛环境的Linux系统性能调优实践</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="../../../07/13/kritabest/" title="Krita 为什么是神？">
-                        <span class="hidden-mobile">Krita 为什么是神？</span>
+                      <a href="../../../../2025/11/15/Your-exclusive-email-address/" title="低成本快速搞定专属域名邮箱：从 0 到 CLI 收发只要 15 分钟">
+                        <span class="hidden-mobile">低成本快速搞定专属域名邮箱：从 0 到 CLI 收发只要 15 分钟</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
