@@ -21,27 +21,36 @@
   <meta name="author" content="CGH0S7">
   <meta name="keywords" content="">
   
-    <meta name="description" content="众所不周知， Chrome 菜单可以自动集成到 KDE Plasma 任务栏全局菜单组件，不管你喜不喜欢浏览器菜单至少看着很顺眼。然而，默认情况下，Firefox 并没有自动启用这个功能，需要进行一些配置。&#x2F;&#x2F;本来我还以为是 Firefox 没有支持这个功能 TT 本文将详细探讨 Linux 全局菜单的 D-Bus 工作原理，对比 Chrome 与 Firefox 的实现差异，">
+    <meta name="description" content="123456789101112    _          _   _                     _         &#x2F; \   _ __ | |_| |__  _ __ ___  _ __ (_) ___   &#x2F; _ \ | &#x27;_ \| __| &#x27;_ \| &#x27;__&#x2F; _ \| &#x27;_ \| |&#x2F; __| &#x2F; ___ \| | | | |_| |">
 <meta property="og:type" content="article">
-<meta property="og:title" content="为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏">
-<meta property="og:url" content="http://blog.hifuu.ink/2026/06/29/firefox-global-menu/index.html">
+<meta property="og:title" content="记录 Gitea 服务器遭 Anthropic 爬虫狂轰滥炸与排查处理经历">
+<meta property="og:url" content="http://blog.hifuu.ink/2026/08/03/anthropic-crawler-report/index.html">
 <meta property="og:site_name" content="CGH0S7&#39;s Blog">
-<meta property="og:description" content="众所不周知， Chrome 菜单可以自动集成到 KDE Plasma 任务栏全局菜单组件，不管你喜不喜欢浏览器菜单至少看着很顺眼。然而，默认情况下，Firefox 并没有自动启用这个功能，需要进行一些配置。&#x2F;&#x2F;本来我还以为是 Firefox 没有支持这个功能 TT 本文将详细探讨 Linux 全局菜单的 D-Bus 工作原理，对比 Chrome 与 Firefox 的实现差异，">
+<meta property="og:description" content="123456789101112    _          _   _                     _         &#x2F; \   _ __ | |_| |__  _ __ ___  _ __ (_) ___   &#x2F; _ \ | &#x27;_ \| __| &#x27;_ \| &#x27;__&#x2F; _ \| &#x27;_ \| |&#x2F; __| &#x2F; ___ \| | | | |_| |">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://blog.hifuu.ink/images/chrome-global-menu.png">
-<meta property="og:image" content="http://blog.hifuu.ink/images/firefox-global-menu-solve.png">
-<meta property="og:image" content="http://blog.hifuu.ink/images/firefox-global-menu.png">
-<meta property="article:published_time" content="2026-06-29T03:32:26.000Z">
-<meta property="article:modified_time" content="2026-08-03T01:58:14.903Z">
+<meta property="og:image" content="http://blog.hifuu.ink/images/anthropic-crawler/cpulog.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/anthropic-crawler/giteasetting.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/anthropic-crawler/gitealog.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/anthropic-crawler/networktrafficlog.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/anthropic-crawler/cflog.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/anthropic-crawler/ipdatabase.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/anthropic-crawler/qwensearch.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/anthropic-crawler/chatlog.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/anthropic-crawler/chatlog2.png">
+<meta property="og:image" content="http://blog.hifuu.ink/images/anthropic-crawler/tsscgitea.png">
+<meta property="article:published_time" content="2026-08-03T02:23:38.000Z">
+<meta property="article:modified_time" content="2026-08-03T02:59:51.695Z">
 <meta property="article:author" content="CGH0S7">
-<meta property="article:tag" content="技术分享">
-<meta property="article:tag" content="Firefox">
+<meta property="article:tag" content="运维记录">
+<meta property="article:tag" content="Gitea">
+<meta property="article:tag" content="Anthropic">
+<meta property="article:tag" content="网络安全">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://blog.hifuu.ink/images/chrome-global-menu.png">
+<meta name="twitter:image" content="http://blog.hifuu.ink/images/anthropic-crawler/cpulog.png">
   
   
   
-  <title>为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏 - CGH0S7&#39;s Blog</title>
+  <title>记录 Gitea 服务器遭 Anthropic 爬虫狂轰滥炸与排查处理经历 - CGH0S7&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -219,7 +228,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏"></span>
+            <span id="subtitle" data-typed-text="记录 Gitea 服务器遭 Anthropic 爬虫狂轰滥炸与排查处理经历"></span>
           
         </div>
 
@@ -230,8 +239,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-06-29 11:32" pubdate>
-          2026年6月29日 中午
+        <time datetime="2026-08-03 10:23" pubdate>
+          2026年8月3日 上午
         </time>
       </span>
     
@@ -242,7 +251,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.3k 字
+          1.6k 字
         
       </span>
     
@@ -253,7 +262,7 @@
         
         
         
-          11 分钟
+          13 分钟
         
       </span>
     
@@ -290,75 +299,53 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏</h1>
+            <h1 id="seo-header">记录 Gitea 服务器遭 Anthropic 爬虫狂轰滥炸与排查处理经历</h1>
             
             
               <div class="markdown-body">
                 
-                <p>众所不周知， Chrome 菜单可以自动集成到 KDE Plasma 任务栏全局菜单组件，不管你喜不喜欢浏览器菜单至少看着很顺眼。然而，默认情况下，Firefox 并没有自动启用这个功能，需要进行一些配置。&#x2F;&#x2F;本来我还以为是 Firefox 没有支持这个功能 TT</p>
-<p>本文将详细探讨 Linux 全局菜单的 D-Bus 工作原理，对比 Chrome 与 Firefox 的实现差异，并给出在 KDE Plasma 下完美启用 Firefox 全局菜单的配置方案（以下与 D-Bus 相关知识分享由 <a target="_blank" rel="noopener" href="https://chat.qwen.ai/">Qwen 3.7</a>提供并由本人验证整理）。</p>
-<h2 id="什么是全局菜单？其背后的-D-Bus-工作原理"><a href="#什么是全局菜单？其背后的-D-Bus-工作原理" class="headerlink" title="什么是全局菜单？其背后的 D-Bus 工作原理"></a>什么是全局菜单？其背后的 D-Bus 工作原理</h2><p>KDE Plasma 桌面的全局菜单（Global Menu）小组件可以把应用程序内部的菜单栏（如“文件”、“编辑”、“视图”等）提取出来，统一放置在桌面顶部的面板（Panel）中。这种机制实际上采用的是<strong>“客户端-服务端”</strong>的架构，其核心是基于 <strong>D-Bus 消息总线系统</strong> 与 <strong><code>dbusmenu</code> 协议</strong>：</p>
-<ol>
-<li><strong><code>dbusmenu</code> 协议</strong>：最初由 Canonical 为 Ubuntu Unity 桌面环境设计，定义了一套标准的 D-Bus 接口，用来描述菜单的层次结构（菜单项、图标、快捷键、分隔符、启用状态等）以及用户交互事件。</li>
-<li><strong>应用端（D-Bus 导出者）</strong>：支持全局菜单的应用启动时，会在 D-Bus 会话总线（Session Bus）上注册一个服务，把本应用的菜单树作为 D-Bus 对象暴露出来。此时，菜单的数据实质上依然保存在应用的内存中，只是通过 D-Bus 接口暴露给外部读取。</li>
-<li><strong>全局菜单小组件（D-Bus 消费者）</strong>：<ul>
-<li><strong>焦点追踪</strong>：小组件通过窗口管理器（KWin）实时监听当前获得焦点的活动窗口。</li>
-<li><strong>数据拉取</strong>：当用户切换窗口时，小组件定位到该窗口对应的 D-Bus 服务地址，通过 <code>dbusmenu</code> 协议拉取菜单树，并在顶栏上进行渲染。</li>
-<li><strong>事件回传</strong>：用户在顶栏点击菜单项时，小组件通过 D-Bus 向目标应用发送“激活”（Activate）信号，应用接收后执行具体的操作。</li>
-</ul>
-</li>
-</ol>
+                <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs TEXT">    _          _   _                     _      <br>   / \   _ __ | |_| |__  _ __ ___  _ __ (_) ___ <br>  / _ \ | &#x27;_ \| __| &#x27;_ \| &#x27;__/ _ \| &#x27;_ \| |/ __|<br> / ___ \| | | | |_| | | | | | (_) | |_) | | (__ <br>/_/   \_\_| |_|\__|_| |_|_|  \___/| .__/|_|\___|<br>                                  |_|<br> _   _ __  __ ____  _     <br>| \ | |  \/  / ___|| |    <br>|  \| | |\/| \___ \| |    <br>| |\  | |  | |___) | |___ <br>|_| \_|_|  |_|____/|_____|<br><br></code></pre></td></tr></table></figure>
+
+<p>原本只是正常早起考研本打算边背单词边开启惬意的一天，结果家里放的小服务器突然风扇狂转、呼啸作响。出于运维糕手的直觉，这显然很不寻常。登上服务器后台一看，CPU 温度和占用率完全不对:(</p>
+<p><img src="/images/anthropic-crawler/cpulog.png" srcset="/img/loading.gif" lazyload alt="CPU 温度与占用异常"></p>
+<p>经过排查，发现是自建的 Gitea 服务占满了系统资源，正在频繁触发各种消耗计算资源的 <code>git diff</code> 和并发数据拉取。我第一时间去问了下 TSSC 超算队的队友，发现当时并没有人在使用或者拉取大仓库。</p>
+<p>看样子是遭到了外部爬虫的恶意刷取，不是哥们我们私有服务器你爬来干啥TT。</p>
 <hr>
-<h2 id="为什么不同应用的支持情况不同？"><a href="#为什么不同应用的支持情况不同？" class="headerlink" title="为什么不同应用的支持情况不同？"></a>为什么不同应用的支持情况不同？</h2><p>在 Linux 桌面中，不同工具包（Toolkit）的底层架构差异，导致了全局菜单集成度的不同：</p>
-<ul>
-<li><strong>Qt 程序</strong>：由于 KDE 深度基于 Qt 构建，Qt 5&#x2F;6 已经原生内置了对 <code>dbusmenu</code> 的支持（通过 <code>libdbusmenu-qt</code> 等）。Qt 应用的 <code>QMenuBar</code> 会自动被全局菜单组件无缝接管，体验最完美。</li>
-<li><strong>Electron &#x2F; Chromium 应用</strong>：Chromium 内核在 Linux 下原生集成了对 <code>libdbusmenu</code> 库的调用，只要没有使用 HTML 自绘标题栏，就会自动在 D-Bus 上注册原生菜单。</li>
-</ul>
-<h3 id="Chrome-与-Firefox-的差异对比"><a href="#Chrome-与-Firefox-的差异对比" class="headerlink" title="Chrome 与 Firefox 的差异对比"></a>Chrome 与 Firefox 的差异对比</h3><ul>
-<li><p><strong>Chrome&#x2F;Chromium</strong>：作为“优等生”，它直接在底层自带了 <code>dbusmenu</code> 支持，能自动检测 KDE 环境并向 D-Bus 注册菜单。</p>
-<p><img src="/images/chrome-global-menu.png" srcset="/img/loading.gif" lazyload alt="Chrome 全局菜单"></p>
-</li>
-<li><p><strong>Firefox</strong>：</p>
-<ol>
-<li>Firefox 在 Linux 下主要基于 GTK3 构建，并不像 Chrome 那样天然“自带干粮”支持 D-Bus 菜单，需要依赖系统的 <code>appmenu-gtk-module</code> 翻译器。</li>
-<li>默认情况下，Firefox 倾向于“自己画界面”（使用 XUL&#x2F;HTML 自绘机制）。当我们按下 <code>Alt</code> 键调出菜单栏时，它弹出的其实是<strong>自绘的虚拟菜单</strong>，而非标准的原生 <code>GtkMenuBar</code>。这就导致 <code>appmenu-gtk-module</code> 无法拦截到任何菜单数据。</li>
-<li>此外，如果启用了“自定义标题栏”（CSD，客户端装饰），Firefox 会完全接管窗口装饰，导致系统模块彻底与菜单脱钩。</li>
-</ol>
-</li>
-</ul>
+<h2 id="1-第一次应对：关闭访客访问"><a href="#1-第一次应对：关闭访客访问" class="headerlink" title="1. 第一次应对：关闭访客访问"></a>1. 第一次应对：关闭访客访问</h2><p>一开始我并没有太放在心上，以为只是某个互联网扫描器扫到了公开端口。于是我直接登录 Gitea 管理后台，将全局访问权限调整为<strong>仅限登录用户访问</strong>（关闭访客查看功能），以为这样就能轻松把爬虫挡在门外。</p>
+<p><img src="/images/anthropic-crawler/giteasetting.png" srcset="/img/loading.gif" lazyload alt="Gitea 设置关闭访客访问"></p>
 <hr>
-<h2 id="完美解决：Firefox-启用全局菜单的完整步骤"><a href="#完美解决：Firefox-启用全局菜单的完整步骤" class="headerlink" title="完美解决：Firefox 启用全局菜单的完整步骤"></a>完美解决：Firefox 启用全局菜单的完整步骤</h2><p>要让 Firefox 的菜单能够正常进入全局菜单，我们需要：</p>
-<ol>
-<li>让 Firefox 放弃自绘菜单，改用原生 GTK 菜单栏；</li>
-<li>开启 Firefox 内部的强制 D-Bus 导出开关；</li>
-<li>确保系统具备 GTK 菜单桥接模块。</li>
-</ol>
-<p>具体步骤如下：</p>
-<h3 id="步骤-1：确保安装并加载了-appmenu-gtk-module"><a href="#步骤-1：确保安装并加载了-appmenu-gtk-module" class="headerlink" title="步骤 1：确保安装并加载了 appmenu-gtk-module"></a>步骤 1：确保安装并加载了 <code>appmenu-gtk-module</code></h3><p>确保系统里存在 GTK 桥接模块：</p>
-<ol>
-<li>根据发行版安装对应的模块：<ul>
-<li><strong>Arch Linux</strong>：<code>sudo pacman -S appmenu-gtk-module</code></li>
-<li><strong>Ubuntu &#x2F; Debian &#x2F; KDE Neon</strong>：<code>sudo apt install appmenu-gtk3-module</code></li>
-<li><strong>Fedora</strong>：<code>sudo dnf install gtk3-appmenu-gtk-module</code></li>
-</ul>
-</li>
-<li>重启你的桌面会话（或注销重新登录），以保证 <code>GTK_MODULES=appmenu-gtk-module</code> 环境变量在全局生效。</li>
-</ol>
-<h3 id="步骤-2：在-about-config-中强制开启全局菜单输出"><a href="#步骤-2：在-about-config-中强制开启全局菜单输出" class="headerlink" title="步骤 2：在 about:config 中强制开启全局菜单输出"></a>步骤 2：在 <code>about:config</code> 中强制开启全局菜单输出</h3><p>由于 Firefox 默认隐藏菜单需要按 alt 键显示，我们需要手动强制其导出：</p>
-<ol>
-<li>在 Firefox 地址栏输入 <code>about:config</code> 并回车，接受风险提示。</li>
-<li>搜索并修改&#x2F;新建以下两个键值：<ul>
-<li><strong><code>widget.gtk.global-menu.force</code></strong> 设置为 <strong><code>true</code></strong> （强制启用全局菜单）</li>
-<li><strong><code>widget.gtk.global-menu.force-wayland</code></strong> 设置为 <strong><code>true</code></strong> （如果在 Wayland 会话下，强制通过 D-Bus 导出菜单，非常关键）</li>
-</ul>
-</li>
-<li>重启 Firefox。</li>
-</ol>
-<p><img src="/images/firefox-global-menu-solve.png" srcset="/img/loading.gif" lazyload alt="Firefox 全局菜单配置"></p>
+<h2 id="2-极其顽固的“死缠烂打”"><a href="#2-极其顽固的“死缠烂打”" class="headerlink" title="2. 极其顽固的“死缠烂打”"></a>2. 极其顽固的“死缠烂打”</h2><p>然而事情远没有我想象的那么简单。这个爬虫异常顽固！</p>
+<p>即便我已经禁用了匿名访问，所有未登录请求都会被强行重定向到登录界面（返回 303 &#x2F; 登录页），但该爬虫依旧完全不理会重定向，依然在以极高频率不停地发起请求，疯狂刷屏 Gitea 的日志。</p>
+<p><img src="/images/anthropic-crawler/gitealog.png" srcset="/img/loading.gif" lazyload alt="Gitea 日志刷新及重定向记录"></p>
+<p>因为大量 HTTP 请求依然直接打在本地服务器上，处理重定向和连接依然消耗着服务器资源，虽然风扇转速和CPU温度有所下降但是我还是无法忍受。</p>
 <hr>
-<h2 id="最终效果"><a href="#最终效果" class="headerlink" title="最终效果"></a>最终效果</h2><p>经过以上配置，Firefox 的菜单成功脱离了浏览器窗口，并无缝集成到了 KDE Plasma 的全局菜单面板中，整体桌面体验更加干净统一：</p>
-<p><img src="/images/firefox-global-menu.png" srcset="/img/loading.gif" lazyload alt="Firefox 菜单成功集成在 Plasma 任务栏"></p>
-<p>如此一来，无论是在 X11 还是 Wayland 会话下，我们都能在 Firefox 中享受到类似 macOS 的全局菜单体验了。</p>
+<h2 id="3-套-Cloudflare-依然被吸干-46G-流量"><a href="#3-套-Cloudflare-依然被吸干-46G-流量" class="headerlink" title="3. 套 Cloudflare 依然被吸干 46G 流量"></a>3. 套 Cloudflare 依然被吸干 46G 流量</h2><p>意识到单靠 Gitea 内部的权限控制无法解决高并发请求带来的资源消耗后，我便开始和队友商量对策。</p>
+<p>我们的 Gitea 服务配置方式是通过我在家里的内网服务器反代到公网的，队友帮我的 Gitea 服务套上了 Cloudflare (CF) 防护，并配置了一些基础规则。本以为有了赛博菩萨出手可以安息了，结果这个扫码的爬虫依然在不间断地骚扰，甚至只是变动了一下源 IP 地址，继续狂刷！</p>
+<p>到了问题最终被解决的时候，我查了一下统计数据，这个爬虫居然已经不知不觉啃掉了我 <strong>46 GB</strong> 的网络流量，下载速度最高的时候达到过近 20MiB&#x2F;s！</p>
+<p><img src="/images/anthropic-crawler/networktrafficlog.png" srcset="/img/loading.gif" lazyload alt="中途截取的网络流量消耗日志"></p>
+<p>无法原谅！我和队友这才意识到情况不对劲：这绝对不是哪位闲人随意的随机扫描，而是有针对性的持久抓取！</p>
+<hr>
+<h2 id="4-深查源头：居然是沟槽的-Anthropic-在搞鬼"><a href="#4-深查源头：居然是沟槽的-Anthropic-在搞鬼" class="headerlink" title="4. 深查源头：居然是沟槽的 Anthropic 在搞鬼"></a>4. 深查源头：居然是沟槽的 Anthropic 在搞鬼</h2><p>为了搞清楚到底是哪来的出生在狂发请求，我们开始仔细调阅 Cloudflare 的访问日志，并对请求源 IP 进行反向溯源。</p>
+<p>结合 Cloudflare 的捕获记录、IP 数据库查询以及通义千问 (Qwen Studio) 的 IP 查询结果：</p>
+<p><img src="/images/anthropic-crawler/cflog.png" srcset="/img/loading.gif" lazyload alt="Cloudflare 访问记录"></p>
+<p><img src="/images/anthropic-crawler/ipdatabase.png" srcset="/img/loading.gif" lazyload alt="IP 数据库查询结果"></p>
+<p><img src="/images/anthropic-crawler/qwensearch.png" srcset="/img/loading.gif" lazyload alt="Qwen Studio IP 查询验证"></p>
+<p>所有指向线索惊人地一致——这个把我们小服务器刷到风扇狂转、吞掉 46G 流量的恶性爬虫，居然来自最不会营销、最清白、最懂安全、最尊重版权、最不会蒸馏、最严于律己宽于待人、最喜欢给用户发福利、最不爱定制榜单、最不喜欢把模型降智给用户限流、最便宜、最喜欢人工维护、最不会全程让AI工作然后出岔子只会甩锅、最不会侵犯用户隐私然后倒打一耙限制蒸馏、最喜欢修bug然后补偿用户损失、最见的别人家好、最喜欢公平竞争、最讨厌装神弄鬼的知名 AI 巨头 <strong>Anthropic</strong> m(0_0)m</p>
+<p>看到这个查询结果的一瞬间，直接把我和队友给气笑了。堂堂A➗爬虫写得如此粗暴无礼，连遇到重定向死循环和验证码拦截都不带停的，活脱脱像个 DDoS 攻击。</p>
+<p><img src="/images/anthropic-crawler/chatlog.png" srcset="/img/loading.gif" lazyload alt="A畜是这样的"><br><img src="/images/anthropic-crawler/chatlog2.png" srcset="/img/loading.gif" lazyload alt="轻松绷住"></p>
+<hr>
+<h2 id="5-彻底拦截与复盘反思"><a href="#5-彻底拦截与复盘反思" class="headerlink" title="5. 彻底拦截与复盘反思"></a>5. 彻底拦截与复盘反思</h2><p>排查出源头后，我们在 Cloudflare 的 WAF 规则中针对来自 Anthropic 的 IP 段和 User-Agent 彻底添加了 Block 封锁规则。</p>
+<p>规则生效后，Gitea 的日志终于不再疯狂刷屏，服务器的 CPU 温度也迅速回落，风扇终于安静了下来。</p>
+<h3 id="6-疑问与复盘：私有-Gitea-地址是怎么泄漏的？"><a href="#6-疑问与复盘：私有-Gitea-地址是怎么泄漏的？" class="headerlink" title="6. 疑问与复盘：私有 Gitea 地址是怎么泄漏的？"></a>6. 疑问与复盘：私有 Gitea 地址是怎么泄漏的？</h3><p>问题解决后，我们不禁思考：<strong>为什么一个完全私有的、没有在互联网任何公开页面做过外链的家用 Gitea 地址，会被 Anthropic 的爬虫盯上并狂轰滥炸？</strong></p>
+<p><img src="/images/anthropic-crawler/tsscgitea.png" srcset="/img/loading.gif" lazyload alt="熙熙攘攘，我们的TSSC&#39;s Gitea"></p>
+<p>综合推测，基本怀疑是我们在平时使用 <strong>Claude Code</strong> 进行辅助开发时，工具在读取本地 git config 或拉取&#x2F;推送上下文时，把我们的私有 Gitea 仓库 URL 作为元数据上报到了 Anthropic 远端。而 Anthropic 的后台抓取系统收到这个 URL 后，便自动化地派出了爬虫进行“大吞噬”，企图把仓库里的代码抓去训练大模型……</p>
+<p>如果这个猜想属实，不得不令人警惕：</p>
+<ol>
+<li><strong>AI 编程工具的隐私保护</strong>：在使用各类 AI 编程助手时，代码仓库地址、内部配置甚至敏感数据都可能在无意间被收集，还是开源工具更加可靠。</li>
+<li><strong>AI 爬虫的野蛮生长</strong>：大模型厂商在急迫获取训练数据的同时，其爬虫策略往往缺乏对个人开发者或小服务器的对等尊重与流控保护。</li>
+<li><strong>Anthropic本质畜生</strong>：没话讲了刻板印象再次加深。</li>
+</ol>
+<p>希望这次记录能给同样自建 Git 服务或使用 AI 辅助开发的朋友们提醒：一定要关注私有服务的 WAF 防护与敏感 URL 暴露风险！</p>
 
                 
               </div>
@@ -371,9 +358,13 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="../../../../tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" class="print-no-link">#技术分享</a>
+        <a href="../../../../tags/%E8%BF%90%E7%BB%B4%E8%AE%B0%E5%BD%95/" class="print-no-link">#运维记录</a>
       
-        <a href="../../../../tags/Firefox/" class="print-no-link">#Firefox</a>
+        <a href="../../../../tags/Gitea/" class="print-no-link">#Gitea</a>
+      
+        <a href="../../../../tags/Anthropic/" class="print-no-link">#Anthropic</a>
+      
+        <a href="../../../../tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" class="print-no-link">#网络安全</a>
       
     </div>
   
@@ -385,8 +376,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏</div>
-      <div>http://blog.hifuu.ink/2026/06/29/firefox-global-menu/</div>
+      <div>记录 Gitea 服务器遭 Anthropic 爬虫狂轰滥炸与排查处理经历</div>
+      <div>http://blog.hifuu.ink/2026/08/03/anthropic-crawler-report/</div>
     </div>
     <div class="license-meta">
       
@@ -398,7 +389,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2026年6月29日</div>
+          <div>2026年8月3日</div>
         </div>
       
       
@@ -430,18 +421,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="../../../08/03/anthropic-crawler-report/" title="记录 Gitea 服务器遭 Anthropic 爬虫狂轰滥炸与排查处理经历">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">记录 Gitea 服务器遭 Anthropic 爬虫狂轰滥炸与排查处理经历</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="../../14/scx-auto/" title="如何在笔记本电脑插拔电源时自动切换 SCX 调度模式">
-                        <span class="hidden-mobile">如何在笔记本电脑插拔电源时自动切换 SCX 调度模式</span>
+                      <a href="../../../06/29/firefox-global-menu/" title="为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏">
+                        <span class="hidden-mobile">为 Firefox 启用全局菜单集成到 KDE Plasma 任务栏</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
